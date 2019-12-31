@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: user-service
+  cloud:
+    config:
+      uri: http://127.0.0.1:8888
+      name: common
+      profile: ${spring.profiles.active}
+  profiles:
+    active: dev
+server:
+  port: 9001
+
+eureka:
+  client:
+    eureka-server-port: 8761
+    service-url:
+      defaultZone: http://${eureka.instance.hostname}:${eureka.client.eureka-server-port}/eureka/
+  instance:
+    hostname: 127.0.0.1
+    prefer-ip-address: true
+

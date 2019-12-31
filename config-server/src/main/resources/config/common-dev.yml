@@ -1,0 +1,15 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/general-spring-cloud?useUnicode=true&characterEncoding=utf8&useSSL=false
+    username: root
+    password: snow0215
+    driver-class-name: com.mysql.jdbc.Driver
+  jpa:
+    database: mysql
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+#mybatis:
+#  config-location: classpath:mybatis/mybatis-config.xml
+#  mapper-location: classpath:mybatis/mapper/*.xml
+#
