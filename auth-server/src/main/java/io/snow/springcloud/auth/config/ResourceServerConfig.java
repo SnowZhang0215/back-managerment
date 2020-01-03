@@ -7,10 +7,8 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.R
 import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
 
 /**
- * <p>参看：https://github.com/spring-guides/tut-spring-security-and-angular-js/blob/master/oauth2-vanilla/README.adoc</p>
- * Created by Mr.Yangxiufeng on 2017/12/29.
- * Time:10:46
- * ProjectName:Mirco-Service-Skeleton
+ * 其他需要认证的应用需要从auth-server获取用户信息，所以auth-server本身也是一个资源服务器
+ * @author snowzhang
  */
 @Configuration
 @EnableResourceServer
