@@ -1,6 +1,5 @@
-package io.snow.springcloud.userservice.controller.rest;
+package io.snow.rest.common;
 
-import org.springframework.http.HttpStatus;
 
 import java.io.Serializable;
 
@@ -14,7 +13,7 @@ public class ResponseData<T> implements Serializable {
 
     public static <T>ResponseData<T> unAuthorized(String errorMsg) {
         ResponseData<T> responseData = new ResponseData<>();
-        responseData.errorCode = HttpStatus.UNAUTHORIZED.value();
+        responseData.errorCode = 401;
         responseData.errorMsg = errorMsg;
         return responseData;
     }
@@ -37,7 +36,7 @@ public class ResponseData<T> implements Serializable {
 
     public static <T> ResponseData<T> ok(T body) {
         ResponseData<T> responseData = new ResponseData<>();
-        responseData.errorCode = HttpStatus.OK.value();
+        responseData.errorCode = 200;
         responseData.errorMsg = "success";
         responseData.setData(body);
         return responseData;
@@ -45,7 +44,7 @@ public class ResponseData<T> implements Serializable {
 
     public static <T> ResponseData<T> error(String errorMsg) {
         ResponseData<T> responseData = new ResponseData<>();
-        responseData.errorCode = HttpStatus.INTERNAL_SERVER_ERROR.value();
+        responseData.errorCode = 500;
         responseData.errorMsg = errorMsg;
         responseData.setData(null);
         return responseData;

@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
-public class User implements UserDetails, Serializable {
+public class User extends BaseEntity implements UserDetails, Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

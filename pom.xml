@@ -13,6 +13,8 @@
         <module>config-server</module>
         <module>auth-server</module>
         <module>user-service</module>
+        <module>core-gateway</module>
+        <module>rest-common</module>
     </modules>
     <packaging>pom</packaging>
     

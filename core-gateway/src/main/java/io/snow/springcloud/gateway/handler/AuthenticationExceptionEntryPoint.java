@@ -1,7 +1,7 @@
-package io.snow.springcloud.userservice.handler;
+package io.snow.springcloud.gateway.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.snow.springcloud.userservice.controller.rest.ResponseData;
+import io.snow.rest.common.ResponseData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.AuthenticationException;
@@ -12,9 +12,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 @Component
 public class AuthenticationExceptionEntryPoint implements AuthenticationEntryPoint {
@@ -23,7 +20,7 @@ public class AuthenticationExceptionEntryPoint implements AuthenticationEntryPoi
 
     @Override
     public void commence(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AuthenticationException e) throws IOException, ServletException {
-        logger.info("no authorized");
+        logger.info("no authorized request --- core gateway");
         ResponseData<Object> unauthorized = ResponseData.unAuthorized(e.getMessage());
         httpServletResponse.setContentType("application/json");
         httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
