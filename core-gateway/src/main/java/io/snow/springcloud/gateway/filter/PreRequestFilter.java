@@ -37,6 +37,10 @@ public class PreRequestFilter extends ZuulFilter {
         RequestContext ctx = RequestContext.getCurrentContext();
         HttpServletRequest request = ctx.getRequest();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication!=null && authentication.isAuthenticated()){
+            ctx.getZuulRequestHeaders().put("userName", (String) authentication.getPrincipal());
+        }
+        LOG.info("request user: {}",authentication);
         LOG.info("send {} request to {}",request.getMethod(),request.getRequestURL().toString());
         return null;
     }

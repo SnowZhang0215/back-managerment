@@ -1,12 +1,12 @@
 package io.snow.springcloud.userservice.entitys;
 
-import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.List;
 
 @Entity
-public class Role implements GrantedAuthority, Serializable {
+public class Role implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -15,7 +15,11 @@ public class Role implements GrantedAuthority, Serializable {
     @Column(nullable = false)
     private String name;
 
-    @Override
+    @ManyToMany(cascade = CascadeType.MERGE,fetch = FetchType.EAGER)
+    @JoinTable(name = "role_privilege", joinColumns = @JoinColumn(name = "role_id"),
+            inverseJoinColumns = @JoinColumn(name = "permission_id"))
+    private List<Permission> rolePermissions;
+
     public String getAuthority() {
         return name;
     }
@@ -34,5 +38,13 @@ public class Role implements GrantedAuthority, Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public List<Permission> getRolePermissions() {
+        return rolePermissions;
+    }
+
+    public void setRolePermissions(List<Permission> rolePermissions) {
+        this.rolePermissions = rolePermissions;
     }
 }
