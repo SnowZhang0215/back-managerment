@@ -1,7 +1,7 @@
 package io.snow.springcloud.userservice.service.dto;
 
+import io.snow.springcloud.userservice.entitys.Role;
 import io.snow.springcloud.userservice.entitys.User;
-import org.springframework.security.core.GrantedAuthority;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -105,7 +105,7 @@ public class UserDTO {
         this.phoneNumber = user.getPhoneNumber();
         this.profile = user.getProfile();
         this.authorities = user.getAuthorities().stream()
-            .map(GrantedAuthority::getAuthority)
+            .map(Role::getAuthority)
             .collect(Collectors.toList());
     }
 }

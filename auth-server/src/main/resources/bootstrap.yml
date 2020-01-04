@@ -19,4 +19,20 @@ eureka:
   instance:
     hostname: 127.0.0.1
     prefer-ip-address: true
+#
+#feign:
+#  hystrix:
+#    enabled: true
+#hystrix:
+#  command:
+#    default:
+#      execution:
+#        isolation:
+#          thread:
+#            timeoutInMilliseconds: 60000
+#ribbon:
+#  ReadTimeout: 30000
+#  ConnectTimeout: 60000
+#  MaxAutoRetries: 0
+#  MaxAutoRetriesNextServer: 1
 

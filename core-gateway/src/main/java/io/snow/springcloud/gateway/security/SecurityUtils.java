@@ -1,4 +1,4 @@
-package io.snow.springcloud.userservice.security;
+package io.snow.springcloud.gateway.security;
 
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;

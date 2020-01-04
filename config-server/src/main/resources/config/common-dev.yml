@@ -12,3 +12,22 @@ spring:
 #  config-location: classpath:mybatis/mybatis-config.xml
 #  mapper-location: classpath:mybatis/mapper/*.xml
 #
+ribbon:
+  hystrix:
+    enable: true
+  okhttp:
+    enabled: true
+  eureka:
+    enabled: true
+  ReadTimeout: 60000
+  ConnectTimeout: 10000
+  MaxAutoRetries: 0
+  MaxAutoRetriesNextServer: 1
+
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 60000

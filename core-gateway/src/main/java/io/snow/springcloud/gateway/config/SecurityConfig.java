@@ -2,6 +2,8 @@ package io.snow.springcloud.gateway.config;
 
 import io.snow.springcloud.gateway.handler.AuthenticationExceptionEntryPoint;
 import io.snow.springcloud.gateway.handler.CustomerAccessDeniedHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -17,9 +19,7 @@ import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.web.context.request.RequestContextListener;
 
 /**
- * Created by Mr.Yangxiufeng on 2017/12/29.
- * Time:10:08
- * ProjectName:Mirco-Service-Skeleton
+ * SecurityConfig
  */
 @Configuration
 @EnableResourceServer
@@ -37,6 +37,8 @@ public class SecurityConfig extends ResourceServerConfigurerAdapter {
 
     @Autowired
     private TokenStore tokenStore;
+
+    private static final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
 
     private static final String[] AUTH_WHITELIST = {
             "/auth-service/**",
@@ -61,28 +63,42 @@ public class SecurityConfig extends ResourceServerConfigurerAdapter {
             http.authorizeRequests().antMatchers(au).permitAll();
         }
         http.authorizeRequests().anyRequest().authenticated();
-//        registry.anyRequest()
-//                .access("@permissionService.hasPermission(request,authentication)");
+        logger.info("registry : {}" ,registry);
+        registry.anyRequest()
+                .access("@permissionService.hasPermission(request,authentication)");
     }
 
     @Override
     public void configure(ResourceServerSecurityConfigurer resources) {
         resources.tokenStore(tokenStore)
                 .resourceId("user-service")
+                .expressionHandler(expressionHandler)
                 .authenticationEntryPoint(authenticationExceptionEntryPoint)
                 .accessDeniedHandler(customerAccessDeniedHandler);
     }
-
-    @Bean
-    public RequestContextListener requestContextListener() {
-        return new RequestContextListener();
-    }
-
 
     @Bean
     public OAuth2WebSecurityExpressionHandler oAuth2WebSecurityExpressionHandler(ApplicationContext applicationContext) {
         OAuth2WebSecurityExpressionHandler expressionHandler = new OAuth2WebSecurityExpressionHandler();
         expressionHandler.setApplicationContext(applicationContext);
         return expressionHandler;
+    }
+
+    /**
+     * add RequestContextListener
+     * 如果没有此Bean 资源服务通过token向auth-server获取用户信息时会报错：
+     * Error creating bean with name 'scopedTarget.oauth2ClientContext':
+     * Scope 'session' is not active for the current thread; consider defining a scoped proxy
+     * for this bean if you intend to refer to it from a singleton; nested exception is java.lang.IllegalStateException:
+     * No thread-bound request found: Are you referring to request attributes outside of an actual web request,
+     * or processing a request outside of the originally receiving thread?
+     * If you are actually operating within a web request and still receive this message,
+     * your code is probably running outside of DispatcherServlet/DispatcherPortlet:
+     * In this case, use RequestContextListener or RequestContextFilter to expose the current request.
+     * @return
+     */
+    @Bean
+    public RequestContextListener requestContextListener() {
+        return new RequestContextListener();
     }
 }

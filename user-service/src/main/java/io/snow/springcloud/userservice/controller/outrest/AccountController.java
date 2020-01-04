@@ -1,7 +1,7 @@
-package io.snow.springcloud.userservice.controller;
+package io.snow.springcloud.userservice.controller.outrest;
 
-import io.snow.springcloud.userservice.controller.rest.ResponseCode;
-import io.snow.springcloud.userservice.controller.rest.ResponseData;
+import io.snow.rest.common.ResponseCode;
+import io.snow.rest.common.ResponseData;
 import io.snow.springcloud.userservice.service.dto.UserDTO;
 import io.snow.springcloud.userservice.service.impl.AccountService;
 import org.slf4j.Logger;
@@ -22,9 +22,9 @@ public class AccountController {
     private AccountService accountService;
 
     @GetMapping("/info")
-    public ResponseData<?> getUserInfo() {
+    public ResponseData<?> getUserInfo(@RequestHeader("userName") String userName) {
         logger.info("get user info");
-        ResponseData<UserDTO> returnData = accountService.getUserWithAuthorities().map(user -> ResponseData.ok(new UserDTO(user))).orElse(
+        ResponseData<UserDTO> returnData = accountService.getUserWithAuthorities(userName).map(user -> ResponseData.ok(new UserDTO(user))).orElse(
                 ResponseData.error("user not login")
         );
         logger.info("return data : {}",returnData);

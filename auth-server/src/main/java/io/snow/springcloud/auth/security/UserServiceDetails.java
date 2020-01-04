@@ -1,8 +1,8 @@
 package io.snow.springcloud.auth.security;
 
-import io.snow.springcloud.auth.dao.UserRepository;
-import io.snow.springcloud.auth.entitys.Role;
-import io.snow.springcloud.auth.entitys.User;
+import io.snow.rest.common.ResponseData;
+import io.snow.springcloud.auth.feign.UserService;
+import io.snow.springcloud.auth.security.userdetails.DBUserDetails;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +11,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Set;
 
 /**
@@ -26,16 +28,18 @@ public class UserServiceDetails implements UserDetailsService {
     private static final Logger logger = LoggerFactory.getLogger(UserServiceDetails.class);
 
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
     @Override
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
-        logger.info("load user form db: {}" , userName);
-        User dbUser = userRepository.findUserByUserName(userName);
-        if (dbUser == null){
-            throw new UsernameNotFoundException("user" + userName + " not exist!");
+        logger.info("call user-service to load user form {}" , userName);
+        ResponseData responseData = userService.findUserByUserName(userName);
+        if (responseData.getErrorCode()!=200){
+            throw new UsernameNotFoundException("user" + userName + responseData.getErrorMsg());
         }
-        logger.info("loaded user : {}",dbUser);
-        return dbUser;
+        LinkedHashMap data = (LinkedHashMap) responseData.getData();
+        DBUserDetails dbUserDetails = new DBUserDetails(data);
+        logger.info("loaded user : {}",dbUserDetails);
+        return  dbUserDetails;
     }
 }
