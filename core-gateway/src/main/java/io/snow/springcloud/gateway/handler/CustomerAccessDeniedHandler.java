@@ -1,5 +1,9 @@
 package io.snow.springcloud.gateway.handler;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.snow.rest.common.ResponseData;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
@@ -14,17 +18,20 @@ import java.util.Map;
 
 @Component
 public class CustomerAccessDeniedHandler implements AccessDeniedHandler {
+
+    private static final Logger logger = LoggerFactory.getLogger(CustomerAccessDeniedHandler.class);
+
+
     @Override
     public void handle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AccessDeniedException e) throws IOException, ServletException {
-        httpServletResponse.setContentType("application/json;charset=UTF-8");
-        Map<String,Object> map = new HashMap<>();
-        map.put("code", 400);
-        map.put("message", e.getMessage());
-        map.put("data", "");
-        map.put("timestamp", String.valueOf(new Date().getTime()));
+        ResponseData<Object> accessDenied = ResponseData.accessDenied();
         httpServletResponse.setContentType("application/json");
         httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-
-        httpServletResponse.getWriter().write(map.toString());
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.writeValue(httpServletResponse.getOutputStream(), accessDenied);
+        } catch (Exception e1) {
+            throw new ServletException();
+        }
     }
 }

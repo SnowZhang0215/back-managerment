@@ -64,7 +64,7 @@ public class AccountService implements IAccountService {
         String encryptedPassword = bCryptPasswordEncoder.encode(password);
         newUser.setUserName(userName);
         newUser.setPassword(encryptedPassword);
-        List<Role> roles = roleRepository.findByName(AuthoritiesConstants.USER);
+        List<Role> roles = roleRepository.findAllByCode(AuthoritiesConstants.USER);
         newUser.setAuthorities(roles);
         newUser = userRepository.save(newUser);
         logger.info("created user : {}",newUser);

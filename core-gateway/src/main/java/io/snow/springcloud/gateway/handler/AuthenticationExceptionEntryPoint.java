@@ -21,7 +21,7 @@ public class AuthenticationExceptionEntryPoint implements AuthenticationEntryPoi
     @Override
     public void commence(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AuthenticationException e) throws IOException, ServletException {
         logger.info("no authorized request --- core gateway");
-        ResponseData<Object> unauthorized = ResponseData.unAuthorized(e.getMessage());
+        ResponseData<Object> unauthorized = ResponseData.unAuthorized("invalid_token");
         httpServletResponse.setContentType("application/json");
         httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         try {

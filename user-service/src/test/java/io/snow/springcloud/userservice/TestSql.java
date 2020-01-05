@@ -44,11 +44,13 @@ public class TestSql {
         logger.info("start init system roles");
 
         Role roleAdmin = new Role();
-        roleAdmin.setName("ROLE_ADMIN");
+        roleAdmin.setCode("ROLE_ADMIN");
+        roleAdmin.setName("管理员");
         roleRepository.save(roleAdmin);
 
         Role roleUser = new Role();
-        roleUser.setName("ROLE_USER");
+        roleUser.setCode("ROLE_USER");
+        roleUser.setName("用户");
         roleRepository.save(roleUser);
 
         logger.info("end init system roles");
@@ -73,13 +75,10 @@ public class TestSql {
             User user = new User();
             user.setUserName("user");
             user.setPassword(bCryptPasswordEncoder().encode("user"));
-            Role role = new Role();
-            role.setName("ROLE_USER");
-            Example<Role> example = Example.of(role);
-            List<Role> userRole = roleRepository.findAll(example);
-            logger.info("load user roles : {}" , userRole.size());
+            List<Role> role_user = roleRepository.findAllByCode("ROLE_USER");
+            logger.info("load user roles : {}" , role_user.size());
 //        HashSet<Role> roles = new HashSet<>(userRole);
-            user.setAuthorities(userRole);
+            user.setAuthorities(role_user);
             User userSaved = userRepository.save(user);
             logger.info("init user : {}",userSaved.getAuthorities());
         }catch (Exception e){

@@ -34,9 +34,9 @@ public class SecurityConfig extends ResourceServerConfigurerAdapter {
 
     @Autowired
     private AuthenticationExceptionEntryPoint authenticationExceptionEntryPoint;
-
-    @Autowired
-    private TokenStore tokenStore;
+//
+//    @Autowired
+//    private TokenStore tokenStore;
 
     private static final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
 
@@ -70,11 +70,13 @@ public class SecurityConfig extends ResourceServerConfigurerAdapter {
 
     @Override
     public void configure(ResourceServerSecurityConfigurer resources) {
-        resources.tokenStore(tokenStore)
-                .resourceId("user-service")
+        resources
+//                .tokenStore(tokenStore)
+//                .resourceId("user-service")
                 .expressionHandler(expressionHandler)
                 .authenticationEntryPoint(authenticationExceptionEntryPoint)
-                .accessDeniedHandler(customerAccessDeniedHandler);
+                .accessDeniedHandler(customerAccessDeniedHandler)
+        ;
     }
 
     @Bean

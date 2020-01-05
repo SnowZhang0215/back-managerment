@@ -105,7 +105,7 @@ public class UserDTO {
         this.phoneNumber = user.getPhoneNumber();
         this.profile = user.getProfile();
         this.authorities = user.getAuthorities().stream()
-            .map(Role::getAuthority)
+            .map(Role::getCode)
             .collect(Collectors.toList());
     }
 }

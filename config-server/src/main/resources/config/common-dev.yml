@@ -8,6 +8,10 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: update
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    password: 123456
 #mybatis:
 #  config-location: classpath:mybatis/mybatis-config.xml
 #  mapper-location: classpath:mybatis/mapper/*.xml
