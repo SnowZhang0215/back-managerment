@@ -80,7 +80,7 @@ public class OAuth2Config extends AuthorizationServerConfigurerAdapter {
 
     }
 
-    @Bean
+    @Bean("clientDetails")
     public ClientDetailsService clientDetails() {
         return new JdbcClientDetailsService(dataSource);
     }

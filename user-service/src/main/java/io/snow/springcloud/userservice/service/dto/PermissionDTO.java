@@ -1,33 +1,12 @@
-package io.snow.springcloud.userservice.entitys;
+package io.snow.springcloud.userservice.service.dto;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.assertj.core.util.Lists;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
+import io.snow.springcloud.userservice.entitys.Permission;
 
-import javax.persistence.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
-/**
- * 菜单
- */
-@Entity
-public class Permission extends BaseEntity{
+public class PermissionDTO {
 
-//    `id` int(11) NOT NULL AUTO_INCREMENT,
-//  `code` varchar(255) DEFAULT NULL COMMENT '菜单编码',
-//            `p_code` varchar(255) DEFAULT NULL COMMENT '菜单父编码',
-//            `p_id` varchar(255) DEFAULT NULL COMMENT '父菜单ID',
-//            `name` varchar(255) DEFAULT NULL COMMENT '名称',
-//            `url` varchar(255) DEFAULT NULL COMMENT '请求地址',
-//            `is_menu` int(11) DEFAULT NULL COMMENT '是否是菜单(1.菜单。2.按钮)',
-//            `level` int(11) DEFAULT NULL COMMENT '菜单层级',
-//            `sort` int(11) DEFAULT NULL COMMENT '菜单排序',
-//            `status` int(11) DEFAULT NULL,
-//  `icon` varchar(255) DEFAULT NULL,
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String code;
@@ -50,13 +29,9 @@ public class Permission extends BaseEntity{
 
     private String defaultType;
 
-    @JsonIgnore
-    @ManyToOne(cascade={CascadeType.REFRESH})
-    @JoinColumn(name="parent_id")
-    private Permission parent;
+    private Long parentId;
 
-    @OneToMany(cascade={CascadeType.REFRESH, CascadeType.REMOVE}, fetch = FetchType.EAGER,mappedBy="parent")
-    private List<Permission> children;
+    private List<PermissionDTO> children;
 
     public Long getId() {
         return id;
@@ -146,19 +121,39 @@ public class Permission extends BaseEntity{
         this.defaultType = defaultType;
     }
 
-    public List<Permission> getChildren() {
+    public Long getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(Long parentId) {
+        this.parentId = parentId;
+    }
+
+
+    public PermissionDTO(Permission permission) {
+        this.id = permission.getId();
+        this.code = permission.getCode();
+        this.parentCode = permission.getParentCode();
+        this.name = permission.getName();
+        this.url = permission.getUrl();
+        this.isMenu = permission.getIsMenu();
+        this.level = permission.getLevel();
+        this.sort = permission.getSort();
+        this.status = permission.getStatus();
+        this.icon = permission.getIcon();
+        this.defaultType = permission.getDefaultType();
+        if (permission.getParent()!=null){
+
+            this.parentId = permission.getParent().getId();
+        }
+        this.children = permission.getChildren().stream().map(PermissionDTO::new).collect(Collectors.toList());
+    }
+
+    public List<PermissionDTO> getChildren() {
         return children;
     }
 
-    public void setChildren(List<Permission> children) {
+    public void setChildren(List<PermissionDTO> children) {
         this.children = children;
-    }
-
-    public Permission getParent() {
-        return parent;
-    }
-
-    public void setParent(Permission parent) {
-        this.parent = parent;
     }
 }

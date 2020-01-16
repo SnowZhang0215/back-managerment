@@ -42,6 +42,7 @@ public class SecurityConfig extends ResourceServerConfigurerAdapter {
 
     private static final String[] AUTH_WHITELIST = {
             "/auth-service/**",
+            "/user-service/menu/default/**",
             "/**/v2/api-docs",
             "/swagger-resources",
             "/swagger-resources/**",
@@ -55,6 +56,8 @@ public class SecurityConfig extends ResourceServerConfigurerAdapter {
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
+        http.csrf().disable();
+        http.cors().disable();
         http.authorizeRequests().antMatchers("/v2/api-docs").permitAll();
 
         ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry registry = http

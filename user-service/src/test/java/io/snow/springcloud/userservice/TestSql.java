@@ -1,7 +1,9 @@
 package io.snow.springcloud.userservice;
 
+import io.snow.springcloud.userservice.dao.PermissionRepository;
 import io.snow.springcloud.userservice.dao.RoleRepository;
 import io.snow.springcloud.userservice.dao.UserRepository;
+import io.snow.springcloud.userservice.entitys.Permission;
 import io.snow.springcloud.userservice.entitys.Role;
 import io.snow.springcloud.userservice.entitys.User;
 import org.junit.Test;
@@ -16,10 +18,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.time.Instant;
+import java.util.*;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
@@ -31,6 +31,9 @@ public class TestSql {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private PermissionRepository permissionRepository;
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder(){
@@ -54,6 +57,64 @@ public class TestSql {
         roleRepository.save(roleUser);
 
         logger.info("end init system roles");
+    }
+
+    @Test
+    public void testMenu(){
+
+        Permission permission = new Permission();
+        permission.setCode("index");
+        permission.setDefaultType("0");
+        permission.setIsMenu("1");
+        permission.setLevel("1");
+        permission.setName("首页");
+        permission.setSort(1L);
+        permission.setStatus("1");
+        permission.setUrl("/");
+        permission.setCreatedBy("system");
+        permission.setCreatedDate(Instant.now());
+
+        Permission save = permissionRepository.save(permission);
+
+
+        Permission setting = new Permission();
+        setting.setCode("setting");
+        setting.setDefaultType("0");
+        setting.setIsMenu("1");
+        setting.setLevel("1");
+        setting.setName("设置");
+        setting.setSort(1L);
+        setting.setStatus("1");
+        setting.setUrl("/setting");
+        setting.setCreatedBy("system");
+        setting.setCreatedDate(Instant.now());
+
+        setting = permissionRepository.save(setting);
+
+
+
+
+        Permission theme = new Permission();
+        theme.setCode("themeSetting");
+        theme.setDefaultType("0");
+        theme.setIsMenu("1");
+        theme.setLevel("2");
+        theme.setName("主题设置");
+        theme.setSort(1L);
+        theme.setStatus("1");
+        theme.setUrl("/theme");
+        theme.setCreatedBy("system");
+        theme.setCreatedDate(Instant.now());
+        theme.setParent(setting);
+        Permission save1 = permissionRepository.save(theme);
+
+
+
+
+        List<Permission> allByDefaultType =
+                permissionRepository.findAllByDefaultType();
+
+        logger.info("list : {}",allByDefaultType);
     }
 
     @Test

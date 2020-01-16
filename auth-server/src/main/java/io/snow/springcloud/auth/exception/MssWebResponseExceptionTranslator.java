@@ -1,6 +1,5 @@
 package io.snow.springcloud.auth.exception;
 
-import io.snow.rest.common.ResponseData;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
