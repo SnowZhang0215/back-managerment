@@ -35,6 +35,9 @@
       name: "LoginComponent",
       methods:{
         login(userInfo){
+          if (this.$storage.getValue("access_token")) {
+            this.$storage.deleteItem("access_token")
+          }
           const params = {};
           params.username = userInfo.username;
           params.password = userInfo.password;
@@ -59,13 +62,28 @@
         },
         onLoginSuccess(response){
           this.$storage.setValue("access_token",response);
-          this.$router.push({
-            path:"/"
-          })
+          const query = this.$router.currentRoute.query;
+          console.log(query);
+          if (query.redirect){
+             if (query.redirect === '/login'){
+               this.$router.push({
+                 path: '/'
+               })
+             } else {
+               this.$router.push({
+                 path: query.redirect
+               })
+             }
+          }else {
+            this.$router.push({
+              path: '/'
+            })
+          }
         }
       },
       created(){
         this.$storage.deleteItem("access_token");
+        this.$storage.deleteItem("userMenus")
       },
       data () {
         return {

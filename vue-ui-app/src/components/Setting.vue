@@ -4,7 +4,23 @@
 
 <script>
     export default {
-        name: "Setting"
+        name: "Setting",
+        data(){
+          return{
+            info:''
+          }
+        },
+        methods:{
+          handleUserInfo(data){
+            this.info = data;
+            this.$storage.setValue("userMenus",data.data.userMenus);
+          }
+        },
+        created(){
+          this.$axios.get("api/user-service/api/account/info")
+            .then(response => this.handleUserInfo(response))
+            .catch(error =>  this.$Message.error(error.toString()))
+        }
     }
 </script>
 

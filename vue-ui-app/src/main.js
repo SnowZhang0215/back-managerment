@@ -27,19 +27,19 @@ new Vue({
   router,
   components: { MainComponent },
   template: '<MainComponent/>',
-  created(){
-
-    console.log("on vue create");
-
-    this.$axios.get("api/user-service/menu/default/menus").then(
-      // response => console.log(response)
-      response => this.initMenuAndRouter(response.data)
-    ).catch(error =>  this.$Message.error(error.toString()))
-
+  created: function () {
+    if (this.$storage.getValue("userMenus")) {
+      const menuData = this.$storage.getValue("userMenus");
+      this.initMenuAndRouter(menuData)
+    } else {
+      this.$axios.get("api/user-service/menu/default/menus").then(
+        response => this.initMenuAndRouter(response.data)
+      ).catch(error => this.$Message.error(error.toString()))
+    }
+    console.log("on main create");
   },
   methods:{
     initMenuAndRouter(menuData){
-      console.log(menuData);
       const childrenRouter = [];
       const result = [{
         path:'/',
@@ -53,7 +53,6 @@ new Vue({
       this.$router.addRoutes(result);
 
       function generateRoutes(childrenRouter,item){
-        console.log(item);
         if (item.children){
           item.children.forEach(e =>{
             generateRoutes(childrenRouter,e)
@@ -66,7 +65,6 @@ new Vue({
             component:  () => import('./components' + item.component)
           });
         }
-        console.log(childrenRouter)
       }
     }
   }

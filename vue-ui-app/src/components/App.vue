@@ -98,12 +98,23 @@
 export default {
   name: 'App',
   created(){
-    console.log("vue created");
-    this.$axios.get("api/user-service/menu/default/menus").then(
-      // response => console.log(response)
-      response => this.initMenuAndRouter(response.data)
-    ).catch(error =>  this.$Message.error(error.toString()))
-
+    console.log("app component created")
+    if (this.$storage.getValue("access_token")){
+      if (this.$storage.getValue("userMenus")){
+        this.initMenuAndRouter(this.$storage.getValue("userMenus"))
+      } else {
+        this.$axios.get("api/user-service/api/account/info")
+          .then(response => this.handleUserInfo(response))
+          .catch(error =>  this.$Message.error(error.toString()))
+      }
+    } else {
+      this.$axios.get("api/user-service/menu/default/menus").then(
+        response => this.initMenuAndRouter(response.data)
+      ).catch(error =>  this.$Message.error(error.toString()))
+    }
+    // this.$router.push({
+    //   path: '/index'
+    // })
   },
   data(){
     return{
@@ -118,16 +129,12 @@ export default {
   },
   methods:{
     initMenuAndRouter(menuData){
-
       this.menuData = menuData;
       this.$nextTick(function() {
         this.$refs.defaultMenu.updateOpened();
         this.$refs.defaultMenu.updateActiveName();
         this.onMenuSelect(this.activeCode);
       });
-      // this.$router.push({
-      //   path: 'index'
-      // })
     },
     onMenuSelect(name){
       console.log(name);
@@ -142,6 +149,10 @@ export default {
           return this.menuData[i].children;
         }
       }
+    },
+    handleUserInfo(data){
+      this.$storage.setValue("userMenus",data.data.userMenus);
+      this.initMenuAndRouter(data.data.userMenus);
     }
   }
 }
