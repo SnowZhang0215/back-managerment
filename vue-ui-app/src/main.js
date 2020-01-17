@@ -28,25 +28,47 @@ new Vue({
   components: { MainComponent },
   template: '<MainComponent/>',
   created(){
+
     console.log("on vue create");
-    this.$router.addRoutes([
-      {
-        path: '/login',
-        name: 'login',
-        mate: '登录',
-        component: () => import('./components/LoginComponent.vue')
-      },
-      {
-        path: '/recover',
-        name: 'recover',
-        component: () => import('./components/RecoverComponent.vue')
-      },
-      {
-        path: '/signup',
-        name: 'signup',
-        component: () => import('./components/SignUpComponent.vue')
+
+    this.$axios.get("api/user-service/menu/default/menus").then(
+      // response => console.log(response)
+      response => this.initMenuAndRouter(response.data)
+    ).catch(error =>  this.$Message.error(error.toString()))
+
+  },
+  methods:{
+    initMenuAndRouter(menuData){
+      console.log(menuData);
+      const childrenRouter = [];
+      const result = [{
+        path:'/',
+        component: () => import('./components/App.vue'),
+        children: childrenRouter
+      }];
+      menuData.forEach(item => {
+        generateRoutes(childrenRouter,item)
+      });
+
+      this.$router.addRoutes(result);
+
+      function generateRoutes(childrenRouter,item){
+        console.log(item);
+        if (item.children){
+          item.children.forEach(e =>{
+            generateRoutes(childrenRouter,e)
+          })
+        }
+        if (item.url) {
+          childrenRouter.push({
+            path: item.url,
+            // component:  () => import('../components/SystemIntroduce'+'.vue')
+            component:  () => import('./components' + item.component)
+          });
+        }
+        console.log(childrenRouter)
       }
-    ])
+    }
   }
 });
 

@@ -15,4 +15,23 @@ const router = new Router({
   }
 );
 
+router.addRoutes([
+  {
+    path: '/login',
+    name: 'login',
+    mate: '登录',
+    component: () => import('../components/LoginComponent.vue')
+  },
+  {
+    path: '/recover',
+    name: 'recover',
+    component: () => import('../components/RecoverComponent.vue')
+  },
+  {
+    path: '/signup',
+    name: 'signup',
+    component: () => import('../components/SignUpComponent.vue')
+  }
+])
+
 export default router;

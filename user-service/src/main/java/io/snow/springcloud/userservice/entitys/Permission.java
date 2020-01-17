@@ -50,6 +50,8 @@ public class Permission extends BaseEntity{
 
     private String defaultType;
 
+    private String component;
+
     @JsonIgnore
     @ManyToOne(cascade={CascadeType.REFRESH})
     @JoinColumn(name="parent_id")
@@ -160,5 +162,13 @@ public class Permission extends BaseEntity{
 
     public void setParent(Permission parent) {
         this.parent = parent;
+    }
+
+    public String getComponent() {
+        return component;
+    }
+
+    public void setComponent(String component) {
+        this.component = component;
     }
 }

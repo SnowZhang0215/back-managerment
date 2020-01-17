@@ -33,6 +33,8 @@ public class PermissionDTO {
 
     private List<PermissionDTO> children;
 
+    private String component;
+
     public Long getId() {
         return id;
     }
@@ -141,6 +143,8 @@ public class PermissionDTO {
         this.sort = permission.getSort();
         this.status = permission.getStatus();
         this.icon = permission.getIcon();
+        this.component = permission.getComponent();
+
         this.defaultType = permission.getDefaultType();
         if (permission.getParent()!=null){
 
@@ -155,5 +159,13 @@ public class PermissionDTO {
 
     public void setChildren(List<PermissionDTO> children) {
         this.children = children;
+    }
+
+    public String getComponent() {
+        return component;
+    }
+
+    public void setComponent(String component) {
+        this.component = component;
     }
 }

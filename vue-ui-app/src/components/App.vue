@@ -118,57 +118,16 @@ export default {
   },
   methods:{
     initMenuAndRouter(menuData){
-      const childrenRouter = [
-      //   {
-      //   path: '/one',
-      //   component: () => import('../components/LoginComponent.vue')
-      // },
-      //   {
-      //     path: '/system',
-      //     component: () => import('../components/SignUpComponent.vue')
-      //   }
-      ];
-      const result = [{
-        path:'/',
-        component: () => import('../components/App.vue'),
-        children: childrenRouter
-      }];
-
 
       this.menuData = menuData;
-      console.log("init ");
-
-      menuData.forEach(item => {
-        generateRoutes(childrenRouter,item)
-      });
-
-      this.$router.addRoutes(result);
-      
-      function generateRoutes(childrenRouter,item){
-        console.log(item);
-        if (item.children){
-          item.children.forEach(e =>{
-            generateRoutes(childrenRouter,e)
-          })
-        }
-        if (item.url) {
-          childrenRouter.push({
-            path: item.url,
-            component: () => import('../components/LoginComponent.vue')
-          });
-        }
-        console.log(childrenRouter)
-      }
-
-
-      console.log(this.$router);
-
-
       this.$nextTick(function() {
         this.$refs.defaultMenu.updateOpened();
         this.$refs.defaultMenu.updateActiveName();
         this.onMenuSelect(this.activeCode);
       });
+      // this.$router.push({
+      //   path: 'index'
+      // })
     },
     onMenuSelect(name){
       console.log(name);
