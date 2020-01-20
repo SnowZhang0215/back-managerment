@@ -24,11 +24,14 @@ public class DBUserDetails implements UserDetails {
                 SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority((String) item.get("code"));
                 authorities.add(simpleGrantedAuthority);
                 if (item.get("roleApis")!=null){
-                    List<Map<String,Object>> permissions = (List<Map<String, Object>>) map.get("roleApis");
+                    List<Map<String,Object>> permissions = (List<Map<String, Object>>) item.get("roleApis");
                     if (permissions!=null){
                         for (Map<String, Object> subItem : permissions) {
-                            GrantedAuthority authority = new SimpleGrantedAuthority((String) subItem.get("path"));
-                            authorities.add(authority);
+                            if (subItem.get("path")!= null){
+                                System.out.println(subItem.get("path"));
+                                GrantedAuthority authority = new SimpleGrantedAuthority((String) subItem.get("path"));
+                                authorities.add(authority);
+                            }
                         }
                     }
                 }

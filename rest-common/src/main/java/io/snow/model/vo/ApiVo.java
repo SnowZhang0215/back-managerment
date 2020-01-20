@@ -1,18 +1,13 @@
-package io.snow.springcloud.userservice.entitys;
+package io.snow.model.vo;
 
-import javax.persistence.*;
 import java.io.Serializable;
 
-@Entity
-public class ApiEntity extends BaseEntity implements Serializable {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class ApiVo extends BaseVo implements Serializable {
+
     private Long id;
 
-    @Column
     private String path;
 
-    @Column
     private String description;
 
     public Long getId() {

@@ -1,6 +1,6 @@
 package io.snow.springcloud.userservice.service.dto;
 
-import io.snow.springcloud.userservice.entitys.Permission;
+import io.snow.model.vo.Permission;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -144,12 +144,7 @@ public class PermissionDTO {
         this.status = permission.getStatus();
         this.icon = permission.getIcon();
         this.component = permission.getComponent();
-
         this.defaultType = permission.getDefaultType();
-        if (permission.getParent()!=null){
-
-            this.parentId = permission.getParent().getId();
-        }
         this.children = permission.getChildren().stream().map(PermissionDTO::new).collect(Collectors.toList());
     }
 

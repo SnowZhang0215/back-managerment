@@ -34,31 +34,22 @@ public class SecurityConfig extends ResourceServerConfigurerAdapter {
 
     @Autowired
     private AuthenticationExceptionEntryPoint authenticationExceptionEntryPoint;
-//
-//    @Autowired
-//    private TokenStore tokenStore;
+
 
     private static final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
 
     private static final String[] AUTH_WHITELIST = {
             "/auth-service/**",
-            "/user-service/menu/default/**",
-            "/**/v2/api-docs",
-            "/swagger-resources",
-            "/swagger-resources/**",
-            "/configuration/ui",
-            "/configuration/security",
-            "/swagger-ui.html",
-            "swagger-resources/configuration/ui",
-            "/doc.html",
-            "/webjars/**"
+            "/user-service/menu/getUserMenus/**"//用户菜单
+            ,
+
     };
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
         http.csrf().disable();
         http.cors().disable();
-        http.authorizeRequests().antMatchers("/v2/api-docs").permitAll();
+        http.authorizeRequests().antMatchers("/auth-service/**").permitAll();
 
         ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry registry = http
                 .authorizeRequests();

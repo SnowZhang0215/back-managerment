@@ -46,7 +46,7 @@
           params.client_secret = 'app';
           params.scope = 'app';
           const paramsStr = this.$qs.stringify(params);
-          this.$axios.post("api/auth-service/oauth/token",paramsStr)
+          this.$axios.post(this.$api.loginUrl,paramsStr)
             .then(response => this.onLoginSuccess(response))
             .catch(error =>  this.$Message.error(error.toString()))
         },
@@ -60,25 +60,74 @@
             }
           })
         },
-        onLoginSuccess(response){
-          this.$storage.setValue("access_token",response);
+        initMenuAndRouter(menuData){
+          this.$storage.setValue("userMenus",menuData);
+          const childrenRouter = [];
+          const result = [{
+            path:'/',
+            component: () => import('../components/App.vue'),
+            children: childrenRouter
+          }];
+          menuData.forEach(item => {
+            generateRoutes(childrenRouter,item)
+          });
+
+          this.$router.addRoutes(result);
+
+          function generateRoutes(childrenRouter,item){
+            if (item.children){
+              item.children.forEach(e =>{
+                generateRoutes(childrenRouter,e)
+              })
+            }
+            if (item.url) {
+              childrenRouter.push({
+                path: item.url,
+                component:  () => import('../components' + item.component)
+              });
+            }
+          }
           const query = this.$router.currentRoute.query;
           console.log(query);
           if (query.redirect){
-             if (query.redirect === '/login'){
-               this.$router.push({
-                 path: '/'
-               })
-             } else {
-               this.$router.push({
-                 path: query.redirect
-               })
-             }
+            if (query.redirect === '/login'){
+              this.$router.push({
+                path: '/'
+              })
+            } else {
+              this.$router.push({
+                path: query.redirect
+              })
+            }
           }else {
             this.$router.push({
               path: '/'
             })
           }
+        },
+        onLoginSuccess(response){
+          this.$storage.setValue("access_token",response);
+          if (this.$storage.getValue("userMenus")) {
+            const menuData = this.$storage.getValue("userMenus");
+            this.initMenuAndRouter(menuData)
+          } else {
+            this.$axios.get(this.$api.userMenus).then(
+              response => this.initMenuAndRouter(response.data)
+            ).catch(error => this.$Message.error(error.toString()))
+          }
+          if (this.$storage.getValue("access_token")){
+            this.$axios.get(this.$api.userInfo)
+              .then(response => this.handleUserInfo(response.data))
+              .catch(error => this.handleErrorResponse(error))
+          }
+        },
+        handleUserInfo(info){
+          this.$storage.setValue("userInfo",info);
+          console.log(info);
+        },
+        handleErrorResponse(error){
+          this.$Message.error(error.toString())
+          console.log(error);
         }
       },
       created(){

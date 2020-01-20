@@ -1,3 +1,139 @@
+<template>
+  <div class="layout">
+    <Layout>
+      <Header>
+        <Menu ref="defaultMenu" mode="horizontal" theme="light" :active-name="activeCode" @on-select="onMenuSelect">
+          <div class="layout-logo">
+            <img src="../assets/logo.png" class="layout-logo-img"/>
+          </div>
+          <div class="layout-nav">
+            <MenuItem :name="menu.code" v-for="menu in menuData" :key="menu.id" :to="menu.url">
+              <Icon :type="menu.icon"></Icon>
+              {{menu.name}}
+            </MenuItem>
+          </div>
+          <div class="info-menu">
+            <div class="info-menu-sign-in">
+              <span><Avatar style="background-color: #87d068" icon="ios-person" /></span>
+              <Button type="text" @click="handleSignBtnClick"><span>{{signIn}}</span></Button>
+            </div>
+          </div>
+        </Menu>
+      </Header>
+      <Layout>
+        <Sider hide-trigger :style="{background: '#fff'}">
+          <Menu theme="light" width="auto">
+            <Submenu :name="subItem.parent + '-' + subItem.code" v-for="subItem in subMenus" :key="subItem.id">
+              <template slot="title">
+                <Icon :type="subItem.icon"></Icon>
+                {{subItem.name}}
+              </template>
+              <MenuItem :name="item.parent + '-' + item.code" v-if="subItem.children.length>0" v-for="item in subItem.children" :key="item.id" :to="item.url">
+                {{item.name}}
+              </MenuItem>
+            </Submenu>
+          </Menu>
+        </Sider>
+        <Layout :style="{padding: '0 10px 10px'}">
+          <Breadcrumb :style="{margin: '10px 0'}">
+            <BreadcrumbItem>{{currentMainMenu}}</BreadcrumbItem>
+            <BreadcrumbItem>{{currentMainMenu}}</BreadcrumbItem>
+            <BreadcrumbItem>{{currentMainMenu}}</BreadcrumbItem>
+          </Breadcrumb>
+          <Content :style="{padding: '5px', minHeight: '540px', background: '#fff'}">
+            <router-view/>
+          </Content>
+        </Layout>
+      </Layout>
+      <Footer></Footer>
+    </Layout>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'App',
+  created(){
+    console.log("app component created")
+    if (this.$storage.getValue("userMenus")){
+      this.initMenu(this.$storage.getValue("userMenus"))
+    } else {
+      this.$Message.error("can not load menus");
+    }
+    this.loadUserInfo();
+  },
+  data(){
+    return{
+      signIn: '登录',
+      menuData: [],
+      subMenus: [],
+      activeCode:'index',
+      leftActiveMenu:'',
+      openNames:[],
+      currentMainMenu:""
+    }
+  },
+  methods:{
+    loadUserInfo(){
+      if (this.$storage.getValue("userInfo")){
+        const  user = this.$storage.getValue("userInfo");
+        this.signIn = user.userName;
+      }else {
+        this.signIn = '登录';
+      }
+    },
+    initMenu(menuData){
+      this.menuData = menuData;
+      const currentPath = this.$router.currentRoute.path;
+      this.activeCode = currentPath.substring(1,currentPath.length);
+      this.$nextTick(function() {
+        this.$refs.defaultMenu.updateOpened();
+        this.$refs.defaultMenu.updateActiveName();
+        this.onMenuSelect(this.activeCode);
+      });
+    },
+    onMenuSelect(name){
+      console.log(name);
+      this.activeCode = name;
+      this.subMenus = this.getSubMenuByCurrentKey(name);
+      console.log(this.subMenus);
+    },
+    getSubMenuByCurrentKey(name){
+      for (let i = 0; i < this.menuData.length; i++) {
+        if (this.menuData[i].code === name) {
+          this.currentMainMenu = this.menuData[i].name;
+          return this.menuData[i].children;
+        }
+      }
+    },
+    handleSignBtnClick(){
+      if (this.$storage.getValue("userInfo")){
+        this.$Modal.confirm({
+          title: '确认',
+          content: '<p>确定退出吗</p>',
+          onOk: () => {
+            this.handleLogout();
+          }
+        });
+      }else {
+        this.$router.push("/login")
+      }
+    },
+    handleLogout(){
+      this.$axios.post(this.$api.logout)
+        .then(response => this.onLogoutSuccess(response))
+        .catch(error => this.$Message.error(error.toString()))
+    },
+    onLogoutSuccess(response){
+      if (response && response.errorCode === 200){
+        this.$storage.clear();
+        this.$router.push('/');
+        location.reload();
+      }
+    }
+  }
+}
+</script>
 <style scoped>
   .layout{
     border: 1px solid #d7dde4;
@@ -6,10 +142,16 @@
     border-radius: 4px;
     overflow: hidden;
   }
+  .ivu-layout-header{
+    padding: 0;
+    background: #d7dde4;
+  }
+  .ivu-menu{
+    padding: 0 10px;
+  }
   .layout-logo{
     width: 100px;
     height: 30px;
-    /*background: #5b6270;*/
     border-radius: 3px;
     float: left;
     position: relative;
@@ -41,123 +183,13 @@
     width: 30px;
     height: 30px;
   }
-</style>
-<template>
-  <div class="layout">
-    <Layout>
-      <Header>
-        <Menu ref="defaultMenu" mode="horizontal" theme="dark" :active-name="activeCode" @on-select="onMenuSelect">
-          <div class="layout-logo">
-            <img src="../assets/logo.png" class="layout-logo-img"/>
-          </div>
-          <div class="layout-nav">
-            <MenuItem :name="menu.code" v-for="menu in menuData" :key="menu.id" :to="menu.url">
-              <Icon :type="menu.icon"></Icon>
-              {{menu.name}}
-            </MenuItem>
-          </div>
-          <div class="info-menu">
-            <div class="info-menu-sign-in">
-              <span>
-                <Button icon="ios-person" to="/login"><span>{{signIn}}</span></Button>
-              </span>
-            </div>
-          </div>
-        </Menu>
-      </Header>
-      <Layout>
-        <Sider hide-trigger :style="{background: '#fff'}">
-          <Menu theme="light" width="auto">
-            <Submenu :name="subItem.parent + '-' + subItem.code" v-for="subItem in subMenus" :key="subItem.id">
-              <template slot="title">
-                <Icon :type="subItem.icon"></Icon>
-                {{subItem.name}}
-              </template>
-              <MenuItem :name="item.parent + '-' + item.code" v-if="subItem.children.length>0" v-for="item in subItem.children" :key="item.id" :to="item.url">
-                {{item.name}}
-              </MenuItem>
-            </Submenu>
-          </Menu>
-        </Sider>
-        <Layout :style="{padding: '0 24px 24px'}">
-          <Breadcrumb :style="{margin: '24px 0'}">
-            <BreadcrumbItem>{{currentMainMenu}}</BreadcrumbItem>
-            <BreadcrumbItem>{{currentMainMenu}}</BreadcrumbItem>
-            <BreadcrumbItem>{{currentMainMenu}}</BreadcrumbItem>
-          </Breadcrumb>
-          <Content :style="{padding: '24px', minHeight: '400px', background: '#fff'}">
-            <router-view/>
-          </Content>
-        </Layout>
-      </Layout>
-    </Layout>
-  </div>
-</template>
 
-<script>
-export default {
-  name: 'App',
-  created(){
-    console.log("app component created")
-    if (this.$storage.getValue("access_token")){
-      if (this.$storage.getValue("userMenus")){
-        this.initMenuAndRouter(this.$storage.getValue("userMenus"))
-      } else {
-        this.$axios.get("api/user-service/api/account/info")
-          .then(response => this.handleUserInfo(response))
-          .catch(error =>  this.$Message.error(error.toString()))
-      }
-    } else {
-      this.$axios.get("api/user-service/menu/default/menus").then(
-        response => this.initMenuAndRouter(response.data)
-      ).catch(error =>  this.$Message.error(error.toString()))
-    }
-    // this.$router.push({
-    //   path: '/index'
-    // })
-  },
-  data(){
-    return{
-      signIn: '登录',
-      menuData: [],
-      subMenus: [],
-      activeCode:'index',
-      leftActiveMenu:'',
-      openNames:[],
-      currentMainMenu:""
-    }
-  },
-  methods:{
-    initMenuAndRouter(menuData){
-      this.menuData = menuData;
-      this.$nextTick(function() {
-        this.$refs.defaultMenu.updateOpened();
-        this.$refs.defaultMenu.updateActiveName();
-        this.onMenuSelect(this.activeCode);
-      });
-    },
-    onMenuSelect(name){
-      console.log(name);
-      this.activeCode = name;
-      this.subMenus = this.getSubMenuByCurrentKey(name);
-      console.log(this.subMenus);
-    },
-    getSubMenuByCurrentKey(name){
-      for (let i = 0; i < this.menuData.length; i++) {
-        if (this.menuData[i].code === name) {
-          this.currentMainMenu = this.menuData[i].name;
-          return this.menuData[i].children;
-        }
-      }
-    },
-    handleUserInfo(data){
-      this.$storage.setValue("userMenus",data.data.userMenus);
-      this.initMenuAndRouter(data.data.userMenus);
-    }
+  .header {
+    color: #515a6e;
   }
-}
-</script>
-
-<style>
-
+  .ivu-layout-footer {
+    padding: 3px 10px;
+    color: #515a6e;
+    font-size: 14px;
+  }
 </style>

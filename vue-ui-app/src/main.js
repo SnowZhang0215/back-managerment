@@ -15,9 +15,11 @@ Vue.config.productionTip = false
 Vue.use(ViewUI);
 Vue.prototype.$qs = qs;
 import myAxios from '../config/httputil';
+import ApiInfo from '../config/ApiInfo';
 // Vue.prototype.$axios = axios;
 Vue.prototype.$axios = myAxios;
 Vue.prototype.$storage = storage;
+Vue.prototype.$api = ApiInfo;
 
 /* eslint-disable no-new */
 
@@ -32,7 +34,7 @@ new Vue({
       const menuData = this.$storage.getValue("userMenus");
       this.initMenuAndRouter(menuData)
     } else {
-      this.$axios.get("api/user-service/menu/default/menus").then(
+      this.$axios.get("api/user-service/menu/getUserMenus").then(
         response => this.initMenuAndRouter(response.data)
       ).catch(error => this.$Message.error(error.toString()))
     }
@@ -40,6 +42,7 @@ new Vue({
   },
   methods:{
     initMenuAndRouter(menuData){
+      this.$storage.setValue("userMenus",menuData);
       const childrenRouter = [];
       const result = [{
         path:'/',
@@ -61,7 +64,6 @@ new Vue({
         if (item.url) {
           childrenRouter.push({
             path: item.url,
-            // component:  () => import('../components/SystemIntroduce'+'.vue')
             component:  () => import('./components' + item.component)
           });
         }

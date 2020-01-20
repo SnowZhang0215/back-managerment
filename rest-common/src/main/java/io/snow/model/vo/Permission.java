@@ -1,19 +1,11 @@
-package io.snow.springcloud.userservice.entitys;
+package io.snow.model.vo;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.assertj.core.util.Lists;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-
-import javax.persistence.*;
 import java.util.List;
 
 /**
  * 菜单
  */
-@Entity
-public class Permission extends BaseEntity{
+public class Permission extends BaseVo{
 
 //    `id` int(11) NOT NULL AUTO_INCREMENT,
 //  `code` varchar(255) DEFAULT NULL COMMENT '菜单编码',
@@ -26,8 +18,7 @@ public class Permission extends BaseEntity{
 //            `sort` int(11) DEFAULT NULL COMMENT '菜单排序',
 //            `status` int(11) DEFAULT NULL,
 //  `icon` varchar(255) DEFAULT NULL,
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private Long id;
 
     private String code;
@@ -52,12 +43,16 @@ public class Permission extends BaseEntity{
 
     private String component;
 
-    @JsonIgnore
-    @ManyToOne(cascade={CascadeType.REFRESH})
-    @JoinColumn(name="parent_id")
-    private Permission parent;
+    public Long getParentId() {
+        return parentId;
+    }
 
-    @OneToMany(cascade={CascadeType.REFRESH, CascadeType.REMOVE}, fetch = FetchType.EAGER,mappedBy="parent")
+    public void setParentId(Long parentId) {
+        this.parentId = parentId;
+    }
+
+    private Long parentId;
+
     private List<Permission> children;
 
     public Long getId() {
@@ -154,14 +149,6 @@ public class Permission extends BaseEntity{
 
     public void setChildren(List<Permission> children) {
         this.children = children;
-    }
-
-    public Permission getParent() {
-        return parent;
-    }
-
-    public void setParent(Permission parent) {
-        this.parent = parent;
     }
 
     public String getComponent() {
