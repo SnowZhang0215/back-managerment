@@ -3,11 +3,13 @@ spring:
     url: jdbc:mysql://localhost:3306/general-spring-cloud?useUnicode=true&characterEncoding=utf8&useSSL=false
     username: root
     password: snow0215
-  jpa:
-    database: mysql
-    show-sql: true
-    hibernate:
-      ddl-auto: update
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    password: 123456
+mybatis:
+  config-locations: classpath:mybatis/mybatis-config.xml
+  mapper-locations: classpath:mybatis/mapper/*.xml
 #mybatis:
 #  config-location: classpath:mybatis/mybatis-config.xml
 #  mapper-location: classpath:mybatis/mapper/*.xml

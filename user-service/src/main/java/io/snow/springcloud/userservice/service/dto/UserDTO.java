@@ -1,10 +1,10 @@
 package io.snow.springcloud.userservice.service.dto;
 
-import io.snow.springcloud.userservice.entitys.Role;
-import io.snow.springcloud.userservice.entitys.User;
+import io.snow.model.vo.RoleVo;
+import io.snow.model.vo.UserVo;
 
 import java.time.ZonedDateTime;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -96,7 +96,8 @@ public class UserDTO {
         this.profile = profile;
     }
 
-    public UserDTO(User user) {
+    public UserDTO(UserVo user) {
+
         this.id = user.getId();
         this.userName = user.getUserName();
         this.emile = user.getEmile();
@@ -105,7 +106,7 @@ public class UserDTO {
         this.phoneNumber = user.getPhoneNumber();
         this.profile = user.getProfile();
         this.authorities = user.getAuthorities().stream()
-            .map(Role::getAuthority)
+            .map(RoleVo::getCode)
             .collect(Collectors.toList());
     }
 }

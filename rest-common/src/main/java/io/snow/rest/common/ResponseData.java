@@ -18,6 +18,13 @@ public class ResponseData<T> implements Serializable {
         return responseData;
     }
 
+    public static <T>ResponseData<T> accessDenied() {
+        ResponseData<T> responseData = new ResponseData<>();
+        responseData.errorCode = 403;
+        responseData.errorMsg = "access_denied";
+        return responseData;
+    }
+
     public int getErrorCode() {
         return errorCode;
     }

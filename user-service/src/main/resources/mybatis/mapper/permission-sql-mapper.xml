@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.snow.springcloud.userservice.mapper.PermissionMapper">
+    <resultMap id="resultBaseMap" type="io.snow.model.vo.Permission">
+        <id property="id" column="id"/>
+        <result column="code" jdbcType="VARCHAR" property="code"/>
+        <result column="parent_code" jdbcType="VARCHAR" property="parentCode"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="url" jdbcType="VARCHAR" property="url"/>
+        <result column="parent_id" jdbcType="BIGINT" property="parentId"/>
+        <result column="is_menu" jdbcType="VARCHAR" property="isMenu"/>
+        <result column="level" jdbcType="VARCHAR" property="level"/>
+        <result column="sort" jdbcType="BIGINT" property="level"/>
+        <result column="status" jdbcType="VARCHAR" property="status"/>
+        <result column="icon" jdbcType="VARCHAR" property="icon"/>
+        <result column="defaultType" jdbcType="BIGINT" property="defaultType"/>
+        <result column="component" jdbcType="VARCHAR" property="component"/>
+        <result column="create_by" jdbcType="VARCHAR" property="createBy"/>
+        <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="last_modified_by" jdbcType="VARCHAR" property="lastModifiedBy"/>
+        <result column="last_modified_date" jdbcType="TIMESTAMP" property="lastModifiedDate"/>
+        <collection property="children" column="id" ofType="io.snow.model.vo.Permission" select="selectByPid"/>
+    </resultMap>
+    <select id="getUserNavPermissions"  resultMap="resultBaseMap" parameterType = "String">
+        SELECT
+            p.* ,
+            rp.role_id ,
+            ur.user_id
+        FROM
+            permission p
+        LEFT JOIN role_privilege rp ON rp.permission_id = p.id
+        LEFT JOIN user_role ur ON ur.role_id = rp.role_id
+        WHERE
+            p.`status` = '1'
+        AND p.parent_id IS NULL
+        AND ur.user_id =(
+            SELECT
+                id
+            FROM
+                USER
+            WHERE
+                USER .user_name = #{userName}
+        )
+        ORDER BY
+            p.sort
+    </select>
+
+    <select id="getDefaultPermission" resultMap = "resultBaseMap">
+        SELECT
+            p.* ,
+            rp.role_id ,
+            ur.user_id
+        FROM
+            permission p
+        LEFT JOIN role_privilege rp ON rp.permission_id = p.id
+        LEFT JOIN user_role ur ON ur.role_id = rp.role_id
+        WHERE
+            p.`status` = '1'
+        AND p.parent_id IS NULL
+        AND p.default_type = '0'
+        ORDER BY
+            p.sort
+    </select>
+
+    <select id="getUserPermissionsIds" resultType = "Long">
+        SELECT
+            p.id
+        FROM
+            permission p
+        LEFT JOIN role_privilege rp ON rp.permission_id = p.id
+        LEFT JOIN user_role ur ON ur.role_id = rp.role_id
+        WHERE
+            p.`status` = '1'
+        AND ur.user_id =(
+            SELECT
+                id
+            FROM
+                USER
+            WHERE
+                USER .user_name = #{userName}
+        )
+    </select>
+
+    <select id="selectByPid" parameterType="Long" resultMap="resultBaseMap">
+        select
+        *
+        from permission
+        <where>
+            parent_id = #{parentId,jdbcType=BIGINT}
+        </where>
+    </select>
+</mapper>

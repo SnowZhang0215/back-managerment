@@ -21,14 +21,17 @@ public class DBUserDetails implements UserDetails {
             List<Object> authoritiesMap = (List<Object>) map.get("authorities");
             for (int i = 0; i < authoritiesMap.size(); i++) {
                 LinkedHashMap item = (LinkedHashMap) authoritiesMap.get(i);
-                SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority((String) item.get("authority"));
+                SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority((String) item.get("code"));
                 authorities.add(simpleGrantedAuthority);
-                if (item.get("rolePermissions")!=null){
-                    List<Map<String,Object>> permissions = (List<Map<String, Object>>) map.get("rolePermissions");
+                if (item.get("roleApis")!=null){
+                    List<Map<String,Object>> permissions = (List<Map<String, Object>>) item.get("roleApis");
                     if (permissions!=null){
                         for (Map<String, Object> subItem : permissions) {
-                            GrantedAuthority authority = new SimpleGrantedAuthority((String) subItem.get("code"));
-                            authorities.add(authority);
+                            if (subItem.get("path")!= null){
+                                System.out.println(subItem.get("path"));
+                                GrantedAuthority authority = new SimpleGrantedAuthority((String) subItem.get("path"));
+                                authorities.add(authority);
+                            }
                         }
                     }
                 }

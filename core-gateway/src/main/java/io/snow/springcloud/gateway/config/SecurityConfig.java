@@ -35,27 +35,21 @@ public class SecurityConfig extends ResourceServerConfigurerAdapter {
     @Autowired
     private AuthenticationExceptionEntryPoint authenticationExceptionEntryPoint;
 
-    @Autowired
-    private TokenStore tokenStore;
 
     private static final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
 
     private static final String[] AUTH_WHITELIST = {
             "/auth-service/**",
-            "/**/v2/api-docs",
-            "/swagger-resources",
-            "/swagger-resources/**",
-            "/configuration/ui",
-            "/configuration/security",
-            "/swagger-ui.html",
-            "swagger-resources/configuration/ui",
-            "/doc.html",
-            "/webjars/**"
+            "/user-service/menu/getUserMenus/**"//用户菜单
+            ,
+
     };
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests().antMatchers("/v2/api-docs").permitAll();
+        http.csrf().disable();
+        http.cors().disable();
+        http.authorizeRequests().antMatchers("/auth-service/**").permitAll();
 
         ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry registry = http
                 .authorizeRequests();
@@ -70,11 +64,13 @@ public class SecurityConfig extends ResourceServerConfigurerAdapter {
 
     @Override
     public void configure(ResourceServerSecurityConfigurer resources) {
-        resources.tokenStore(tokenStore)
-                .resourceId("user-service")
+        resources
+//                .tokenStore(tokenStore)
+//                .resourceId("user-service")
                 .expressionHandler(expressionHandler)
                 .authenticationEntryPoint(authenticationExceptionEntryPoint)
-                .accessDeniedHandler(customerAccessDeniedHandler);
+                .accessDeniedHandler(customerAccessDeniedHandler)
+        ;
     }
 
     @Bean

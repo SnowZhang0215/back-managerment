@@ -1,28 +1,20 @@
-package io.snow.springcloud.userservice.entitys;
+package io.snow.model.vo;
 
 
-import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
 
-@Entity
-public class Role implements Serializable {
+public class RoleVo extends BaseVo implements Serializable {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    private String code;
+
     private String name;
 
-    @ManyToMany(cascade = CascadeType.MERGE,fetch = FetchType.EAGER)
-    @JoinTable(name = "role_privilege", joinColumns = @JoinColumn(name = "role_id"),
-            inverseJoinColumns = @JoinColumn(name = "permission_id"))
     private List<Permission> rolePermissions;
 
-    public String getAuthority() {
-        return name;
-    }
+    private List<ApiVo> roleApis;
 
     public Long getId() {
         return id;
@@ -46,5 +38,21 @@ public class Role implements Serializable {
 
     public void setRolePermissions(List<Permission> rolePermissions) {
         this.rolePermissions = rolePermissions;
+    }
+
+    public List<ApiVo> getRoleApis() {
+        return roleApis;
+    }
+
+    public void setRoleApis(List<ApiVo> roleApis) {
+        this.roleApis = roleApis;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 }

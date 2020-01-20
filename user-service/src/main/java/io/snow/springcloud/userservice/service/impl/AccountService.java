@@ -1,10 +1,10 @@
 package io.snow.springcloud.userservice.service.impl;
 
+import io.snow.model.vo.RoleVo;
+import io.snow.model.vo.UserVo;
 import io.snow.rest.common.ResponseData;
-import io.snow.springcloud.userservice.dao.RoleRepository;
-import io.snow.springcloud.userservice.dao.UserRepository;
-import io.snow.springcloud.userservice.entitys.Role;
-import io.snow.springcloud.userservice.entitys.User;
+import io.snow.springcloud.userservice.mapper.RoleMapper;
+import io.snow.springcloud.userservice.mapper.UserMapper;
 import io.snow.springcloud.userservice.security.AuthoritiesConstants;
 import io.snow.springcloud.userservice.service.IAccountService;
 import io.snow.springcloud.userservice.service.dto.UserDTO;
@@ -26,10 +26,10 @@ public class AccountService implements IAccountService {
     private static final Logger logger = LoggerFactory.getLogger(AccountService.class);
 
     @Autowired
-    private UserRepository userRepository;
+    private UserMapper userMapper;
 
     @Autowired
-    private RoleRepository roleRepository;
+    private RoleMapper roleMapper;
 
 //    @Autowired
 //    private OAuthClientConfig oAuthClientConfig;
@@ -38,19 +38,19 @@ public class AccountService implements IAccountService {
     private BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
 
     @Override
-    public Optional<User> getUserWithAuthorities(String userName) {
-        return userRepository.findUserByUserName(userName);
+    public UserVo getUserWithAuthorities(String userName) {
+        return userMapper.findUserByUserName(userName);
     }
 
     @Override
     public ResponseData createUser(Map<String, String> map) {
         String userName = map.get("userName").toLowerCase();
         String password = map.get("password");
-        Optional<User> optional = userRepository.findUserByUserName(userName);
-        if (optional.isPresent()){
+        UserVo userVo = userMapper.findUserByUserName(userName);
+        if (userVo != null){
             return ResponseData.error("user exist");
         }
-        User user = insertUserToDB(userName,password);
+        UserVo user = insertUserToDB(userName,password);
         return ResponseData.ok(new UserDTO(user));
     }
 
@@ -59,14 +59,13 @@ public class AccountService implements IAccountService {
         return null;
     }
 
-    private User insertUserToDB(String userName, String password) {
-        User newUser = new User();
+    private UserVo insertUserToDB(String userName, String password) {
+        UserVo newUser = new UserVo();
         String encryptedPassword = bCryptPasswordEncoder.encode(password);
         newUser.setUserName(userName);
         newUser.setPassword(encryptedPassword);
-        List<Role> roles = roleRepository.findByName(AuthoritiesConstants.USER);
-        newUser.setAuthorities(roles);
-        newUser = userRepository.save(newUser);
+        RoleVo roles = roleMapper.findRoleByRoleName(AuthoritiesConstants.USER);
+        newUser = userMapper.saveUserAndRole(newUser);
         logger.info("created user : {}",newUser);
         return newUser;
     }

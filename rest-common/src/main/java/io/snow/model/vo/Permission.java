@@ -1,15 +1,11 @@
-package io.snow.springcloud.userservice.entitys;
+package io.snow.model.vo;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import java.util.List;
 
 /**
  * 菜单
  */
-@Entity
-public class Permission extends BaseEntity{
+public class Permission extends BaseVo{
 
 //    `id` int(11) NOT NULL AUTO_INCREMENT,
 //  `code` varchar(255) DEFAULT NULL COMMENT '菜单编码',
@@ -22,15 +18,12 @@ public class Permission extends BaseEntity{
 //            `sort` int(11) DEFAULT NULL COMMENT '菜单排序',
 //            `status` int(11) DEFAULT NULL,
 //  `icon` varchar(255) DEFAULT NULL,
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private Long id;
 
     private String code;
 
     private String parentCode;
-
-    private String parentId;
 
     private String name;
 
@@ -45,6 +38,22 @@ public class Permission extends BaseEntity{
     private String status;
 
     private String icon;
+
+    private String defaultType;
+
+    private String component;
+
+    public Long getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(Long parentId) {
+        this.parentId = parentId;
+    }
+
+    private Long parentId;
+
+    private List<Permission> children;
 
     public Long getId() {
         return id;
@@ -68,14 +77,6 @@ public class Permission extends BaseEntity{
 
     public void setParentCode(String parentCode) {
         this.parentCode = parentCode;
-    }
-
-    public String getParentId() {
-        return parentId;
-    }
-
-    public void setParentId(String parentId) {
-        this.parentId = parentId;
     }
 
     public String getName() {
@@ -132,5 +133,29 @@ public class Permission extends BaseEntity{
 
     public void setIcon(String icon) {
         this.icon = icon;
+    }
+
+    public String getDefaultType() {
+        return defaultType;
+    }
+
+    public void setDefaultType(String defaultType) {
+        this.defaultType = defaultType;
+    }
+
+    public List<Permission> getChildren() {
+        return children;
+    }
+
+    public void setChildren(List<Permission> children) {
+        this.children = children;
+    }
+
+    public String getComponent() {
+        return component;
+    }
+
+    public void setComponent(String component) {
+        this.component = component;
     }
 }
