@@ -20,8 +20,6 @@ public class UserDTO {
 
     private String emile;
 
-    private ZonedDateTime createTime;
-
     private String gender;
 
     private String phoneNumber;
@@ -64,14 +62,6 @@ public class UserDTO {
         this.emile = emile;
     }
 
-    public ZonedDateTime getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(ZonedDateTime createTime) {
-        this.createTime = createTime;
-    }
-
     public String getGender() {
         return gender;
     }
@@ -101,7 +91,6 @@ public class UserDTO {
         this.id = user.getId();
         this.userName = user.getUserName();
         this.emile = user.getEmile();
-        this.createTime = user.getCreateTime();
         this.gender = user.getGender();
         this.phoneNumber = user.getPhoneNumber();
         this.profile = user.getProfile();

@@ -40,8 +40,8 @@ public class SecurityConfig extends ResourceServerConfigurerAdapter {
 
     private static final String[] AUTH_WHITELIST = {
             "/auth-service/**",
-            "/user-service/menu/getUserMenus/**"//用户菜单
-            ,
+            "/user-service/menu/getUserMenus/**",//用户菜单
+            "/user-service/account/register" //注册
 
     };
 

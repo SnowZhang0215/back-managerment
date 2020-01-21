@@ -32,7 +32,14 @@ router.addRoutes([
     path: '/signup',
     name: 'signup',
     component: () => import('../components/SignUpComponent.vue')
+  },
+  {
+    path: '/error',
+    component: () => import('../components/common/Error.vue')
+  },
+  {
+    path: '/forbidden',
+    component: () => import('../components/common/Forbidden.vue')
   }
 ])
-
 export default router;

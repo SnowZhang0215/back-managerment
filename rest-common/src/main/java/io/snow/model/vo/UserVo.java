@@ -16,8 +16,6 @@ public class UserVo extends BaseVo implements Serializable {
 
     private String emile;
 
-    private ZonedDateTime createTime;
-
     private String gender;
 
     private String phoneNumber;
@@ -54,13 +52,6 @@ public class UserVo extends BaseVo implements Serializable {
         this.emile = emile;
     }
 
-    public ZonedDateTime getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(ZonedDateTime createTime) {
-        this.createTime = createTime;
-    }
 
     public String getGender() {
         return gender;

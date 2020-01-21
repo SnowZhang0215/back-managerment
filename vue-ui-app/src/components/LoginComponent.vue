@@ -6,7 +6,6 @@
           <Icon type="ios-log-in" />
           登录
         </p>
-        <template>
           <Form ref="formInline" :model="loginInfo" :rules="ruleInline">
             <FormItem prop="user">
               <Input type="text" v-model="loginInfo.username" placeholder="Username">
@@ -24,7 +23,6 @@
               <p>尚未拥有账户？<router-link to="/signup">注册</router-link></p>
             </FormItem>
           </Form>
-        </template>
       </Card>
     </div>
   </div>
@@ -131,8 +129,7 @@
         }
       },
       created(){
-        this.$storage.deleteItem("access_token");
-        this.$storage.deleteItem("userMenus")
+        this.$storage.clear();
       },
       data () {
         return {

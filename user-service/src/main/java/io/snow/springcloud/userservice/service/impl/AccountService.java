@@ -13,11 +13,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 @Service
 @Transactional
@@ -31,10 +32,6 @@ public class AccountService implements IAccountService {
     @Autowired
     private RoleMapper roleMapper;
 
-//    @Autowired
-//    private OAuthClientConfig oAuthClientConfig;
-
-
     private BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
 
     @Override
@@ -43,30 +40,30 @@ public class AccountService implements IAccountService {
     }
 
     @Override
-    public ResponseData createUser(Map<String, String> map) {
+    @Transactional(propagation= Propagation.REQUIRED,isolation= Isolation.READ_COMMITTED)
+    public ResponseData createUser(Map<String, String> map) throws Exception {
         String userName = map.get("userName").toLowerCase();
-        String password = map.get("password");
         UserVo userVo = userMapper.findUserByUserName(userName);
         if (userVo != null){
             return ResponseData.error("user exist");
         }
-        UserVo user = insertUserToDB(userName,password);
-        return ResponseData.ok(new UserDTO(user));
+        String password = map.get("password");
+        UserVo newUser = new UserVo();
+        String encryptedPassword = bCryptPasswordEncoder.encode(password);
+        newUser.setUserName(userName);
+        newUser.setPassword(encryptedPassword);
+        userMapper.insertUser(newUser);
+        RoleVo roles = roleMapper.findRoleByRoleName(AuthoritiesConstants.USER);
+        Map<String,Object> userRole = new HashMap<>();
+        userRole.put("user",newUser);
+        userRole.put("role",roles);
+        userMapper.saveUserAndRole(userRole);
+        logger.info("created user : {}",newUser);
+        return ResponseData.ok("注册成功");
     }
 
     @Override
     public ResponseData loginAccount(Map<String, String> map) {
         return null;
-    }
-
-    private UserVo insertUserToDB(String userName, String password) {
-        UserVo newUser = new UserVo();
-        String encryptedPassword = bCryptPasswordEncoder.encode(password);
-        newUser.setUserName(userName);
-        newUser.setPassword(encryptedPassword);
-        RoleVo roles = roleMapper.findRoleByRoleName(AuthoritiesConstants.USER);
-        newUser = userMapper.saveUserAndRole(newUser);
-        logger.info("created user : {}",newUser);
-        return newUser;
     }
 }

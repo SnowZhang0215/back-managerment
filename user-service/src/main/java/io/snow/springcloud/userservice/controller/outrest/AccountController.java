@@ -43,7 +43,13 @@ public class AccountController {
         if (StringUtils.isEmpty(map.get("userName")) || StringUtils.isEmpty(map.get("password"))){
             return ResponseData.error(ResponseCode.ParamsError,"params error");
         }
-        ResponseData responseData = accountService.createUser(map);
+        ResponseData responseData = null;
+        try {
+            responseData = accountService.createUser(map);
+        } catch (Exception e) {
+            logger.error("register filed:{}",e);
+            responseData = ResponseData.error("注册失败");
+        }
         logger.info("response data : {}",responseData);
         return responseData;
     }
