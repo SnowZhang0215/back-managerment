@@ -18,12 +18,15 @@
         </Content>
       </Layout>
     </Layout>
+    <PermissionEdit ref="permissionEdit"/>
   </div>
 </template>
 
 <script>
+    import PermissionEdit from "./PermissionEdit";
     export default {
       name: "PermissionList",
+      components: {PermissionEdit},
       data(){
         return{
           menuData:[],
@@ -105,9 +108,9 @@
       },
       methods:{
         add(){
-          this.$Modal.confirm({
-            title: '新建',
-            content: 'add'
+          this.$refs.permissionEdit.init({
+            title:'新增',
+            model:null
           })
         },
         edit(){

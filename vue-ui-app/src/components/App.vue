@@ -68,7 +68,7 @@ export default {
       menuData: [],
       subMenus: [],
       activeCode:'index',
-      verticalMenuActiveCode:'list',
+      verticalMenuActiveCode:'',
       openNames:[],
       currentMainMenu:""
     }
