@@ -37,7 +37,7 @@ public class DBUserDetails implements UserDetails {
                 }
             }
         }
-        authorities.add(new SimpleGrantedAuthority("/user-service/api/account/info"));
+        authorities.add(new SimpleGrantedAuthority("/user-service/account/info"));
     }
 
     @Override

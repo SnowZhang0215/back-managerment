@@ -25,6 +25,9 @@ public class MenuService implements IMenuService {
             List<Long> userAllowPermissionIds = permissionMapper.getUserPermissionsIds(userName);
             List<Permission> userMenus = permissionMapper.getUserNavPermissions(userName);
             removeNotAllowChildren(userMenus,userAllowPermissionIds);
+            if (userMenus.isEmpty()){
+                userMenus = permissionMapper.getDefaultPermission();
+            }
             return userMenus;
         }
     }
@@ -51,7 +54,6 @@ public class MenuService implements IMenuService {
 
     @Override
     public List<Permission> getAllParentMenus() {
-//        return permissionRepository.findAllParentMenus().stream().map(PermissionDTO::new).collect(Collectors.toList());
-        return null;
+        return permissionMapper.findAllParentMenus();
     }
 }

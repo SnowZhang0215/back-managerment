@@ -8,7 +8,7 @@ import java.util.Map;
 public interface IAccountService {
     UserVo getUserWithAuthorities(String userName);
 
-    ResponseData createUser(Map<String, String> map);
+    ResponseData createUser(Map<String, String> map) throws Exception;
 
     ResponseData loginAccount(Map<String, String> map);
 }

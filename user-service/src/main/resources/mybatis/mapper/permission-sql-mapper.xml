@@ -89,4 +89,15 @@
             parent_id = #{parentId,jdbcType=BIGINT}
         </where>
     </select>
+
+    <select id="findAllParentMenus" resultMap="resultBaseMap">
+        select *
+        from permission p
+        <where>
+            p.status = '1'
+            and
+            p.parent_id is null
+        </where>
+        order by p.sort;
+    </select>
 </mapper>

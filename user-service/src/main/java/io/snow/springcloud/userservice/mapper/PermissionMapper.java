@@ -4,7 +4,6 @@ import io.snow.model.vo.Permission;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Set;
 
 @Component
 public interface PermissionMapper {
@@ -14,4 +13,6 @@ public interface PermissionMapper {
     List<Permission> getDefaultPermission();
 
     List<Long> getUserPermissionsIds(String userName);
+
+    List<Permission> findAllParentMenus();
 }

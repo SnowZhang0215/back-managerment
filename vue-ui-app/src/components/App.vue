@@ -2,7 +2,7 @@
   <div class="layout">
     <Layout>
       <Header>
-        <Menu ref="defaultMenu" mode="horizontal" theme="light" :active-name="activeCode" @on-select="onMenuSelect">
+        <Menu ref="horizontalMenu" mode="horizontal" theme="light" :active-name="activeCode" @on-select="onMenuSelect">
           <div class="layout-logo">
             <img src="../assets/logo.png" class="layout-logo-img"/>
           </div>
@@ -22,13 +22,13 @@
       </Header>
       <Layout>
         <Sider hide-trigger :style="{background: '#fff'}">
-          <Menu theme="light" width="auto">
-            <Submenu :name="subItem.parent + '-' + subItem.code" v-for="subItem in subMenus" :key="subItem.id">
+          <Menu ref="verticalMenu" theme="light" width="auto" :open-names="openNames" :active-name="verticalMenuActiveCode" @on-select="onVerticalMenuSelect" accordion>
+            <Submenu :name="subItem.code" v-for="subItem in subMenus" :key="subItem.id">
               <template slot="title">
                 <Icon :type="subItem.icon"></Icon>
                 {{subItem.name}}
               </template>
-              <MenuItem :name="item.parent + '-' + item.code" v-if="subItem.children.length>0" v-for="item in subItem.children" :key="item.id" :to="item.url">
+              <MenuItem :name="item.code" v-if="subItem.children.length>0" v-for="item in subItem.children" :key="item.id" :to="item.url">
                 {{item.name}}
               </MenuItem>
             </Submenu>
@@ -68,7 +68,7 @@ export default {
       menuData: [],
       subMenus: [],
       activeCode:'index',
-      leftActiveMenu:'',
+      verticalMenuActiveCode:'list',
       openNames:[],
       currentMainMenu:""
     }
@@ -82,21 +82,89 @@ export default {
         this.signIn = '登录';
       }
     },
-    initMenu(menuData){
+    initMenu: function (menuData) {
       this.menuData = menuData;
       const currentPath = this.$router.currentRoute.path;
-      this.activeCode = currentPath.substring(1,currentPath.length);
-      this.$nextTick(function() {
-        this.$refs.defaultMenu.updateOpened();
-        this.$refs.defaultMenu.updateActiveName();
-        this.onMenuSelect(this.activeCode);
+      this.activeCode = currentPath.substring(1, currentPath.length);
+      const isTopMenu = checkCurrentMenuIsTop(this.menuData, this.activeCode);
+      if (!isTopMenu) {
+        this.verticalMenuActiveCode = this.activeCode;
+        let topMenu = null;
+        for (let i = 0; i < this.menuData.length; i++) {
+          topMenu = this.menuData[i];
+          if (getTopParentCode(topMenu,this.verticalMenuActiveCode)){
+            break;
+          }else {
+            topMenu = null;
+          }
+        }
+        if (topMenu){
+          console.log(topMenu);
+          this.activeCode = topMenu.code;
+          if (topMenu.children){
+            let openVorticalMenu = null;
+            for (let i = 0; i < topMenu.children.length; i++) {
+               openVorticalMenu = topMenu.children[i];
+              if (getTopParentCode(openVorticalMenu,this.verticalMenuActiveCode)){
+                break;
+              }else{
+                openVorticalMenu = null;
+              }
+            }
+            if (openVorticalMenu){
+              console.log(openVorticalMenu);
+              this.openNames.push(openVorticalMenu.code);
+            }
+          }
+        }
+      }
+      this.onMenuSelect(this.activeCode);
+      this.$nextTick(function () {
+        this.$refs.horizontalMenu.updateOpened();
+        this.$refs.horizontalMenu.updateActiveName();
+        this.$refs.verticalMenu.updateOpened();
+        this.$refs.verticalMenu.updateActiveName();
       });
+
+      function getTopParentCode(data, code) {
+        if (data.code === code) {
+          return true;
+        }
+        let result = false;
+        if (data.children) {
+          data.children.forEach(e=>{
+           if (getTopParentCode(e,code)){
+             result = true;
+           }
+          })
+        }
+        return result;
+      }
+
+      /**
+       * 检查当前menu是否为横向菜单的menu
+       */
+
+      function checkCurrentMenuIsTop(data, code) {
+        const result = false;
+        data.forEach(item => function (result) {
+          if (item.code === code) {
+            result = true;
+          }
+          return result;
+        });
+        return result;
+      }
     },
     onMenuSelect(name){
       console.log(name);
       this.activeCode = name;
       this.subMenus = this.getSubMenuByCurrentKey(name);
       console.log(this.subMenus);
+    },
+    onVerticalMenuSelect(name){
+      this.verticalMenuActiveCode = name;
+      console.log(name);
     },
     getSubMenuByCurrentKey(name){
       for (let i = 0; i < this.menuData.length; i++) {

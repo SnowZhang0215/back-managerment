@@ -32,6 +32,39 @@
             </collection>
         </collection>
     </resultMap>
+
+
+    <insert id="insertUser" useGeneratedKeys="true" keyProperty="id" keyColumn="id" parameterType="io.snow.model.vo.UserVo">
+        insert into user(
+        user_name,
+        password,
+        phone_number,
+        profile,
+        gender,
+        emile,
+        created_by,
+        created_date,
+        last_modified_by,
+        last_modified_date
+        )values(
+        #{userName},
+        #{password},
+        #{phoneNumber},
+        #{profile},
+        #{gender},
+        #{emile},
+        #{createdBy},
+        #{createdDate},
+        #{lastModifiedBy},
+        #{lastModifiedDate}
+        )
+    </insert>
+
+    <insert id="saveUserAndRole" parameterType="HashMap">
+        insert into user_role values(#{user.id},#{role.id})
+    </insert>
+
+
     <select id="findUserByUserName"  resultMap="resultBaseMap">
         SELECT
             u.*, r.* , p.*
