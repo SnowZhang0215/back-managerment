@@ -7,5 +7,8 @@ const ApiInfo = {
 
 
      menuManageList:'api/user-service/menu/manage/list',
+     menuManageAdd:'api/user-service/menu/manage/add',
+     menuManageUpdate:'api/user-service/menu/manage/update',
+     menuManageDelete:'api/user-service/menu/manage/delete'
 }
 export default ApiInfo

@@ -7,7 +7,7 @@
           登录
         </p>
           <Form ref="formInline" :model="loginInfo" :rules="ruleInline">
-            <FormItem prop="user">
+            <FormItem prop="username">
               <Input type="text" v-model="loginInfo.username" placeholder="Username">
               <Icon type="ios-person-outline" slot="prepend"></Icon>
               </Input>

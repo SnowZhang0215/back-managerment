@@ -21,6 +21,37 @@
         <result column="last_modified_date" jdbcType="TIMESTAMP" property="lastModifiedDate"/>
         <collection property="children" column="id" ofType="io.snow.model.vo.Permission" select="selectByPid"/>
     </resultMap>
+
+    <sql id="baseColumnList">
+        name,
+        code,
+        icon,
+        level,
+        parent_code,
+      	status,
+        sort,
+      	url,
+      	is_menu,
+        default_type,
+      	component,
+      	parent_id,
+        created_by,
+        created_date,
+        last_modified_by,
+        last_modified_date,
+    </sql>
+
+    <insert id="insertPermission" parameterType="io.snow.model.vo.Permission">
+        insert into permission
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <include refid="baseColumnList"/>
+        </trim>
+        values (
+        #{name},#{code},#{icon},#{level},#{parentCode},#{status},#{sort},#{url},#{isMenu},#{defaultType},#{component},#{parentId},
+        #{createdBy},#{createdDate},#{lastModifiedBy},#{lastModifiedDate}
+        )
+    </insert>
+
     <select id="getUserNavPermissions"  resultMap="resultBaseMap" parameterType = "String">
         SELECT
             p.* ,
