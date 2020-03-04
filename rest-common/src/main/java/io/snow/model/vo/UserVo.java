@@ -24,6 +24,8 @@ public class UserVo extends BaseVo implements Serializable {
 
     private List<RoleVo> authorities;
 
+    private List<Permission> userPermissions;
+
     public Long getId() {
         return id;
     }
@@ -85,11 +87,15 @@ public class UserVo extends BaseVo implements Serializable {
         return password;
     }
 
-    public String getUsername() {
-        return userName;
-    }
-
     public void setAuthorities(List<RoleVo> authorities) {
         this.authorities = authorities;
+    }
+
+    public List<Permission> getUserPermissions() {
+        return userPermissions;
+    }
+
+    public void setUserPermissions(List<Permission> userPermissions) {
+        this.userPermissions = userPermissions;
     }
 }

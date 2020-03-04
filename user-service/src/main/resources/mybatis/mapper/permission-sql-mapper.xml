@@ -22,6 +22,38 @@
         <collection property="children" column="id" ofType="io.snow.model.vo.Permission" select="selectByPid"/>
     </resultMap>
 
+    <!--权限基础结果集，不级联child，管理权限API-->
+    <resultMap id="permissionResultMap" type="io.snow.model.vo.Permission">
+        <id property="id" column="id"/>
+        <result column="code" jdbcType="VARCHAR" property="code"/>
+        <result column="parent_code" jdbcType="VARCHAR" property="parentCode"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="url" jdbcType="VARCHAR" property="url"/>
+        <result column="parent_id" jdbcType="BIGINT" property="parentId"/>
+        <result column="is_menu" jdbcType="VARCHAR" property="isMenu"/>
+        <result column="level" jdbcType="VARCHAR" property="level"/>
+        <result column="sort" jdbcType="BIGINT" property="level"/>
+        <result column="status" jdbcType="VARCHAR" property="status"/>
+        <result column="icon" jdbcType="VARCHAR" property="icon"/>
+        <result column="defaultType" jdbcType="BIGINT" property="defaultType"/>
+        <result column="component" jdbcType="VARCHAR" property="component"/>
+        <result column="create_by" jdbcType="VARCHAR" property="createBy"/>
+        <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="last_modified_by" jdbcType="VARCHAR" property="lastModifiedBy"/>
+        <result column="last_modified_date" jdbcType="TIMESTAMP" property="lastModifiedDate"/>
+        <association property="permissionApi" column="api_id" select="selectApiById"/>
+    </resultMap>
+
+    <resultMap id="apiResultMap" type="io.snow.model.vo.ApiVo">
+        <id property="id" column="id"/>
+        <result column="path" jdbcType="VARCHAR" property="path"/>
+        <result column="description" jdbcType="VARCHAR" property="description"/>
+    </resultMap>
+
+    <select id="selectApiById" resultMap="apiResultMap">
+        select * from api_entity where id = #{id}
+    </select>
+
     <sql id="baseColumnList">
         name,
         code,
@@ -34,6 +66,7 @@
       	is_menu,
         default_type,
       	component,
+      	api_id,
       	parent_id,
         created_by,
         created_date,
@@ -76,6 +109,8 @@
             p.sort
     </select>
 
+
+
     <select id="getDefaultPermission" resultMap = "resultBaseMap">
         SELECT
             p.* ,
@@ -91,6 +126,25 @@
         AND p.default_type = '0'
         ORDER BY
             p.sort
+    </select>
+
+    <select id="getUserPermissionWithApi" resultMap = "permissionResultMap">
+        SELECT
+            *
+        FROM
+            permission p
+        LEFT JOIN role_privilege rp ON rp.permission_id = p.id
+        LEFT JOIN user_role ur ON ur.role_id = rp.role_id
+        WHERE
+            p.`status` = '1'
+        AND ur.user_id =(
+            SELECT
+                id
+            FROM
+                USER
+            WHERE
+                USER .user_name = #{userName}
+        )
     </select>
 
     <select id="getUserPermissionsIds" resultType = "Long">

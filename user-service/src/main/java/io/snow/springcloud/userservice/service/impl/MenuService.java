@@ -3,7 +3,6 @@ package io.snow.springcloud.userservice.service.impl;
 import io.snow.model.vo.Permission;
 import io.snow.springcloud.userservice.mapper.PermissionMapper;
 import io.snow.springcloud.userservice.service.IMenuService;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -12,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class MenuService implements IMenuService {

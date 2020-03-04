@@ -55,6 +55,8 @@ public class Permission extends BaseVo{
 
     private List<Permission> children;
 
+    private ApiVo permissionApi;
+
     public Long getId() {
         return id;
     }
@@ -157,5 +159,13 @@ public class Permission extends BaseVo{
 
     public void setComponent(String component) {
         this.component = component;
+    }
+
+    public ApiVo getPermissionApi() {
+        return permissionApi;
+    }
+
+    public void setPermissionApi(ApiVo permissionApi) {
+        this.permissionApi = permissionApi;
     }
 }

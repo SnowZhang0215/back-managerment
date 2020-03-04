@@ -23,20 +23,20 @@ public class DBUserDetails implements UserDetails {
                 LinkedHashMap item = (LinkedHashMap) authoritiesMap.get(i);
                 SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority((String) item.get("code"));
                 authorities.add(simpleGrantedAuthority);
-                if (item.get("roleApis")!=null){
-                    List<Map<String,Object>> permissions = (List<Map<String, Object>>) item.get("roleApis");
-                    if (permissions!=null){
-                        for (Map<String, Object> subItem : permissions) {
-                            if (subItem.get("path")!= null){
-                                System.out.println(subItem.get("path"));
-                                GrantedAuthority authority = new SimpleGrantedAuthority((String) subItem.get("path"));
-                                authorities.add(authority);
-                            }
-                        }
+            }
+        }
+        if (map.get("userPermissions")!=null){
+            List<Map<String,Object>> userPermissions = (List<Map<String, Object>>) map.get("userPermissions");
+            for(Map<String,Object> permission : userPermissions){
+                if (permission.get("permissionApi")!=null){
+                    Map<String,Object> permissionApi = (Map<String, Object>) permission.get("permissionApi");
+                    if (permissionApi.get("path")!=null){
+                        authorities.add(new SimpleGrantedAuthority(String.valueOf(permissionApi.get("path"))));
                     }
                 }
             }
         }
+        //获取账户信息默认可访问
         authorities.add(new SimpleGrantedAuthority("/user-service/account/info"));
     }
 
