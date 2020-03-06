@@ -1,0 +1,38 @@
+spring:
+  application:
+    name: auth-service
+  cloud:
+    config:
+      uri: http://127.0.0.1:8888
+      name: common
+      profile: ${spring.profiles.active}
+  profiles:
+    active: prod
+server:
+  port: 8084
+
+eureka:
+  client:
+    eureka-server-port: 8761
+    service-url:
+      defaultZone: http://${eureka.instance.hostname}:${eureka.client.eureka-server-port}/eureka/
+  instance:
+    hostname: 127.0.0.1
+    prefer-ip-address: true
+#
+#feign:
+#  hystrix:
+#    enabled: true
+#hystrix:
+#  command:
+#    default:
+#      execution:
+#        isolation:
+#          thread:
+#            timeoutInMilliseconds: 60000
+#ribbon:
+#  ReadTimeout: 30000
+#  ConnectTimeout: 60000
+#  MaxAutoRetries: 0
+#  MaxAutoRetriesNextServer: 1
+
