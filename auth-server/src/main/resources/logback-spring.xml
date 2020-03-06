@@ -15,7 +15,7 @@
     <springProfile name="dev">
         <property name="log.path" value="classpath:/log"/>
     </springProfile>
-    <property name="module.name" value="user-service"/>
+    <property name="module.name" value="auth-service"/>
 
     <!-- 彩色日志 -->
     <!-- 彩色日志依赖的渲染类 -->
