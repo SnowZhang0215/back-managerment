@@ -43,3 +43,5 @@ fabric.properties
 !/.idea/*
 !/cloud.iml
 
+!/log/
+/appLogs/

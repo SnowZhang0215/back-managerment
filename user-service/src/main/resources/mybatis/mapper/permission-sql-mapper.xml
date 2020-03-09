@@ -96,7 +96,7 @@
         LEFT JOIN user_role ur ON ur.role_id = rp.role_id
         WHERE
             p.`status` = '1'
-        AND p.parent_id IS NULL
+        AND p.parent_id = '0'
         AND ur.user_id =(
             SELECT
                 id
@@ -122,7 +122,7 @@
         LEFT JOIN user_role ur ON ur.role_id = rp.role_id
         WHERE
             p.`status` = '1'
-        AND p.parent_id IS NULL
+        AND p.parent_id = '0'
         AND p.default_type = '0'
         ORDER BY
             p.sort
