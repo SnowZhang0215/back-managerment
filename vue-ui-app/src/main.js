@@ -64,6 +64,7 @@ new Vue({
         if (item.url) {
           childrenRouter.push({
             path: item.url,
+            name: item.code,
             component:  () => import('./components' + item.component)
           });
         }

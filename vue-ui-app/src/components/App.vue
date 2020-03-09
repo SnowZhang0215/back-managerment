@@ -7,10 +7,22 @@
             <img src="../assets/logo.png" class="layout-logo-img"/>
           </div>
           <div class="layout-nav">
-            <MenuItem :name="menu.code" v-for="menu in menuData" :key="menu.id" :to="menu.url">
-              <Icon :type="menu.icon"></Icon>
-              {{menu.name}}
-            </MenuItem>
+            <li v-for="menu in menuData" :key="menu.id">
+              <!-- :to = {path:menu.url,params:menu.children} -->
+                <MenuItem :name="menu.code" :to = {name:menu.code,params:menu.children} v-if="menu.children==null || menu.children.length == 0">
+                  <Icon :type="menu.icon"></Icon>
+                  {{menu.name}}
+                </MenuItem>
+                <Submenu :name="menu.code" v-if="menu.children && menu.children.length>0">
+                  <template slot="title">
+                      {{menu.name}}
+                  </template>
+                  <!-- :to = {path:item.url,params:menu.children} -->
+                  <MenuItem :name="item.code" :to = {path:item.url,params:menu.children} v-for="item in menu.children" :key="item.id" >
+                      {{item.name}}
+                  </MenuItem>
+              </Submenu>
+            </li>
           </div>
           <div class="info-menu">
             <div class="info-menu-sign-in">
@@ -21,29 +33,9 @@
         </Menu>
       </Header>
       <Layout>
-        <Sider hide-trigger :style="{background: '#fff'}">
-          <Menu ref="verticalMenu" theme="light" width="auto" :open-names="openNames" :active-name="verticalMenuActiveCode" @on-select="onVerticalMenuSelect" accordion>
-            <Submenu :name="subItem.code" v-for="subItem in subMenus" :key="subItem.id">
-              <template slot="title">
-                <Icon :type="subItem.icon"></Icon>
-                {{subItem.name}}
-              </template>
-              <MenuItem :name="item.code" v-if="subItem.children.length>0" v-for="item in subItem.children" :key="item.id" :to="item.url">
-                {{item.name}}
-              </MenuItem>
-            </Submenu>
-          </Menu>
-        </Sider>
-        <Layout :style="{padding: '0 10px 10px'}">
-          <Breadcrumb :style="{margin: '10px 0'}">
-            <BreadcrumbItem>{{currentMainMenu}}</BreadcrumbItem>
-            <BreadcrumbItem>{{currentMainMenu}}</BreadcrumbItem>
-            <BreadcrumbItem>{{currentMainMenu}}</BreadcrumbItem>
-          </Breadcrumb>
           <Content :style="{padding: '5px', minHeight: '540px', background: '#fff'}">
             <router-view/>
           </Content>
-        </Layout>
       </Layout>
       <Footer></Footer>
     </Layout>
@@ -118,12 +110,9 @@ export default {
           }
         }
       }
-      this.onMenuSelect(this.activeCode);
       this.$nextTick(function () {
         this.$refs.horizontalMenu.updateOpened();
         this.$refs.horizontalMenu.updateActiveName();
-        this.$refs.verticalMenu.updateOpened();
-        this.$refs.verticalMenu.updateActiveName();
       });
 
       function getTopParentCode(data, code) {
@@ -161,10 +150,6 @@ export default {
       this.activeCode = name;
       this.subMenus = this.getSubMenuByCurrentKey(name);
       console.log(this.subMenus);
-    },
-    onVerticalMenuSelect(name){
-      this.verticalMenuActiveCode = name;
-      console.log(name);
     },
     getSubMenuByCurrentKey(name){
       for (let i = 0; i < this.menuData.length; i++) {
