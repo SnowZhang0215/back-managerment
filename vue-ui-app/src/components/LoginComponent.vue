@@ -72,6 +72,8 @@
 
           this.$router.addRoutes(result);
 
+          console.log(childrenRouter)
+
           function generateRoutes(childrenRouter,item){
             if (item.children){
               item.children.forEach(e =>{
@@ -81,6 +83,7 @@
             if (item.url) {
               childrenRouter.push({
                 path: item.url,
+                name: item.code,
                 component:  () => import('../components' + item.component)
               });
             }
@@ -105,14 +108,9 @@
         },
         onLoginSuccess(response){
           this.$storage.setValue("access_token",response);
-          if (this.$storage.getValue("userMenus")) {
-            const menuData = this.$storage.getValue("userMenus");
-            this.initMenuAndRouter(menuData)
-          } else {
-            this.$axios.get(this.$api.userMenus).then(
+          this.$axios.get(this.$api.userMenus).then(
               response => this.initMenuAndRouter(response.data)
             ).catch(error => this.$Message.error(error.toString()))
-          }
           if (this.$storage.getValue("access_token")){
             this.$axios.get(this.$api.userInfo)
               .then(response => this.handleUserInfo(response.data))

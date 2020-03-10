@@ -147,43 +147,35 @@ export default {
     },
     onMenuSelect(name){
       console.log(name);
-      
-     let params = this.getParamsFromMenuData(this.menuData,name);
-      
-      console.log("params:",params)
+      let params = [];
+      this.menuData.forEach(item =>{
+         console.log(item);
+         this.findParams(params,item,name);
+      })
+      console.log("params",params);
+      let paramsData = {menuData:params}
       this.$router.push({
         name:name,
-        params: params
+        params: paramsData
       })
     },
-    getParamsFromMenuData(data,name){
-      let result = null;
-      for(let i = 0 ; i<data.length ;i++){
-          let params = this.findParams(data[i],name);
-          if(params!= null){
-            result = params.children;
-            console.log("xxx",params)
-            break;
-          }
-      }
-      return result;
-    },
   
-    findParams(arrayData,name){
-        let result = null;
-        if(arrayData.code === name){
-          console.log("find :",arrayData)
-          return arrayData;
-        }else if(result == null && arrayData.children){
-          for(let i = 0 ; i< arrayData.children.length; i++){
-            let params = this.findParams(arrayData.children[i],name);
-            if(params){
-              result = params;
-              break;
-            }
-          }
-        }
-        return result
+    findParams(result,arrayData,name){
+      if(arrayData.children){
+         arrayData.children.forEach(item =>{
+            this.findParams(result,item,name);
+          })
+      }
+      if(arrayData.code === name){
+        // result = arrayData.children
+       if(arrayData.children){
+         arrayData.children.forEach(element => {
+           console.log(element);
+           result.push(element);
+         });
+       }
+        // Array.prototype.push.apply(result, arrayData.children);
+      }
     },
     getSubMenuByCurrentKey(name){
       for (let i = 0; i < this.menuData.length; i++) {
