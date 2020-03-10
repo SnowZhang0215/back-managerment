@@ -9,7 +9,7 @@
           <div class="layout-nav">
             <li v-for="menu in menuData" :key="menu.id">
               <!-- :to = {path:menu.url,params:menu.children} -->
-                <MenuItem :name="menu.code" :to = {name:menu.code,params:menu.children} v-if="menu.children==null || menu.children.length == 0">
+                <MenuItem :name="menu.code"  v-if="menu.children==null || menu.children.length == 0">
                   <Icon :type="menu.icon"></Icon>
                   {{menu.name}}
                 </MenuItem>
@@ -18,7 +18,7 @@
                       {{menu.name}}
                   </template>
                   <!-- :to = {path:item.url,params:menu.children} -->
-                  <MenuItem :name="item.code" :to = {path:item.url,params:menu.children} v-for="item in menu.children" :key="item.id" >
+                  <MenuItem :name="item.code"  v-for="item in menu.children" :key="item.id" >
                       {{item.name}}
                   </MenuItem>
               </Submenu>
@@ -147,9 +147,43 @@ export default {
     },
     onMenuSelect(name){
       console.log(name);
-      this.activeCode = name;
-      this.subMenus = this.getSubMenuByCurrentKey(name);
-      console.log(this.subMenus);
+      
+     let params = this.getParamsFromMenuData(this.menuData,name);
+      
+      console.log("params:",params)
+      this.$router.push({
+        name:name,
+        params: params
+      })
+    },
+    getParamsFromMenuData(data,name){
+      let result = null;
+      for(let i = 0 ; i<data.length ;i++){
+          let params = this.findParams(data[i],name);
+          if(params!= null){
+            result = params.children;
+            console.log("xxx",params)
+            break;
+          }
+      }
+      return result;
+    },
+  
+    findParams(arrayData,name){
+        let result = null;
+        if(arrayData.code === name){
+          console.log("find :",arrayData)
+          return arrayData;
+        }else if(result == null && arrayData.children){
+          for(let i = 0 ; i< arrayData.children.length; i++){
+            let params = this.findParams(arrayData.children[i],name);
+            if(params){
+              result = params;
+              break;
+            }
+          }
+        }
+        return result
     },
     getSubMenuByCurrentKey(name){
       for (let i = 0; i < this.menuData.length; i++) {

@@ -55,6 +55,8 @@ new Vue({
 
       this.$router.addRoutes(result);
 
+      console.log(this.$router)
+
       function generateRoutes(childrenRouter,item){
         if (item.children){
           item.children.forEach(e =>{
