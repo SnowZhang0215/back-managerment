@@ -3,13 +3,14 @@ package io.snow.springcloud.userservice.service.impl;
 import io.snow.model.vo.Permission;
 import io.snow.springcloud.userservice.mapper.PermissionMapper;
 import io.snow.springcloud.userservice.service.IMenuService;
-import io.snow.springcloud.userservice.service.dto.PermissionDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 @Service
 public class MenuService implements IMenuService {
@@ -55,5 +56,12 @@ public class MenuService implements IMenuService {
     @Override
     public List<Permission> getAllParentMenus() {
         return permissionMapper.findAllParentMenus();
+    }
+
+    @Override
+    @Transactional(propagation= Propagation.REQUIRED,isolation= Isolation.READ_COMMITTED)
+    public int createPermission(Permission permission) {
+        int i = permissionMapper.insertPermission(permission);
+        return i;
     }
 }

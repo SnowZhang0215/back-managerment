@@ -43,3 +43,6 @@ fabric.properties
 !/.idea/*
 !/cloud.iml
 
+!/log/
+/appLogs/
+vue-ui-app/dist.zip

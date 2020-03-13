@@ -1,11 +1,11 @@
-#application.yml文件配置端口即注册中心相关内容
 server:
-  port: 8888
+  port: 8084
+
 eureka:
   client:
     eureka-server-port: 8761
     service-url:
       defaultZone: http://${eureka.instance.hostname}:${eureka.client.eureka-server-port}/eureka/
   instance:
-    hostname: localhost
+    hostname: 127.0.0.1
     prefer-ip-address: true

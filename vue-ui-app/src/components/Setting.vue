@@ -16,6 +16,8 @@
           // }
         },
         created(){
+          console.log("setting pages",this.$route.params);
+          
           // this.$axios.get("api/user-service/api/account/info")
           //   .then(response => this.handleUserInfo(response))
           //   .catch(error =>  this.$Message.error(error.toString()))

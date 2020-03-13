@@ -21,15 +21,15 @@
             <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
             <result column="last_modified_by" jdbcType="VARCHAR" property="lastModifiedBy"/>
             <result column="last_modified_date" jdbcType="TIMESTAMP" property="lastModifiedDate"/>
-            <collection property="roleApis" ofType="io.snow.model.vo.ApiVo">
-                <result column="id" property="id"/>
-                <result column="path" jdbcType="VARCHAR" property="path"/>
-                <result column="description" jdbcType="VARCHAR" property="description"/>
-                <result column="create_by" jdbcType="VARCHAR" property="createBy"/>
-                <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
-                <result column="last_modified_by" jdbcType="VARCHAR" property="lastModifiedBy"/>
-                <result column="last_modified_date" jdbcType="TIMESTAMP" property="lastModifiedDate"/>
-            </collection>
+            <!--<collection property="rolePermissions" ofType="io.snow.model.vo.Permission">-->
+                <!--<result column="id" property="id"/>-->
+                <!--<result column="path" jdbcType="VARCHAR" property="path"/>-->
+                <!--<result column="description" jdbcType="VARCHAR" property="description"/>-->
+                <!--<result column="create_by" jdbcType="VARCHAR" property="createBy"/>-->
+                <!--<result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>-->
+                <!--<result column="last_modified_by" jdbcType="VARCHAR" property="lastModifiedBy"/>-->
+                <!--<result column="last_modified_date" jdbcType="TIMESTAMP" property="lastModifiedDate"/>-->
+            <!--</collection>-->
         </collection>
     </resultMap>
 
@@ -67,27 +67,28 @@
 
     <select id="findUserByUserName"  resultMap="resultBaseMap">
         SELECT
-            u.*, r.* , p.*
+            u.*, r.*
+--             , p.*
         FROM
             USER u
         LEFT JOIN user_role ur ON u.id = ur.user_id
         LEFT JOIN role r ON r.id = ur.role_id
-        LEFT JOIN role_apis ra on ra.role_id = r.id
-        LEFT JOIN api_entity p on ra.api_id = p.id
+--         LEFT JOIN role_privilege rp on rp.role_id = r.id
+--         LEFT JOIN permission p on rp.api_id = p.id
         WHERE
             u.user_name = #{userName};
     </select>
 
-    <select id="loadUserWithPermission" resultMap="resultBaseMap">
-        SELECT
-            u.*, r.* ,p.*
-        FROM
-            USER u
-        LEFT JOIN user_role ur ON u.id = ur.user_id
-        LEFT JOIN role r ON r.id = ur.role_id
-        LEFT JOIN role_privilege rp ON rp.role_id = r.id
-        LEFT JOIN permission p ON rp.permission_id = p.id
-        WHERE
-            u.user_name = #{userName};
-    </select>
+    <!--<select id="loadUserWithPermission" resultMap="resultBaseMap">-->
+        <!--SELECT-->
+            <!--u.*, r.* ,p.*-->
+        <!--FROM-->
+            <!--USER u-->
+        <!--LEFT JOIN user_role ur ON u.id = ur.user_id-->
+        <!--LEFT JOIN role r ON r.id = ur.role_id-->
+        <!--LEFT JOIN role_privilege rp ON rp.role_id = r.id-->
+        <!--LEFT JOIN permission p ON rp.permission_id = p.id-->
+        <!--WHERE-->
+            <!--u.user_name = #{userName};-->
+    <!--</select>-->
 </mapper>

@@ -7,7 +7,6 @@ import io.snow.springcloud.userservice.mapper.RoleMapper;
 import io.snow.springcloud.userservice.mapper.UserMapper;
 import io.snow.springcloud.userservice.security.AuthoritiesConstants;
 import io.snow.springcloud.userservice.service.IAccountService;
-import io.snow.springcloud.userservice.service.dto.UserDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

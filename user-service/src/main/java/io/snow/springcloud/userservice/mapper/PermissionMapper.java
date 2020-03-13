@@ -15,4 +15,8 @@ public interface PermissionMapper {
     List<Long> getUserPermissionsIds(String userName);
 
     List<Permission> findAllParentMenus();
+
+    List<Permission> getUserPermissionWithApi(String userName);
+
+    int insertPermission(Permission permission);
 }

@@ -1,0 +1,26 @@
+server:
+  port: 9000
+eureka:
+  client:
+    eureka-server-port: 8761
+    service-url:
+      defaultZone: http://${eureka.instance.hostname}:${eureka.client.eureka-server-port}/eureka/
+  instance:
+    hostname: localhost
+    prefer-ip-address: true
+security:
+  oauth2:
+    client:
+      access-token-uri: http://auth-service/oauth/token
+      user-authorization-uri: http://auth-service/oauth/authorize
+      client-id: user-service
+      client-secret: 1234
+    resource:
+      user-info-uri: http://auth-service/user
+      prefer-token-info: false
+      loadBalanced: true
+zuul:
+  sensitiveHeaders: "Cookie,Set-Cookie"
+  host:
+    connect-timeout-millis: 10000
+    socket-timeout-millis: 60000

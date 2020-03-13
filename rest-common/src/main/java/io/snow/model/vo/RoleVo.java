@@ -14,8 +14,6 @@ public class RoleVo extends BaseVo implements Serializable {
 
     private List<Permission> rolePermissions;
 
-    private List<ApiVo> roleApis;
-
     public Long getId() {
         return id;
     }
@@ -38,14 +36,6 @@ public class RoleVo extends BaseVo implements Serializable {
 
     public void setRolePermissions(List<Permission> rolePermissions) {
         this.rolePermissions = rolePermissions;
-    }
-
-    public List<ApiVo> getRoleApis() {
-        return roleApis;
-    }
-
-    public void setRoleApis(List<ApiVo> roleApis) {
-        this.roleApis = roleApis;
     }
 
     public String getCode() {

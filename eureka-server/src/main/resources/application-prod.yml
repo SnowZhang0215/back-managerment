@@ -1,7 +1,6 @@
-
 spring:
   profiles:
-    active: dev
+    active: prod
   application:
     name: eurka-server
 server:
@@ -12,7 +11,7 @@ eureka:
     hostname: localhost
   client:
     #  表明自己是一个eureka server.
-    registerWithEureka: false
+    registerWithEureka: true
     fetchRegistry: true
     serviceUrl:
       defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/

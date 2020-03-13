@@ -11,7 +11,7 @@
               <div style="text-align: right;padding-bottom: 10px">
                   <Button style="margin-right: 10px" :type="btn.type" @click="handleClick(btn.clickMethod)" v-for="btn in btnDatas" :key="btn.id">{{btn.name}}</Button>
               </div>
-              <Table stripe :columns="columns" height="430" :data="tableData"></Table>
+              <Table @on-select="onSelectRow" stripe :columns="columns" height="430" :data="tableData"></Table>
               <div style="text-align: right;padding: 5px"><Page :total="tableData.length" show-sizer class="ivu-page"></Page></div>
             </div>
           </Card>
@@ -36,6 +36,7 @@
             edit: this.edit,
             delete: this.delete
           },
+          parentMenuData:{},
           btnDatas:[
             {
               id:'1',
@@ -107,10 +108,16 @@
           .catch(error => this.$Message.error(error.toString()))
       },
       methods:{
+        onSelectRow(data){
+          console.log(data);
+        },
         add(){
           this.$refs.permissionEdit.init({
             title:'新增',
-            model:null
+            model:{
+              parentId: this.parentMenuData.id,
+              parentName: this.parentMenuData.name
+            }
           })
         },
         edit(){
@@ -127,6 +134,7 @@
         },
         onSelectChange(data){
           console.log(data[0]);
+          this.parentMenuData = data[0];
           if (data[0] && data[0].children)
           this.tableData = data[0].children;
           this.tableData.forEach(item => (item.parentName = data[0].name))
