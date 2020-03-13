@@ -4,8 +4,8 @@ spring:
   cloud:
     config:
       discovery:
-        enable: true
-        service-id: config-server
+        enabled: true
+        serviceId: config-server
       name: common
       profile: ${spring.profiles.active}
   profiles:

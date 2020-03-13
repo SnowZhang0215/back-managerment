@@ -1,8 +1,11 @@
 spring:
   application:
-    name: user-service
+    name: core-gateway
   cloud:
     config:
+      discovery:
+        enabled: true
+        serviceId: config-server
       name: common
       profile: ${spring.profiles.active}
   profiles:
