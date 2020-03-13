@@ -3,6 +3,7 @@
 import Vue from 'vue'
 import storage from './storge';
 import router from './router';
+import commonMethods from './common/commonutils';
 import qs from 'qs';
 // 导入Iview组件库
 import ViewUI from 'view-design';
@@ -20,6 +21,7 @@ import ApiInfo from '../config/ApiInfo';
 Vue.prototype.$axios = myAxios;
 Vue.prototype.$storage = storage;
 Vue.prototype.$api = ApiInfo;
+Vue.prototype.$commonMethods = commonMethods;
 
 /* eslint-disable no-new */
 
@@ -39,6 +41,7 @@ new Vue({
       ).catch(error => this.$Message.error(error.toString()))
     }
     console.log("on main create");
+    console.log(commonMethods)
   },
   methods:{
     initMenuAndRouter(menuData){

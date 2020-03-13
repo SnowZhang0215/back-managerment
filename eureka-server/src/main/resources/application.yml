@@ -13,7 +13,7 @@ eureka:
     hostname: localhost
   client:
     #  表明自己是一个eureka server.
-    registerWithEureka: false
-    fetchRegistry: false
+    registerWithEureka: true
+    fetchRegistry: true
     serviceUrl:
       defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
