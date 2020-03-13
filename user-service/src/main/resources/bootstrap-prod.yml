@@ -3,7 +3,7 @@ spring:
     name: user-service
   cloud:
     config:
-      uri: http://127.0.0.1:8888
+#      uri: http://127.0.0.1:8888
       name: common
       profile: ${spring.profiles.active}
   profiles:
