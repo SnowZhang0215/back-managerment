@@ -1,6 +1,6 @@
 spring:
   application:
-    name: auth-server
+    name: auth-service
   cloud:
     config:
       discovery:
