@@ -1,0 +1,17 @@
+spring:
+  profiles:
+    active: prod
+  application:
+    name: eurka-server
+server:
+  port: 8761
+
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    #  表明自己是一个eureka server.
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
