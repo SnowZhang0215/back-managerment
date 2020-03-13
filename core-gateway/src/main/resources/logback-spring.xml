@@ -65,8 +65,16 @@
         </filter>
     </appender>
 
-    <root level="info">
-        <appender-ref ref="FILE" />
-    </root>
+    <springProfile name="prod">
+        <root level="info">
+            <appender-ref ref="FILE" />
+        </root>
+    </springProfile>
+
+    <springProfile name="dev">
+        <root level="info">
+            <appender-ref ref="CONSOLE" />
+        </root>
+    </springProfile>
 
 </configuration>

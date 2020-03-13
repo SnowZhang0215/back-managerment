@@ -1,12 +1,11 @@
 
 spring:
+  profiles:
+    active: dev
   application:
     name: eurka-server
 server:
   port: 8761
-
-  profiles:
-    active: prod
 
 eureka:
   instance:
