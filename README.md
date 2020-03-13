@@ -17,5 +17,8 @@
 - 5 UserService
 - vue-ui-app 进入项目运行 `npm run dev`
 
+
+- 项目支持Jenkins持续化集群部署，Jenkins部署问题，可以联系我
+
 在使用中任何问题可以通过下面的方式与我联系：
 snowzhang@aliyun.com
