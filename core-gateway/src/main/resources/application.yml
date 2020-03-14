@@ -11,12 +11,12 @@ eureka:
 security:
   oauth2:
     client:
-      access-token-uri: http://auth-service/oauth/token
-      user-authorization-uri: http://auth-service/oauth/authorize
+      access-token-uri: http://auth-server/oauth/token
+      user-authorization-uri: http://auth-server/oauth/authorize
       client-id: user-service
       client-secret: 1234
     resource:
-      user-info-uri: http://auth-service/user
+      user-info-uri: http://auth-server/user
       prefer-token-info: false
       loadBalanced: true
 zuul:

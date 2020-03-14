@@ -39,7 +39,7 @@ public class SecurityConfig extends ResourceServerConfigurerAdapter {
     private static final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
 
     private static final String[] AUTH_WHITELIST = {
-            "/auth-service/**",
+            "/auth-server/**",
             "/user-service/menu/getUserMenus/**",//用户菜单
             "/user-service/account/register" //注册
 
@@ -49,7 +49,7 @@ public class SecurityConfig extends ResourceServerConfigurerAdapter {
     public void configure(HttpSecurity http) throws Exception {
         http.csrf().disable();
         http.cors().disable();
-        http.authorizeRequests().antMatchers("/auth-service/**").permitAll();
+        http.authorizeRequests().antMatchers("/auth-server/**").permitAll();
 
         ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry registry = http
                 .authorizeRequests();
