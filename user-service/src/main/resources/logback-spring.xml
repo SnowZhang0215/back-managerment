@@ -142,7 +142,7 @@
 
     <springProfile name="prod">
         <root level="info">
-            <appender-ref ref="FILE" />
+            <appender-ref ref="RabbitMQ" />
         </root>
     </springProfile>
 
