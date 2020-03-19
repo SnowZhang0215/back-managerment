@@ -1,17 +1,8 @@
-#bootstrap 配置文件配置应用的名称和配置文件等
 spring:
-  application:
-    name: config-server
-  cloud:
-    config:
-      server:
-        native:
-          search-locations: classpath:/config/
-      discovery:
-        enabled: true
   profiles:
-    active: native
-
+    active: dev
+  application:
+    name: eurka-server
   sleuth:
     web:
       client:

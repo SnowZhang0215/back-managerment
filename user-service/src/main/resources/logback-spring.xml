@@ -65,6 +65,81 @@
         </filter>
     </appender>
 
+    <appender name="RabbitMQ" class="org.springframework.amqp.rabbit.logback.AmqpAppender">
+
+        <layout>
+                <pattern>
+                    {
+                    "logger_name":"%logger",
+                    "loglevel":"%level",
+                    "message":"%msg",
+                    "service":"${module.name:-}",
+                    "trace":"%X{X-B3-TraceId:-}",
+                    "span":"%X{X-B3-SpanId:-}",
+                    "class":"%logger{40}",
+                    "host":"${HOSTNAME}",
+                    "file":"%F",
+                    "method":"%M",
+                    "line_number":"%L",
+                    "thread_name":"%thread",
+                    "timestamp":"%d{yyyy-MM-dd'T'HH:mm:ss:SSS}"
+                    }
+                </pattern>
+        </layout>
+        <host>122.112.211.146</host>
+        <port>5672</port>
+        <username>guest</username>
+        <password>guest</password>
+        <declareExchange>true</declareExchange>
+        <exchangeType>direct</exchangeType>
+        <exchangeName>rabbit.log</exchangeName>
+        <routingKeyPattern>info</routingKeyPattern>
+        <generateId>true</generateId>
+        <charset>UTF-8</charset>
+        <durable>true</durable>
+        <deliveryMode>NON_PERSISTENT</deliveryMode>
+        <autoDelete>false</autoDelete>
+    </appender>
+
+    <appender name="logstash" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${user.dir}${log.path}/${module.name}_log.json</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- 日志归档 -->
+            <fileNamePattern>${user.dir}${log.path}/logback/${module.name}_log-%d{yyyy-MM-dd}.%i.json</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <!--日志文件保留天数-->
+            <maxHistory>15</maxHistory>
+        </rollingPolicy>
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+            <providers>
+                <timestamp>
+                    <timeZone>UTC</timeZone>
+                </timestamp>
+                <pattern>
+                    <pattern>
+                        {
+                        "logger_name":"%logger",
+                        "loglevel":"%level",
+                        "message":"%message",
+                        "service":"${module.name:-}",
+                        "trace":"%X{X-B3-TraceId:-}",
+                        "span":"%X{X-B3-SpanId:-}",
+                        "class":"%logger{40}",
+                        "host":"${HOSTNAME}",
+                        "file":"%F",
+                        "method":"%M",
+                        "line_number":"%L",
+                        "thread_name":"%thread",
+                        "timestamp":"%d{yyyy-MM-dd'T'HH:mm:ss:SSS}"
+                        }
+                    </pattern>
+                </pattern>
+            </providers>
+        </encoder>
+    </appender>
+
     <springProfile name="prod">
         <root level="info">
             <appender-ref ref="FILE" />
@@ -74,6 +149,8 @@
     <springProfile name="dev">
         <root level="info">
             <appender-ref ref="CONSOLE" />
+<!--            <appender-ref ref="logstash"/>-->
+<!--            <appender-ref ref="RabbitMQ"/>-->
         </root>
     </springProfile>
 

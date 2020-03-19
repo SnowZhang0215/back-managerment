@@ -15,6 +15,7 @@
         <module>user-service</module>
         <module>core-gateway</module>
         <module>rest-common</module>
+        <module>zipkin-server</module>
     </modules>
     <packaging>pom</packaging>
     

@@ -20,5 +20,8 @@
 
 - 项目支持Jenkins持续化集群部署，Jenkins部署问题，可以联系我
 
+- 项目集成SpringCloud Sleuth + Zipkin 全链路分析。日志通过RabbitMQ对接logstash
+到ELK平台
+
 在使用中任何问题可以通过下面的方式与我联系：
 snowzhang@aliyun.com
