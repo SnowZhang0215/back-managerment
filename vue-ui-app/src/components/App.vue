@@ -149,33 +149,12 @@ export default {
       console.log(name);
       let params = [];
       this.$commonMethods.getChildFromRootByCode(params,this.menuData,name);
-      // this.menuData.forEach(item =>{
-      //    console.log(item);
-      //    this.findParams(params,item,name);
-      // })
       console.log("params",params);
-      let paramsData = {menuData:params}
+      let paramsData = {menuData:params,parentCode:name}
       this.$router.push({
         name:name,
         params: paramsData
       })
-    },
-  
-    findParams(result,arrayData,name){
-      if(arrayData.children){
-         arrayData.children.forEach(item =>{
-            this.findParams(result,item,name);
-          })
-      }
-      if(arrayData.code === name){
-        // result = arrayData.children
-       if(arrayData.children){
-         arrayData.children.forEach(element => {
-           console.log(element);
-           result.push(element);
-         });
-       }
-      }
     },
     getSubMenuByCurrentKey(name){
       for (let i = 0; i < this.menuData.length; i++) {

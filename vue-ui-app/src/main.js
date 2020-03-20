@@ -53,22 +53,43 @@ new Vue({
         children: childrenRouter
       }];
       menuData.forEach(item => {
-        generateRoutes(childrenRouter,item)
+        generateRoutes(childrenRouter,item,"")
       });
 
       this.$router.addRoutes(result);
+      
 
       console.log(childrenRouter)
 
-      function generateRoutes(childrenRouter,item){
-        if (item.children){
+      // function getStrTargetCount(str,target){
+      //   var obj = {};
+      //   for (var i = 0; i < str.length; i++) {
+      //   var key = str[i];
+      //   if (obj[key]) {
+      //       obj[key]++;
+      //     } else {
+      //       obj[key] = 1;
+      //     }
+      //   }
+      //   if(obj[target]){
+      //     return obj[target]
+      //   }else{
+      //     return 0;
+      //   }
+      // }
+
+      function generateRoutes(childrenRouter,item,parentPath){
+        // console.log(getStrTargetCount(parentPath,'/'))
+        if (item.children){ 
+          parentPath = parentPath + "/" + item.url
+
           item.children.forEach(e =>{
-            generateRoutes(childrenRouter,e)
+            generateRoutes(childrenRouter,e,parentPath)
           })
         }
         if (item.url) {
           childrenRouter.push({
-            path: item.url,
+            path: parentPath ,
             name: item.code,
             component:  () => import('./components' + item.component)
           });
