@@ -113,7 +113,8 @@
 <!--        </root>-->
 <!--    </springProfile>-->
     <root level="info">
-        <appender-ref ref="RabbitMQ" />
+<!--        <appender-ref ref="RabbitMQ" />-->
+        <appender-ref ref="CONSOLE" />
     </root>
 
 </configuration>

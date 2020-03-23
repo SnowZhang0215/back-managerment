@@ -23,6 +23,14 @@ spring:
         port: 5672
         username: guest
         password: guest
+    eureka:
+        client:
+            eureka-server-port: 8761
+            service-url:
+                defaultZone: http://${eureka.instance.hostname}:${eureka.client.eureka-server-port}/eureka/
+        instance:
+            hostname: localhost
+            prefer-ip-address: true
 #
 #feign:
 #  hystrix:

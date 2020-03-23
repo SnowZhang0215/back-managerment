@@ -1,16 +1,16 @@
 <template>
-    <Layout :style="{padding: '5px',background: '#fff'}">
-        <Sider hide-trigger v-if="menus.length>0">
-            <Menu theme="light"  :style="{background: '#fff',minHeight: '540px'}" width="auto" @on-select="onMenuSelect">
-              <MenuItem v-for="item in menus" :name="item.code" :key="item.id">
-              <Icon :type="item.icon"></Icon>
-                  {{item.name}}</MenuItem>
-            </Menu>
-        </Sider>
-        <Content :style="{padding: '24px', minHeight: '280px', background: '#fff'}">
-            <CustomerContent/>
-        </Content>              
-   </Layout>
+    <el-container>
+        <el-aside class="aside-class" v-if="subMenu.length>0">
+          <el-menu mode="vertical" :default-active="activeCode" @select="onMenuSelected">
+                <el-menu-item  v-for="item in subMenu" :key="item.id" :index="item.code">{{item.name}}</el-menu-item>
+            </el-menu>
+        </el-aside>
+        <el-container class="main-container">
+            <el-main>
+                <router-view/>
+            </el-main>
+        </el-container>
+    </el-container>
 </template>
 
 <script>
@@ -18,21 +18,27 @@
         name: "SystemManage",
         data(){
             return {
-                menus:[],
-                currentPath:""
+                subMenu:[],
             }
         },
         created(){
-          console.log(this.$route.params);
-          console.log(this.$router);
-          this.menus = this.$route.params.menuData;
-          this.currentPath = this.$route.params.parentCode;
+          console.log("setting pages",this.$store.state.subMenus);
+          this.subMenu = this.$store.state.subMenus;
+          const currentPath = this.$router.currentRoute.path;
+          let result = currentPath.split('/');
+          if(result.length > 2){
+              this.activeCode = result[2]
+          }
         },
         methods:{
-            onMenuSelect(name){
-            console.log(name)
-           },
-        }
+          onMenuSelected: function(key,keyPath){
+            this.$store.dispatch('changeAsideActive',key);
+            this.$router.push({
+                name: key,
+            })
+          }
+        },
+        
     }
 </script>
 
