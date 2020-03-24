@@ -10,7 +10,7 @@ const store = new Vuex.Store({
         subMenus:[],
         topActiveCode:'',
         asideActiveCode:'',
-
+        userInfo: null
     },
     mutations:{
         menuData(state,data){
@@ -24,6 +24,9 @@ const store = new Vuex.Store({
         },
         asideActiveCode(state,code){
             state.asideActiveCode = code
+        },
+        setUserInfo(state,data){
+            state.userInfo = data
         }
     },
     actions:{
@@ -40,6 +43,9 @@ const store = new Vuex.Store({
         },
         asideActiveCode(state,code){
             state.commit("asideActiveCode",code)
+        },
+        setUserInfo(state,data){
+            state.commit('setUserInfo',data)
         }
     },
     getters:{
@@ -51,6 +57,9 @@ const store = new Vuex.Store({
         },
         getMenuData(state){
             return state.menuData;
+        },
+        getUserInfo(state){
+            return state.userInfo;
         }
     }
 });

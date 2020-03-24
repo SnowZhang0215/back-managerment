@@ -10,6 +10,12 @@ export default {
 </script>
 
 <style>
+a{
+  text-decoration:none;
+}
+p{
+    font-size: 14px;
+}
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
