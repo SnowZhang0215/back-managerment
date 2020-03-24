@@ -1,19 +1,20 @@
 import storage from './storge'
 import axios from './httputil'
 import api from '../api/api.info'
-export function loaduserMenu(onSuccess) {
+import {generateRouter} from '../router/router.service'
+export function loaduserMenu() {
     console.log("load user menus") 
     if (storage.getValue("userMenus")) {
         const menuData = storage.getValue("userMenus")
-        onSuccess(menuData)
+        generateRouter(menuData)
       } else {
          axios.get(api.userMenus).then(
-          response => getUserMenus(response.data,onSuccess)
+          response => getUserMenus(response.data)
         ).catch(error => console.error(error.toString()))
     }
-    function getUserMenus(response,onSuccess){
+    function getUserMenus(response){
         storage.setValue("userMenus",response)
-        onSuccess(response);
+        generateRouter(response);
     }
 }
 export function getSubMenuByParentCode(sourceData,code){

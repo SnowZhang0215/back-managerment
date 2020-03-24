@@ -8,7 +8,6 @@ import ElementUI from 'element-ui'
 import axios from './service/httputil'
 import storage from './service/storge'
 import {loaduserMenu} from './service/menuService'
-import {generateRouter} from './router/router.service'
 import store from './store'
 
 Vue.config.productionTip = false
@@ -26,7 +25,7 @@ new Vue({
   components: { App },
   template: '<App/>',
   created: function(){
-    loaduserMenu(generateRouter)
+    loaduserMenu()
   },
   methods:{
    
