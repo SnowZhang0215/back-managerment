@@ -1,13 +1,5 @@
 server:
   port: 9000
-eureka:
-  client:
-    eureka-server-port: 8761
-    service-url:
-      defaultZone: http://${eureka.instance.hostname}:${eureka.client.eureka-server-port}/eureka/
-  instance:
-    hostname: localhost
-    prefer-ip-address: true
 security:
   oauth2:
     client:
@@ -24,3 +16,20 @@ zuul:
   host:
     connect-timeout-millis: 10000
     socket-timeout-millis: 60000
+#
+#spring:
+#  zipkin:
+#    enabled: true
+#    base-url: http://localhost:9411/
+#    locator:
+#      discovery:
+#        enabled: true
+#    sender:
+#      type: WEB
+#  sleuth:
+#    web:
+#      client:
+#        enabled: true
+#    sampler: 1.0
+    # 默认的采样比率为0.1，不能看到所有请求数据
+    # 更改采样比率为1，就能看到所有的请求数据了，但是这样会增加接口调用延迟

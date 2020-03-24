@@ -64,16 +64,52 @@
             <onMismatch>DENY</onMismatch>
         </filter>
     </appender>
+    <appender name="RabbitMQ" class="org.springframework.amqp.rabbit.logback.AmqpAppender">
+        <layout>
+            <pattern>
+                {
+                "logger_name":"%logger",
+                "loglevel":"%level",
+                "message":"%message",
+                "service":"${module.name:-}",
+                "trace":"%X{X-B3-TraceId:-}",
+                "span":"%X{X-B3-SpanId:-}",
+                "class":"%logger{40}",
+                "host":"${HOSTNAME}",
+                "file":"%F",
+                "method":"%M",
+                "line_number":"%L",
+                "thread_name":"%thread",
+                "timestamp":"%d{yyyy-MM-dd'T'HH:mm:ss:SSS}"
+                }
+            </pattern>
+        </layout>
+        <host>122.112.211.146</host>
+        <port>5672</port>
+        <username>guest</username>
+        <password>guest</password>
+        <declareExchange>true</declareExchange>
+        <exchangeType>direct</exchangeType>
+        <exchangeName>rabbit.log</exchangeName>
+        <routingKeyPattern>info</routingKeyPattern>
+        <generateId>true</generateId>
+        <charset>UTF-8</charset>
+        <durable>true</durable>
+        <deliveryMode>NON_PERSISTENT</deliveryMode>
+        <autoDelete>false</autoDelete>
+    </appender>
 
     <springProfile name="prod">
         <root level="info">
-            <appender-ref ref="FILE" />
+            <appender-ref ref="RabbitMQ" />
         </root>
     </springProfile>
 
     <springProfile name="dev">
         <root level="info">
+<!--            <appender-ref ref="RabbitMQ" />-->
             <appender-ref ref="CONSOLE" />
+<!--            <appender-ref ref="FILE" />-->
         </root>
     </springProfile>
 

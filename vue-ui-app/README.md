@@ -1,6 +1,6 @@
-# y
+# vue-ui-app
 
-> A Vue.js project
+> 基于Vue,Element-UI 构建的应用系统，配合spring-cloud-general使用，前端vue,后端SpringCloud
 
 ## Build Setup
 
@@ -16,12 +16,6 @@ npm run build
 
 # build for production and view the bundle analyzer report
 npm run build --report
-
-# run e2e tests
-npm run e2e
-
-# run all tests
-npm test
 ```
 
 For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).

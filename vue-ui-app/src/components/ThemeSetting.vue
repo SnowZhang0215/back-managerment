@@ -4,7 +4,10 @@
 
 <script>
     export default {
-        name: "ThemeSetting"
+        name: "ThemeSetting",
+        created(){
+            console.log(this.$store.state);
+        }
     }
 </script>
 
