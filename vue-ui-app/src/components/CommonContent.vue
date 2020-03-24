@@ -45,7 +45,7 @@
           let result = currentPath.split('/');
           if(result.length > 2){
               // this.activeCode = result[2]
-              this.$store.dispatch('asideActiveCode',result[2]);
+              // this.$store.dispatch('asideActiveCode',result[2]);
               let params = getSubMenuByParentCode(this.$store.getters.getMenuData,result[1]);
               console.log("params:",params);
               let stateData = {"subMenu":params,topActiveCode:result[1]}
