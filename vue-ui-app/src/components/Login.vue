@@ -73,11 +73,12 @@ export default {
       });
     },
     getUserInfoOk(data) {
-      console.log(data);
+      this.$storage.setValue("userInfo",data);
       this.$store.dispatch("setUserInfo", data);
     },
     getUserInfoError(data) {
       console.log(data);
+      this.$storage.deleteItem("userInfo");
       this.$store.dispatch("setUserInfo", null);
     },
     onLoginFailed(data) {

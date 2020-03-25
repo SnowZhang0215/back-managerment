@@ -4,6 +4,7 @@ import io.snow.model.vo.Permission;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
 
 @Component
 public interface PermissionMapper {
@@ -19,4 +20,10 @@ public interface PermissionMapper {
     List<Permission> getUserPermissionWithApi(String userName);
 
     int insertPermission(Permission permission);
+
+    /**
+     * Permission 权限分页查找
+     * @return
+     */
+    List<Permission> findSubMenusByParentIdPage(Map<String,Object> map);
 }

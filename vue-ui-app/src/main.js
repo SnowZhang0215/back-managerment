@@ -26,6 +26,9 @@ new Vue({
   template: '<App/>',
   created: function(){
     loaduserMenu()
+    if(this.$storage.getValue("userInfo")){
+      store.dispatch("setUserInfo", this.$storage.getValue("userInfo"));
+    }
   },
   methods:{
    

@@ -39,3 +39,13 @@ export function getSubMenuByParentCode(sourceData,code){
         }
     }
 }
+export function getAllPermission(opt){
+    axios.get(api.menuManageList)
+    .then(response => opt.onSuccess(response))
+    .catch(error => opt.onFaild(error))
+}
+export function getSubMenusByParentId(opt){
+    axios.post(api.menuManageSubMenus,opt.params)
+    .then(response => opt.onSuccess(response))
+    .catch(error => opt.onFaild(error))
+}

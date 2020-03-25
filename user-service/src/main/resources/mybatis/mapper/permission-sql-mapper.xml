@@ -55,6 +55,7 @@
     </select>
 
     <sql id="baseColumnList">
+        id,
         name,
         code,
         icon,
@@ -71,8 +72,22 @@
         created_by,
         created_date,
         last_modified_by,
-        last_modified_date,
+        last_modified_date
     </sql>
+
+    <select id="findSubMenusByParentIdPage" resultMap="permissionResultMap" parameterType="java.util.Map">
+        select <include refid="baseColumnList"/>
+        from permission p where p.id > 0
+        <if test="code != null">
+            and p.code = #{code}
+        </if>
+        <if test="parentId != null">
+            and p.parent_id = #{parentId}
+        </if>
+        <if test="name != null">
+            and p.name like concat('%', #{name},'%')
+        </if>
+    </select>
 
     <insert id="insertPermission" parameterType="io.snow.model.vo.Permission">
         insert into permission
@@ -181,7 +196,7 @@
         <where>
             p.status = '1'
             and
-            p.parent_id is null
+            p.parent_id = '0'
         </where>
         order by p.sort;
     </select>

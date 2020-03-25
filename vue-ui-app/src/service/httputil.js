@@ -40,15 +40,15 @@ axios.interceptors.response.use(
   error => {
     if (error.response.status){
       console.log(error.response)
-        // switch (error.response.status) {
-        // case 401:
-        //   router.replace({
-        //     path: '/login',
-        //     query: {
-        //       redirect: router.currentRoute.fullPath
-        //     }
-        //   });
-        //   break;
+        switch (error.response.status) {
+        case 401:
+          router.replace({
+            path: '/login',
+            query: {
+              redirect: router.currentRoute.fullPath
+            }
+          });
+          break;
         // case 403:
         //   router.replace({
         //     path: '/forbidden',
@@ -65,15 +65,16 @@ axios.interceptors.response.use(
         //     }
         //   });
         //   break;
-        // case 500:
-        //   router.replace({
-        //     path: '/error',
-        //     query: {
-        //       redirect: router.currentRoute.fullPath
-        //     }
-        //   });
-        //   break;
-      // }
+        case 500:
+          // router.replace({
+          //   path: '/error',
+          //   query: {
+          //     redirect: router.currentRoute.fullPath
+          //   }
+          // });
+          console.error(error)
+          break;
+      }
     }
     return Promise.reject(error)
   }

@@ -53,10 +53,10 @@ export default {
       let stateData = { subMenu: params, topActiveCode: result[1] };
       this.$store.dispatch("switchMenu", stateData);
     }
-    const token = this.$storage.getValue("access_token");
-    if (token) {
-      getUserInfo(this.getUserInfoOk, this.getUserInfoError);
-    }
+    // const token = this.$storage.getValue("access_token");
+    // if (token) {
+    //   getUserInfo(this.getUserInfoOk, this.getUserInfoError);
+    // }
   },
   computed: {
     activeCode() {
@@ -82,10 +82,19 @@ export default {
     },
     getUserInfoOk(data) {
       console.log(data);
+      this.$storage.setVaule("userInfo",data)
       this.$store.dispatch("setUserInfo", data);
     },
     getUserInfoError(data) {
       console.log(data);
+      if(data.status === 401){
+          this.$router.push({
+              name: '/login'
+          })
+      }else{
+          console.error(data.errorMsg)
+      }
+      this.$storage.deleteItem("userInfo")
       this.$store.dispatch("setUserInfo", null);
     },
 

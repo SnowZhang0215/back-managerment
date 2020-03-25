@@ -2,6 +2,7 @@ package io.snow.springcloud.userservice.controller.outrest;
 
 import io.snow.model.vo.Permission;
 import io.snow.rest.common.ResponseData;
+import io.snow.rest.common.page.PageResult;
 import io.snow.springcloud.userservice.service.impl.MenuService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/menu")
@@ -27,10 +29,22 @@ public class MenuController {
             List<Permission> allMenus = menuService.getAllParentMenus();
             return ResponseData.ok(allMenus);
         } catch (Exception e) {
-            logger.error("get all menu exception : {}",e);
+            logger.error("get all menu exception : {0}",e);
            return ResponseData.error(e.getMessage());
         }
     }
+    @PostMapping("/manage/subMenu")
+    public ResponseData getSubMenuByParentId(@RequestBody Map<String,Object> map){
+        logger.info("get subMenu by ParentId :{}",map);
+        try {
+            PageResult result = menuService.getSubMenuByParentId(map);
+            return ResponseData.ok(result);
+        } catch (Exception e) {
+            logger.error("get subMenu by ParentId : {0}",e);
+            return ResponseData.error(e.getMessage());
+        }
+    }
+
     @PostMapping("/manage/add")
     public ResponseData addPermission(@RequestBody Permission permission,@RequestHeader("userName")String userName){
         logger.info("create permission");
