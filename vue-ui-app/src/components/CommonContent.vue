@@ -1,7 +1,7 @@
 <template>
    <el-container>
-        <el-aside class="aside-class" v-if="subMenusFormState.length>0" style="width:250px">
-          <el-menu mode="vertical" :default-active="activeCode" @select="onMenuSelected" style="width:250px">
+        <el-aside class="aside-class" v-if="subMenusFormState.length>0" >
+          <el-menu mode="vertical" :default-active="activeCode" @select="onMenuSelected">
                 <el-menu-item  v-for="item in subMenusFormState" :key="item.id" :index="item.code">{{item.name}}</el-menu-item>
             </el-menu>
         </el-aside>
