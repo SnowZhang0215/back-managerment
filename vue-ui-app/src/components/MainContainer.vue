@@ -3,7 +3,7 @@
   <el-container>
     <el-header class="header">
       <div>
-        <img class="logo" src="../assets/logo.png"/>
+        <img class="logo" src="../assets/logo.png" />
       </div>
       <div class="right">
         <el-menu
@@ -139,8 +139,8 @@ export default {
   display: flex;
   align-items: center;
 }
-.logo{
-    width: 40px;
-    height: 40px;
+.logo {
+  width: 40px;
+  height: 40px;
 }
 </style>
