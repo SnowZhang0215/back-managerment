@@ -1,6 +1,6 @@
 spring:
   application:
-    name: auth-service
+    name: auth-server
   cloud:
     config:
       discovery:
@@ -10,6 +10,28 @@ spring:
       profile: ${spring.profiles.active}
   profiles:
     active: dev
+  sleuth:
+    web:
+      client:
+        enabled: true
+    sampler:
+      probability: 1.0 # 将采样比例设置为 1.0，也就是全部都需要。默认是 0.1
+  zipkin:
+    base-url: http://localhost:9411/ # 指定了 Zipkin 服务器的地址
+
+  rabbitmq:
+    host: 122.112.211.146
+    port: 5672
+    username: guest
+    password: guest
+  eureka:
+    client:
+      eureka-server-port: 8761
+      service-url:
+        defaultZone: http://${eureka.instance.hostname}:${eureka.client.eureka-server-port}/eureka/
+    instance:
+      hostname: 127.0.0.1
+      prefer-ip-address: true
 #
 #feign:
 #  hystrix:
