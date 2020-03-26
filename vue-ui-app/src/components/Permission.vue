@@ -11,6 +11,14 @@
       ></el-tree>
     </el-aside>
     <el-main>
+      <el-row class="btn-opt">
+        <el-button
+          v-for="btn in pageBtns"
+          :key="btn.id"
+          :type="btn.type"
+          @click="handleBtnClick(btn.method)"
+        >{{btn.name}}</el-button>
+      </el-row>
       <el-table
         :data="tableData"
         :stripe="true"
@@ -48,6 +56,7 @@
 import { getAllPermission } from "../service/menuService";
 import { getSubMenusByParentId } from "../service/menuService";
 import { convertTree } from "../service/tree.service";
+import { showMsgBox, noticeMsg } from "../common/common.service";
 export default {
   name: "Permission",
   data() {
@@ -59,7 +68,32 @@ export default {
       currentPage: 1,
       pageSize: 10,
       totalCount: 0,
-      selection: []
+      selection: [],
+      pageBtns: [
+        {
+          id: 1,
+          name: "新增",
+          type: "primary",
+          method: "add"
+        },
+        {
+          id: 2,
+          name: "修改",
+          type: "warning",
+          method: "edit"
+        },
+        {
+          id: 3,
+          name: "删除",
+          type: "danger",
+          method: "delete"
+        }
+      ],
+      btnMethods: {
+        add: this.add,
+        edit: this.edit,
+        delete: this.delete
+      }
     };
   },
   reloadTable() {},
@@ -71,6 +105,22 @@ export default {
     this.getTableData();
   },
   methods: {
+    handleBtnClick(methodName) {
+      console.log(methodName);
+      const functionName = this.btnMethods[methodName];
+      if (functionName) {
+        return functionName();
+      }
+    },
+    add() {
+      noticeMsg("add", true);
+    },
+    edit() {
+      noticeMsg("edit", true);
+    },
+    delete() {
+      noticeMsg("delete", true);
+    },
     getTableData() {
       this.selection = [];
       let requestOpt = {};
@@ -142,4 +192,10 @@ export default {
 </script>
 
 <style scoped>
+.btn-opt{
+    margin-bottom: 5px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+}
 </style>
