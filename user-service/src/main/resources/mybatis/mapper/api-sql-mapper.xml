@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.snow.springcloud.userservice.mapper.APIMapper">
+    <resultMap id="resultBaseMap" type="io.snow.model.vo.ApiVo">
+        <id property="id" column="id"/>
+        <result column="path" jdbcType="VARCHAR" property="path"/>
+        <result column="description" jdbcType="VARCHAR" property="description"/>
+        <result column="create_by" jdbcType="VARCHAR" property="createBy"/>
+        <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="last_modified_by" jdbcType="VARCHAR" property="lastModifiedBy"/>
+        <result column="last_modified_date" jdbcType="TIMESTAMP" property="lastModifiedDate"/>
+    </resultMap>
+    <select id="selectById"  resultMap="resultBaseMap" parameterType = "java.lang.Long">
+        SELECT
+        a.*
+        FROM
+        api_entity a
+        WHERE
+        a.`id` = #{id}
+    </select>
+</mapper>
