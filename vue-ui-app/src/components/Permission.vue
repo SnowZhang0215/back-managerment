@@ -1,16 +1,18 @@
 <template>
   <el-container>
-    <el-aside style="width:250px">
+    <el-aside style="width:200px">
       <el-tree
         v-if="treeData.length > 0"
         :data="treeData"
         node-key="id"
+        :expand-on-click-node="false"
         :highlight-current="true"
         :default-expanded-keys="[0]"
+        :current-node-key="0"
         @node-click="onNodeClick"
       ></el-tree>
     </el-aside>
-    <el-main>
+    <el-main class="main-content">
       <el-row class="btn-opt">
         <el-button
           v-for="btn in pageBtns"
@@ -24,7 +26,7 @@
         :stripe="true"
         :highlight-current-row="true"
         style="width: 100%"
-        height="450"
+        :header-cell-style="tableHeaderStyle"
         :border="true"
         @select="onRowSelect"
         @select-all="onSelectAll"
@@ -186,16 +188,26 @@ export default {
         console.log("根据key 获取child", key);
         this.getTableData();
       }
+    },
+    tableHeaderStyle({ row, column, rowIndex, columnIndex }) {
+      if (rowIndex === 0) {
+        return "background-color: #f5f7fa;";
+      } else {
+        return "";
+      }
     }
   }
 };
 </script>
 
 <style scoped>
-.btn-opt{
-    margin-bottom: 5px;
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
+.btn-opt {
+  margin-bottom: 5px;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
 }
+/* .table-header {
+  background-color: cornflowerblue;
+} */
 </style>
