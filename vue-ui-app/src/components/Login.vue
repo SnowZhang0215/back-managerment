@@ -43,6 +43,7 @@
 <script>
 import { login } from "../service/login.service";
 import { getUserInfo } from "../service/userinfo.service";
+import {loaduserMenu} from '../service/menuService'
 import store from "../store";
 export default {
   data() {
@@ -64,20 +65,26 @@ export default {
       }
     };
   },
+  created(){
+      this.$storage.clear()
+  },
   methods: {
     onLoginSuccess(data) {
       this.$storage.setValue("access_token", data);
+      this.$storage.deleteItem("userMenus")
+      loaduserMenu()
       getUserInfo(this.getUserInfoOk, this.getUserInfoError);
       this.$router.push({
         name: "/"
       });
     },
     getUserInfoOk(data) {
-      console.log(data);
+      this.$storage.setValue("userInfo",data);
       this.$store.dispatch("setUserInfo", data);
     },
     getUserInfoError(data) {
       console.log(data);
+      this.$storage.deleteItem("userInfo");
       this.$store.dispatch("setUserInfo", null);
     },
     onLoginFailed(data) {

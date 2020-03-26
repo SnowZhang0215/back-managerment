@@ -1,6 +1,10 @@
 package io.snow.springcloud.userservice.service.impl;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import io.snow.model.vo.Permission;
+import io.snow.rest.common.page.PageRequest;
+import io.snow.rest.common.page.PageResult;
 import io.snow.springcloud.userservice.mapper.PermissionMapper;
 import io.snow.springcloud.userservice.service.IMenuService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class MenuService implements IMenuService {
@@ -63,5 +68,20 @@ public class MenuService implements IMenuService {
     public int createPermission(Permission permission) {
         int i = permissionMapper.insertPermission(permission);
         return i;
+    }
+
+    @Override
+    public PageResult getSubMenuByParentId(Map<String, Object> map) {
+        PageRequest pageRequest = new PageRequest();
+        pageRequest.setPageNum((map.get("pageNum") == null ? 1 : Integer.parseInt(String.valueOf(map.get("pageNum")))));
+        pageRequest.setPageSize((map.get("pageSize") == null ? 1 : Integer.parseInt(String.valueOf(map.get("pageSize")))));
+        Page<Object> page = PageHelper.startPage(pageRequest.getPageNum(), pageRequest.getPageSize(), true);
+        List<Permission> list = permissionMapper.findSubMenusByParentIdPage(map);
+        PageResult result = new PageResult();
+        result.setContent(list);
+        result.setTotalSize(page.getTotal());
+        result.setPageNum(pageRequest.getPageNum());
+        result.setPageSize(pageRequest.getPageSize());
+        return result;
     }
 }

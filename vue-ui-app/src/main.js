@@ -25,9 +25,18 @@ new Vue({
   components: { App },
   template: '<App/>',
   created: function(){
-    loaduserMenu()
+    loaduserMenu(this.onLoadFinish)
+    if(this.$storage.getValue("userInfo")){
+      store.dispatch("setUserInfo", this.$storage.getValue("userInfo"));
+    }else{
+      store.dispatch("setUserInfo", null);
+    }
   },
   methods:{
-   
+    onLoadFinish(){
+      router.push({
+        name: '/'
+      })
+    }
   }
 })

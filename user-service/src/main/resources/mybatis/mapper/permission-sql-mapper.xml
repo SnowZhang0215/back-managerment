@@ -41,20 +41,22 @@
         <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
         <result column="last_modified_by" jdbcType="VARCHAR" property="lastModifiedBy"/>
         <result column="last_modified_date" jdbcType="TIMESTAMP" property="lastModifiedDate"/>
-        <association property="permissionApi" column="api_id" select="selectApiById"/>
+<!--        <collection property="permissionApis" column="a_id" />-->
+        <association property="permissionApi" column="a_id"  select="io.snow.springcloud.userservice.mapper.APIMapper.selectById"/>
     </resultMap>
 
-    <resultMap id="apiResultMap" type="io.snow.model.vo.ApiVo">
-        <id property="id" column="id"/>
-        <result column="path" jdbcType="VARCHAR" property="path"/>
-        <result column="description" jdbcType="VARCHAR" property="description"/>
-    </resultMap>
+<!--    <resultMap id="apiResultMap" type="io.snow.model.vo.ApiVo">-->
+<!--        <id property="id" column="id"/>-->
+<!--        <result column="path" jdbcType="VARCHAR" property="path"/>-->
+<!--        <result column="description" jdbcType="VARCHAR" property="description"/>-->
+<!--    </resultMap>-->
 
-    <select id="selectApiById" resultMap="apiResultMap">
-        select * from api_entity where id = #{id}
-    </select>
+<!--    <select id="selectApiById" resultMap="apiResultMap">-->
+<!--        select * from api_entity where id = #{id}-->
+<!--    </select>-->
 
     <sql id="baseColumnList">
+        id,
         name,
         code,
         icon,
@@ -66,13 +68,26 @@
       	is_menu,
         default_type,
       	component,
-      	api_id,
       	parent_id,
         created_by,
         created_date,
         last_modified_by,
-        last_modified_date,
+        last_modified_date
     </sql>
+
+    <select id="findSubMenusByParentIdPage" resultMap="permissionResultMap" parameterType="java.util.Map">
+        select <include refid="baseColumnList"/>
+        from permission p where p.id > 0
+        <if test="code != null">
+            and p.code = #{code}
+        </if>
+        <if test="parentId != null">
+            and p.parent_id = #{parentId}
+        </if>
+        <if test="name != null">
+            and p.name like concat('%', #{name},'%')
+        </if>
+    </select>
 
     <insert id="insertPermission" parameterType="io.snow.model.vo.Permission">
         insert into permission
@@ -130,20 +145,21 @@
 
     <select id="getUserPermissionWithApi" resultMap = "permissionResultMap">
         SELECT
-            *
+        DISTINCT(p.id), p.*,pa.*,rp.*,ur.*
         FROM
-            permission p
+        permission p
+        left JOIN permission_api pa on pa.p_id = p.id
         LEFT JOIN role_privilege rp ON rp.permission_id = p.id
         LEFT JOIN user_role ur ON ur.role_id = rp.role_id
         WHERE
-            p.`status` = '1'
+        p.`status` = '1'
         AND ur.user_id =(
-            SELECT
-                id
-            FROM
-                USER
-            WHERE
-                USER .user_name = #{userName}
+        SELECT
+        id
+        FROM
+        USER
+        WHERE
+        USER .user_name =#{userName}
         )
     </select>
 
@@ -181,7 +197,7 @@
         <where>
             p.status = '1'
             and
-            p.parent_id is null
+            p.parent_id = '0'
         </where>
         order by p.sort;
     </select>

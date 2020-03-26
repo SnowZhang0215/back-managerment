@@ -2,7 +2,8 @@ import storage from './storge'
 import axios from './httputil'
 import api from '../api/api.info'
 import {generateRouter} from '../router/router.service'
-export function loaduserMenu() {
+import store from '../store/index'
+export function loaduserMenu(callback) {
     console.log("load user menus") 
     if (storage.getValue("userMenus")) {
         const menuData = storage.getValue("userMenus")
@@ -14,7 +15,11 @@ export function loaduserMenu() {
     }
     function getUserMenus(response){
         storage.setValue("userMenus",response)
+        store.dispatch("menuData", response);
         generateRouter(response);
+        if(callback){
+            callback();
+        }
     }
 }
 export function getSubMenuByParentCode(sourceData,code){
@@ -38,4 +43,14 @@ export function getSubMenuByParentCode(sourceData,code){
             }
         }
     }
+}
+export function getAllPermission(opt){
+    axios.get(api.menuManageList)
+    .then(response => opt.onSuccess(response))
+    .catch(error => opt.onFaild(error))
+}
+export function getSubMenusByParentId(opt){
+    axios.post(api.menuManageSubMenus,opt.params)
+    .then(response => opt.onSuccess(response))
+    .catch(error => opt.onFaild(error))
 }
