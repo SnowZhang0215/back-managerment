@@ -39,7 +39,7 @@ let router =  new Router({
         title: '注册'
       },
       component: Regester
-    }
+    },
   ]
 })
 router.beforeEach((to, from, next) => {

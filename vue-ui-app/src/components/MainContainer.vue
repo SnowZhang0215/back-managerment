@@ -12,7 +12,7 @@
           mode="horizontal"
           @select="onMenuSelected"
         >
-          <el-menu-item v-for="item in menuData" :key="item.id" :index="item.code">{{item.name}}</el-menu-item>
+          <el-menu-item v-for="item in menuData" :key="item.id" :index="item.url">{{item.name}}</el-menu-item>
         </el-menu>
         <div class="user-info">
           <i class="el-icon-user-solid"></i>
@@ -31,6 +31,9 @@
 <script>
 import { loaduserMenu, getSubMenuByParentCode } from "../service/menuService";
 import { getUserInfo } from "../service/userinfo.service";
+import { showMsgBox,noticeMsg } from "../common/common.service";
+import {logout} from '../service/login.service'
+// import commonService from './common/commonService'
 export default {
   data() {
     return {
@@ -39,6 +42,7 @@ export default {
     };
   },
   created: function() {
+    // noticeMsg("xxxx",true)
     this.initMenu();
     const currentPath = this.$router.currentRoute.path;
     let result = currentPath.split("/");
@@ -53,10 +57,9 @@ export default {
       let stateData = { subMenu: params, topActiveCode: result[1] };
       this.$store.dispatch("switchMenu", stateData);
     }
-    // const token = this.$storage.getValue("access_token");
-    // if (token) {
-    //   getUserInfo(this.getUserInfoOk, this.getUserInfoError);
-    // }
+    if(!this.$storage.getValue("access_token")){
+           this.$store.dispatch("setUserInfo", null);
+      }
   },
   computed: {
     activeCode() {
@@ -77,24 +80,26 @@ export default {
         console.log(menuData);
       } else {
         // this.$Message.error("can not load menus");
-        console.log("can not load user menu");
+        // console.log("can not load user menu");
+        // noticeMsg("can not load user menu",true)
+        loaduserMenu();
       }
     },
     getUserInfoOk(data) {
       console.log(data);
-      this.$storage.setVaule("userInfo",data)
+      this.$storage.setVaule("userInfo", data);
       this.$store.dispatch("setUserInfo", data);
     },
     getUserInfoError(data) {
       console.log(data);
-      if(data.status === 401){
-          this.$router.push({
-              name: '/login'
-          })
-      }else{
-          console.error(data.errorMsg)
+      if (data.status === 401) {
+        this.$router.push({
+          name: "/login"
+        });
+      } else {
+        console.error(data.errorMsg);
       }
-      this.$storage.deleteItem("userInfo")
+      this.$storage.deleteItem("userInfo");
       this.$store.dispatch("setUserInfo", null);
     },
 
@@ -114,7 +119,16 @@ export default {
         this.$router.push({
           name: "login"
         });
+      } else {
+        showMsgBox("提示","确定退出？",this.onLogout);
       }
+    },
+    onLogout(){
+        // console.log("logout")
+        // this.$router.push({
+        //   name: "login"
+        // });
+        logout()
     }
   }
 };

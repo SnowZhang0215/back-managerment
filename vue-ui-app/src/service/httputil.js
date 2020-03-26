@@ -1,6 +1,7 @@
 import axios from 'axios';
 import router from '../router';
 import storage from './storge';
+import {noticeMsg} from '../common/common.service'
 
 axios.defaults.timeout = 5000;
 axios.defaults.baseURL ='';
@@ -40,6 +41,9 @@ axios.interceptors.response.use(
   error => {
     if (error.response.status){
       console.log(error.response)
+      if(!error.response){
+        noticeMsg(error)
+      }
         switch (error.response.status) {
         case 401:
           router.replace({
@@ -66,6 +70,7 @@ axios.interceptors.response.use(
         //   });
         //   break;
         case 500:
+          noticeMsg(error)
           // router.replace({
           //   path: '/error',
           //   query: {

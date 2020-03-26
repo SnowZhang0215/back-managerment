@@ -1,4 +1,13 @@
 import router from './index'
+export function clearRouter(){
+  let result = [{
+    path:'/',
+        redirect: '/index',
+        component: () => import('../components/MainContainer'),
+        children: []
+  }]
+  router.addRoutes(result)
+}
 export function generateRouter(data){
     const childrenRouter = [];
     const result = [{
