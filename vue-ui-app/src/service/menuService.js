@@ -3,6 +3,7 @@ import axios from './httputil'
 import api from '../api/api.info'
 import {generateRouter} from '../router/router.service'
 import store from '../store/index'
+import {noticeMsg} from '../common/common.service'
 export function loaduserMenu(callback) {
     console.log("load user menus") 
     if (storage.getValue("userMenus")) {
@@ -53,4 +54,9 @@ export function getSubMenusByParentId(opt){
     axios.post(api.menuManageSubMenus,opt.params)
     .then(response => opt.onSuccess(response))
     .catch(error => opt.onFaild(error))
+}
+export function getPermissionDetail(opt){
+    axios.get(api.menuDetail + '/' + opt.id )
+    .then(response => opt.onSuccess(response))
+    .catch(error => opt.onFaild ? opt.onFaild(error) : noticeMsg(error,true))
 }

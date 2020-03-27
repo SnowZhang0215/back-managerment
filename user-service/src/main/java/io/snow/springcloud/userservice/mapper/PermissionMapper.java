@@ -26,4 +26,11 @@ public interface PermissionMapper {
      * @return
      */
     List<Permission> findSubMenusByParentIdPage(Map<String,Object> map);
+
+    /**
+     * 权限详情，修改时调用
+     * @param id
+     * @return
+     */
+    Permission findPermissionById(Long id);
 }

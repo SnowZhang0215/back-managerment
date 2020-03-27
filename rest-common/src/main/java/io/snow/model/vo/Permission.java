@@ -57,6 +57,8 @@ public class Permission extends BaseVo{
 
     private ApiVo permissionApi;
 
+    private List<ApiVo> permissionHasApi;
+
     public Long getId() {
         return id;
     }
@@ -167,5 +169,13 @@ public class Permission extends BaseVo{
 
     public void setPermissionApi(ApiVo permissionApi) {
         this.permissionApi = permissionApi;
+    }
+
+    public List<ApiVo> getPermissionHasApi() {
+        return permissionHasApi;
+    }
+
+    public void setPermissionHasApi(List<ApiVo> permissionHasApi) {
+        this.permissionHasApi = permissionHasApi;
     }
 }

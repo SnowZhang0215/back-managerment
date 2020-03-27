@@ -53,6 +53,8 @@ axios.interceptors.response.use(
             }
           });
           break;
+          
+          
         // case 403:
         //   router.replace({
         //     path: '/forbidden',
@@ -69,17 +71,18 @@ axios.interceptors.response.use(
         //     }
         //   });
         //   break;
-        case 500:
-          noticeMsg(error)
+        // case 500:
+          
           // router.replace({
           //   path: '/error',
           //   query: {
           //     redirect: router.currentRoute.fullPath
           //   }
           // });
-          console.error(error)
-          break;
+          // console.error(error)
+          // break;
       }
+      noticeMsg(error,true)
     }
     return Promise.reject(error)
   }
