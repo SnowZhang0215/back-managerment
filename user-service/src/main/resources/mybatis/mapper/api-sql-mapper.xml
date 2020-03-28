@@ -18,4 +18,28 @@
         WHERE
         a.`id` = #{id}
     </select>
+    <select id="selectByPath" resultMap="resultBaseMap" parameterType="java.lang.String">
+        select a.* from api_entity a where a.`path` = #{path,jdbcType=VARCHAR}
+    </select>
+    <insert id="insertApiEntity" useGeneratedKeys="true" keyProperty="id" keyColumn="id" parameterType="io.snow.model.vo.ApiVo">
+        INSERT INTO api_entity(
+        path ,
+        description ,
+        create_by ,
+        last_modified_by ,
+        create_date ,
+        last_modified_date ,
+        type
+        )
+        VALUES
+        (
+        #{path},
+        #{description},
+        #{createBy},
+        #{lastModifiedBy},
+        #{createDate},
+        #{lastModifiedDate},
+        #{type}
+        )
+    </insert>
 </mapper>

@@ -54,8 +54,20 @@ public class MenuController {
             int row =  menuService.createPermission(permission);
             return ResponseData.ok(row);
         } catch (Exception e) {
-            logger.error("create permission : {}",e);
+            logger.error("create permission : {0}",e);
             return ResponseData.error("新建权限失败");
+        }
+    }
+
+    @GetMapping("/manage/detail/{id}")
+    public ResponseData getPermissionDetail(@PathVariable("id") Long id,@RequestHeader("userName")String userName){
+        logger.info("get permission detail:{}",id);
+        try {
+            Permission permission = menuService.getPermissionDetail(id);
+            return ResponseData.ok(permission);
+        }catch (Exception e){
+            logger.error("get permission detail exception: {0}",e);
+            return ResponseData.error("获取详情失败");
         }
     }
 

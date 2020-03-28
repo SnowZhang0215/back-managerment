@@ -84,4 +84,9 @@ public class MenuService implements IMenuService {
         result.setPageSize(pageRequest.getPageSize());
         return result;
     }
+
+    @Override
+    public Permission getPermissionDetail(Long id) {
+       return permissionMapper.findPermissionById(id);
+    }
 }

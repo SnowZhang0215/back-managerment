@@ -1,59 +1,44 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="io.snow.springcloud.userservice.mapper.PermissionMapper">
-    <resultMap id="resultBaseMap" type="io.snow.model.vo.Permission">
+    <resultMap id="permissionMap" type="io.snow.model.vo.Permission">
         <id property="id" column="id"/>
         <result column="code" jdbcType="VARCHAR" property="code"/>
         <result column="parent_code" jdbcType="VARCHAR" property="parentCode"/>
         <result column="name" jdbcType="VARCHAR" property="name"/>
         <result column="url" jdbcType="VARCHAR" property="url"/>
         <result column="parent_id" jdbcType="BIGINT" property="parentId"/>
-        <result column="is_menu" jdbcType="VARCHAR" property="isMenu"/>
+        <result column="permission_type" jdbcType="VARCHAR" property="permissionType"/>
         <result column="level" jdbcType="VARCHAR" property="level"/>
-        <result column="sort" jdbcType="BIGINT" property="level"/>
+        <result column="sort" jdbcType="BIGINT" property="sort"/>
         <result column="status" jdbcType="VARCHAR" property="status"/>
         <result column="icon" jdbcType="VARCHAR" property="icon"/>
-        <result column="defaultType" jdbcType="BIGINT" property="defaultType"/>
+        <result column="default_type" jdbcType="BIGINT" property="defaultType"/>
         <result column="component" jdbcType="VARCHAR" property="component"/>
         <result column="create_by" jdbcType="VARCHAR" property="createBy"/>
         <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
         <result column="last_modified_by" jdbcType="VARCHAR" property="lastModifiedBy"/>
         <result column="last_modified_date" jdbcType="TIMESTAMP" property="lastModifiedDate"/>
+    </resultMap>
+
+    <resultMap id="resultBaseMap" type="io.snow.model.vo.Permission" extends="permissionMap">
         <collection property="children" column="id" ofType="io.snow.model.vo.Permission" select="selectByPid"/>
     </resultMap>
 
+    <resultMap id="detailMap" type="io.snow.model.vo.Permission" extends="permissionMap">
+        <collection property="permissionHasApi" ofType="io.snow.model.vo.ApiVo">
+            <id property="id" column="apiId"/>
+            <result column="path" jdbcType="VARCHAR" property="path"/>
+            <result column="description" jdbcType="VARCHAR" property="description"/>
+        </collection>
+    </resultMap>
+
     <!--权限基础结果集，不级联child，管理权限API-->
-    <resultMap id="permissionResultMap" type="io.snow.model.vo.Permission">
-        <id property="id" column="id"/>
-        <result column="code" jdbcType="VARCHAR" property="code"/>
-        <result column="parent_code" jdbcType="VARCHAR" property="parentCode"/>
-        <result column="name" jdbcType="VARCHAR" property="name"/>
-        <result column="url" jdbcType="VARCHAR" property="url"/>
-        <result column="parent_id" jdbcType="BIGINT" property="parentId"/>
-        <result column="is_menu" jdbcType="VARCHAR" property="isMenu"/>
-        <result column="level" jdbcType="VARCHAR" property="level"/>
-        <result column="sort" jdbcType="BIGINT" property="level"/>
-        <result column="status" jdbcType="VARCHAR" property="status"/>
-        <result column="icon" jdbcType="VARCHAR" property="icon"/>
-        <result column="defaultType" jdbcType="BIGINT" property="defaultType"/>
-        <result column="component" jdbcType="VARCHAR" property="component"/>
-        <result column="create_by" jdbcType="VARCHAR" property="createBy"/>
-        <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
-        <result column="last_modified_by" jdbcType="VARCHAR" property="lastModifiedBy"/>
-        <result column="last_modified_date" jdbcType="TIMESTAMP" property="lastModifiedDate"/>
+    <resultMap id="permissionResultMap" type="io.snow.model.vo.Permission" extends="permissionMap">
 <!--        <collection property="permissionApis" column="a_id" />-->
         <association property="permissionApi" column="a_id"  select="io.snow.springcloud.userservice.mapper.APIMapper.selectById"/>
     </resultMap>
 
-<!--    <resultMap id="apiResultMap" type="io.snow.model.vo.ApiVo">-->
-<!--        <id property="id" column="id"/>-->
-<!--        <result column="path" jdbcType="VARCHAR" property="path"/>-->
-<!--        <result column="description" jdbcType="VARCHAR" property="description"/>-->
-<!--    </resultMap>-->
-
-<!--    <select id="selectApiById" resultMap="apiResultMap">-->
-<!--        select * from api_entity where id = #{id}-->
-<!--    </select>-->
 
     <sql id="baseColumnList">
         id,
@@ -65,7 +50,7 @@
       	status,
         sort,
       	url,
-      	is_menu,
+      	permission_type,
         default_type,
       	component,
       	parent_id,
@@ -95,7 +80,7 @@
             <include refid="baseColumnList"/>
         </trim>
         values (
-        #{name},#{code},#{icon},#{level},#{parentCode},#{status},#{sort},#{url},#{isMenu},#{defaultType},#{component},#{parentId},
+        #{name},#{code},#{icon},#{level},#{parentCode},#{status},#{sort},#{url},#{permissionType},#{defaultType},#{component},#{parentId},
         #{createdBy},#{createdDate},#{lastModifiedBy},#{lastModifiedDate}
         )
     </insert>
@@ -144,11 +129,27 @@
     </select>
 
     <select id="getUserPermissionWithApi" resultMap = "permissionResultMap">
-        SELECT
-        DISTINCT(p.id), p.*,pa.*,rp.*,ur.*
+        SELECT DISTINCT
+        (p.id) ,
+        p.created_by ,
+        p.created_date ,
+        p.last_modified_by ,
+        p.last_modified_date ,
+        p.`code` ,
+        p.default_type ,
+        p.icon ,
+        p.permission_type ,
+        p.`level` ,
+        p.`name` ,
+        p.parent_code ,
+        p.sort ,
+        p.`status` ,
+        p.url ,
+        p.parent_id ,
+        p.component, pa.*, rp.*, ur.*
         FROM
         permission p
-        left JOIN permission_api pa on pa.p_id = p.id
+        LEFT JOIN permission_api pa ON pa.p_id = p.id
         LEFT JOIN role_privilege rp ON rp.permission_id = p.id
         LEFT JOIN user_role ur ON ur.role_id = rp.role_id
         WHERE
@@ -159,8 +160,9 @@
         FROM
         USER
         WHERE
-        USER .user_name =#{userName}
-        )
+        USER .user_name = #{userName}
+        );
+
     </select>
 
     <select id="getUserPermissionsIds" resultType = "Long">
@@ -200,5 +202,18 @@
             p.parent_id = '0'
         </where>
         order by p.sort;
+    </select>
+
+    <select id="findPermissionById" resultMap="detailMap" parameterType="Long">
+        SELECT
+        p.*, ae.id AS apiId ,
+        ae.path ,
+        ae.description
+        FROM
+        permission p
+        LEFT JOIN permission_api pa ON p.id = pa.p_id
+        LEFT JOIN api_entity ae ON pa.a_id = ae.id
+        WHERE
+        p.id = #{id,jdbcType=BIGINT}
     </select>
 </mapper>

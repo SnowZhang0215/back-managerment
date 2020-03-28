@@ -8,6 +8,7 @@ const api = {
 
 
     menuManageList:'api/user-service/menu/manage/list',
+    menuDetail:'api/user-service/menu/manage/detail',
     menuManageAdd:'api/user-service/menu/manage/add',
     menuManageSubMenus:'api/user-service/menu/manage/subMenu',
     menuManageUpdate:'api/user-service/menu/manage/update',

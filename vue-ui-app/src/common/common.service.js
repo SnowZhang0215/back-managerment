@@ -1,4 +1,4 @@
-import { MessageBox, Notification } from 'element-ui'
+import { MessageBox, Notification ,Dialog} from 'element-ui'
 export function noticeMsg(msg, autoClose) {
     let config = {};
     config.title = "提示"

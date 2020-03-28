@@ -1,16 +1,18 @@
 <template>
   <el-container>
-    <el-aside style="width:250px">
+    <el-aside style="width:200px">
       <el-tree
         v-if="treeData.length > 0"
         :data="treeData"
         node-key="id"
+        :expand-on-click-node="true"
         :highlight-current="true"
         :default-expanded-keys="[0]"
+        :current-node-key="0"
         @node-click="onNodeClick"
       ></el-tree>
     </el-aside>
-    <el-main>
+    <el-main class="main-content">
       <el-row class="btn-opt">
         <el-button
           v-for="btn in pageBtns"
@@ -24,14 +26,15 @@
         :stripe="true"
         :highlight-current-row="true"
         style="width: 100%"
-        height="450"
+        :header-cell-style="tableHeaderStyle"
         :border="true"
         @select="onRowSelect"
         @select-all="onSelectAll"
       >
         <el-table-column type="selection" width="55"></el-table-column>
-        <el-table-column prop="id" label="ID" width="180"></el-table-column>
-        <el-table-column prop="code" label="编码" width="180"></el-table-column>
+        <el-table-column prop="id" label="ID" width="55"></el-table-column>
+        <el-table-column prop="isMenu" label="权限类型"></el-table-column>
+        <el-table-column prop="url" label="权限跳转路径"></el-table-column>
         <el-table-column prop="name" label="名称"></el-table-column>
         <el-table-column prop="component" label="组件"></el-table-column>
       </el-table>
@@ -49,20 +52,39 @@
         ></el-pagination>
       </el-row>
     </el-main>
+    <el-dialog
+      :title="dialogTitle"
+      :visible.sync="showDialog"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :destroy-on-close="true"
+      center
+      :append-to-body="true"
+      width="50%"
+    >
+      <permission-edit :data-model="editDataModel"></permission-edit>
+    </el-dialog>
   </el-container>
 </template>
 
 <script>
 import { getAllPermission } from "../service/menuService";
-import { getSubMenusByParentId } from "../service/menuService";
+import {
+  getSubMenusByParentId,
+  getPermissionDetail
+} from "../service/menuService";
 import { convertTree } from "../service/tree.service";
 import { showMsgBox, noticeMsg } from "../common/common.service";
+import PermissionEdit from "./edit/PermissionEdit";
 export default {
   name: "Permission",
+  components: {
+    PermissionEdit
+  },
   data() {
     return {
       info: "",
-      currentKey: "",
+      currentKey: "0",
       tableData: [],
       treeData: [],
       currentPage: 1,
@@ -93,7 +115,11 @@ export default {
         add: this.add,
         edit: this.edit,
         delete: this.delete
-      }
+      },
+      //eidt
+      showDialog: false,
+      dialogTitle: "",
+      editDataModel: {}
     };
   },
   reloadTable() {},
@@ -113,13 +139,37 @@ export default {
       }
     },
     add() {
-      noticeMsg("add", true);
+      this.editDataModel = {};
+      this.editDataModel.parentId = this.currentKey;
+      this.showEditDialog("新建", this.editDataModel);
     },
     edit() {
-      noticeMsg("edit", true);
+      if (this.selection.length <= 0) {
+        noticeMsg("请选择要编辑的数据", true);
+      } else if (this.selection.length > 1) {
+        noticeMsg("请选择一条数据", true);
+      } else {
+        let opt = {};
+        opt.id = this.selection[0].id;
+        opt.onSuccess = this.detailOk;
+        getPermissionDetail(opt);
+      }
+    },
+    detailOk(data) {
+      console.log(data);
+      if (data.errorCode === 200) {
+        this.showEditDialog("编辑", data.data);
+      } else {
+        noticeMsg("获取权限详情失败", true);
+      }
     },
     delete() {
       noticeMsg("delete", true);
+    },
+    showEditDialog(title, data) {
+      this.showDialog = true;
+      this.dialogTitle = title;
+      this.editDataModel = data;
     },
     getTableData() {
       this.selection = [];
@@ -186,16 +236,26 @@ export default {
         console.log("根据key 获取child", key);
         this.getTableData();
       }
+    },
+    tableHeaderStyle({ row, column, rowIndex, columnIndex }) {
+      if (rowIndex === 0) {
+        return "background-color: #f5f7fa;";
+      } else {
+        return "";
+      }
     }
   }
 };
 </script>
 
 <style scoped>
-.btn-opt{
-    margin-bottom: 5px;
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
+.btn-opt {
+  margin-bottom: 5px;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
 }
+/* .table-header {
+  background-color: cornflowerblue;
+} */
 </style>

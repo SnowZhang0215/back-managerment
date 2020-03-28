@@ -15,4 +15,6 @@ public interface IMenuService {
     int createPermission(Permission permission);
 
     PageResult getSubMenuByParentId(Map<String, Object> map);
+
+    Permission getPermissionDetail(Long id);
 }
