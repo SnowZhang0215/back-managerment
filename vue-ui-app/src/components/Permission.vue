@@ -55,6 +55,9 @@
     <el-dialog
       :title="dialogTitle"
       :visible.sync="showDialog"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :destroy-on-close="true"
       center
       :append-to-body="true"
       width="50%"
@@ -136,10 +139,9 @@ export default {
       }
     },
     add() {
-    this.editDataModel = {};
-    this.editDataModel.parentId = this.currentKey;
-    this.showEditDialog("新建",this.editDataModel);
-
+      this.editDataModel = {};
+      this.editDataModel.parentId = this.currentKey;
+      this.showEditDialog("新建", this.editDataModel);
     },
     edit() {
       if (this.selection.length <= 0) {
