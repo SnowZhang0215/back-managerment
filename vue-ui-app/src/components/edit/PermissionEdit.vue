@@ -7,7 +7,7 @@
       <el-input v-model="dataModel.name"></el-input>
     </el-form-item>
     <el-form-item label="是否默认" prop="defaultType">
-      <el-select v-model="dataModel.defaultType" placeholder="请选择">
+      <el-select v-model="dataModel.defaultType" placeholder="请选择是否默认">
         <el-option
           v-for="item in defaultTypeOptions"
           :key="item.value"
@@ -16,8 +16,15 @@
         ></el-option>
       </el-select>
     </el-form-item>
-    <el-form-item label="权限类型" prop="isMenu">
-      <el-input v-model="dataModel.isMenu"></el-input>
+    <el-form-item label="权限类型" prop="permissionType">
+      <el-select v-model="dataModel.permissionType" placeholder="请选择权限类型">
+        <el-option
+          v-for="item in permissionTypeOptions"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"
+        ></el-option>
+      </el-select>
     </el-form-item>
     <el-form-item label="路由路径" prop="url">
       <el-input v-model="dataModel.url"></el-input>
@@ -38,8 +45,12 @@ export default {
   data() {
     return {
       defaultTypeOptions: [
-        { label: "是", value: 0 },
-        { label: "否", value: 1 }
+        { label: "是", value: "0" },
+        { label: "否", value: "1" }
+      ],
+      permissionTypeOptions: [
+        { label: "菜单", value: "1" },
+        { label: "按钮", value: "2" }
       ],
       rules: {
         name: [

@@ -29,7 +29,7 @@ public class Permission extends BaseVo{
 
     private String url;
 
-    private String isMenu;
+    private String permissionType;
 
     private String level;
 
@@ -97,14 +97,6 @@ public class Permission extends BaseVo{
 
     public void setUrl(String url) {
         this.url = url;
-    }
-
-    public String getIsMenu() {
-        return isMenu;
-    }
-
-    public void setIsMenu(String isMenu) {
-        this.isMenu = isMenu;
     }
 
     public String getLevel() {
@@ -177,5 +169,13 @@ public class Permission extends BaseVo{
 
     public void setPermissionHasApi(List<ApiVo> permissionHasApi) {
         this.permissionHasApi = permissionHasApi;
+    }
+
+    public String getPermissionType() {
+        return permissionType;
+    }
+
+    public void setPermissionType(String permissionType) {
+        this.permissionType = permissionType;
     }
 }

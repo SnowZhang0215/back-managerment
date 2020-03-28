@@ -5,7 +5,7 @@
         v-if="treeData.length > 0"
         :data="treeData"
         node-key="id"
-        :expand-on-click-node="false"
+        :expand-on-click-node="true"
         :highlight-current="true"
         :default-expanded-keys="[0]"
         :current-node-key="0"
