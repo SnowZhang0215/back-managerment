@@ -59,6 +59,18 @@ public class Permission extends BaseVo{
 
     private List<ApiVo> permissionHasApi;
 
+    private String btnMethod;
+
+    public String getBtnType() {
+        return btnType;
+    }
+
+    public void setBtnType(String btnType) {
+        this.btnType = btnType;
+    }
+
+    private String btnType;
+
     public Long getId() {
         return id;
     }
@@ -177,5 +189,13 @@ public class Permission extends BaseVo{
 
     public void setPermissionType(String permissionType) {
         this.permissionType = permissionType;
+    }
+
+    public String getBtnMethod() {
+        return btnMethod;
+    }
+
+    public void setBtnMethod(String btnMethod) {
+        this.btnMethod = btnMethod;
     }
 }

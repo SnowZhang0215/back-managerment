@@ -15,6 +15,8 @@
         <result column="icon" jdbcType="VARCHAR" property="icon"/>
         <result column="default_type" jdbcType="BIGINT" property="defaultType"/>
         <result column="component" jdbcType="VARCHAR" property="component"/>
+        <result column="btn_method" jdbcType="VARCHAR" property="btnMethod"/>
+        <result column="btn_type" jdbcType="VARCHAR" property="btnType"/>
         <result column="create_by" jdbcType="VARCHAR" property="createBy"/>
         <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
         <result column="last_modified_by" jdbcType="VARCHAR" property="lastModifiedBy"/>
@@ -54,6 +56,8 @@
         default_type,
       	component,
       	parent_id,
+        btn_method,
+        btn_type,
         created_by,
         created_date,
         last_modified_by,
@@ -80,8 +84,25 @@
             <include refid="baseColumnList"/>
         </trim>
         values (
-        #{name},#{code},#{icon},#{level},#{parentCode},#{status},#{sort},#{url},#{permissionType},#{defaultType},#{component},#{parentId},
-        #{createdBy},#{createdDate},#{lastModifiedBy},#{lastModifiedDate}
+        #{id},
+        #{name},
+        #{code},
+        #{icon},
+        #{level},
+        #{parentCode},
+        #{status},
+        #{sort},
+        #{url},
+        #{permissionType},
+        #{defaultType},
+        #{component},
+        #{parentId},
+        #{btnMethod},
+        #{btnType},
+        #{createdBy},
+        #{createdDate},
+        #{lastModifiedBy},
+        #{lastModifiedDate}
         )
     </insert>
 
@@ -146,6 +167,8 @@
         p.`status` ,
         p.url ,
         p.parent_id ,
+        p.btn_method,
+        p.btn_type,
         p.component, pa.*, rp.*, ur.*
         FROM
         permission p
@@ -216,4 +239,20 @@
         WHERE
         p.id = #{id,jdbcType=BIGINT}
     </select>
+
+    <select id="findPermissionByUrl" resultMap="detailMap" parameterType="String">
+        select
+        *
+        from permission p
+        <where>
+            p.url = #{url,jdbcType=BIGINT}
+        </where>
+    </select>
+
+    <delete id="deletePermission" parameterType="List">
+        delete from permission where id in
+        <foreach collection="list" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
 </mapper>

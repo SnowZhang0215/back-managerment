@@ -1,19 +1,19 @@
 <template>
   <el-form :model="dataModel" :rules="rules" ref="dataModel" class="form-class" label-width="35%">
     <el-row class="row">
-      <el-col :lg="8" :md="12" :sm="24">
+      <el-col :lg="12" :md="12" :sm="24">
         <el-form-item label="父权限ID" prop="parentId">
           <el-input v-model="dataModel.parentId" disabled="disabled"></el-input>
         </el-form-item>
       </el-col>
-      <el-col :lg="8" :md="12" :sm="24">
+      <el-col :lg="12" :md="12" :sm="24">
         <el-form-item label="权限名称" prop="name">
           <el-input v-model="dataModel.name"></el-input>
         </el-form-item>
       </el-col>
     </el-row>
     <el-row class="row">
-      <el-col :lg="8" :md="12" :sm="24">
+      <el-col :lg="12" :md="12" :sm="24">
         <el-form-item label="是否默认" prop="defaultType">
           <el-select v-model="dataModel.defaultType" placeholder="请选择是否默认">
             <el-option
@@ -25,7 +25,7 @@
           </el-select>
         </el-form-item>
       </el-col>
-      <el-col :lg="8" :md="12" :sm="24">
+      <el-col :lg="12" :md="12" :sm="24">
         <el-form-item label="权限类型" prop="permissionType">
           <el-select
             v-model="dataModel.permissionType"
@@ -43,7 +43,7 @@
       </el-col>
     </el-row>
     <el-row class="row">
-      <el-col :lg="8" :md="12" :sm="24">
+      <el-col :lg="12" :md="12" :sm="24">
         <el-form-item label="是否启用" prop="status">
           <el-select v-model="dataModel.status" placeholder="请选择启用状态">
             <el-option
@@ -55,31 +55,41 @@
           </el-select>
         </el-form-item>
       </el-col>
-      <el-col :lg="8" :md="12" :sm="24">
+      <el-col :lg="12" :md="12" :sm="24">
         <el-form-item label="排序" prop="sort">
           <el-input v-model="dataModel.sort"></el-input>
         </el-form-item>
       </el-col>
     </el-row>
-    <el-row class="row" v-if="dataModel.permissionType == 1 || dataModel.permissionType == null ">
-      <el-col :lg="8" :md="12" :sm="24">
+    <el-row class="row">
+      <el-col
+        :lg="12"
+        :md="12"
+        :sm="24"
+        v-if="dataModel.permissionType == 1 || dataModel.permissionType == null "
+      >
         <el-form-item label="路由路径" prop="url">
           <el-input v-model="dataModel.url"></el-input>
         </el-form-item>
       </el-col>
-      <el-col :lg="8" :md="12" :sm="24">
+      <el-col
+        :lg="12"
+        :md="12"
+        :sm="24"
+        v-if="dataModel.permissionType == 1 || dataModel.permissionType == null "
+      >
         <el-form-item label="权限对应组件" prop="component">
           <el-input v-model="dataModel.component"></el-input>
         </el-form-item>
       </el-col>
     </el-row>
-    <el-row class="row" v-if="dataModel.permissionType == 2">
-      <el-col :lg="8" :md="12" :sm="24">
+    <el-row class="row">
+      <el-col :lg="12" :md="12" :sm="24" v-if="dataModel.permissionType == 2">
         <el-form-item label="按钮方法" prop="btnMethod">
           <el-input v-model="dataModel.btnMethod"></el-input>
         </el-form-item>
       </el-col>
-      <el-col :lg="8" :md="12" :sm="24">
+      <el-col :lg="12" :md="12" :sm="24" v-if="dataModel.permissionType == 2">
         <el-form-item label="按钮类型" prop="btnType">
           <el-select v-model="dataModel.btnType" placeholder="请选择按钮类型">
             <el-option
@@ -92,29 +102,21 @@
         </el-form-item>
       </el-col>
     </el-row>
-
-    <!-- <el-row class="row">
-      <el-col :lg="8" :md="12" :sm="24">
-        <el-form-item label="父权限ID" prop="parentId">
-          <el-input v-model="dataModel.parentId" disabled="disabled"></el-input>
+    <el-row class="row">
+      <el-col :lg="12" :md="12" :sm="24">
+        <el-form-item>
+          <el-button type="primary" @click="submitForm('dataModel')">提交</el-button>
+          <el-button @click="resetForm('dataModel')">重置</el-button>
         </el-form-item>
       </el-col>
-      <el-col :lg="8" :md="12" :sm="24">
-        <el-form-item label="权限名称" prop="name">
-          <el-input v-model="dataModel.name"></el-input>
-        </el-form-item>
-      </el-col>
-    </el-row>-->
-
-    <el-form-item>
-      <el-button type="primary" @click="submitForm('dataModel')">立即创建</el-button>
-      <el-button @click="resetForm('dataModel')">重置</el-button>
-    </el-form-item>
+    </el-row>
   </el-form>
 </template>
 <script>
+import { createPermission } from "../../service/menuService";
+import { noticeMsg } from "../../common/common.service";
 export default {
-  props: ["dataModel"],
+  props: { dataModel: Object, onfinish: Function },
   name: "PermissionEdit",
   data() {
     var validateUrl = (rule, value, callback) => {
@@ -132,6 +134,28 @@ export default {
       if (this.dataModel.permissionType == 1) {
         if (!value) {
           callback(new Error("请输入菜单对应的组件"));
+        } else {
+          callback();
+        }
+      } else {
+        callback();
+      }
+    };
+    let validateBtnMethod = (rule, value, callback) => {
+      if (this.dataModel.permissionType == 2) {
+        if (!value) {
+          callback(new Error("请输入按钮对应的方法"));
+        } else {
+          callback();
+        }
+      } else {
+        callback();
+      }
+    };
+    let validateBtnType = (rule, value, callback) => {
+      if (this.dataModel.permissionType == 2) {
+        if (!value) {
+          callback(new Error("请选择按钮的类型"));
         } else {
           callback();
         }
@@ -179,18 +203,22 @@ export default {
             validator: validateComponent,
             trigger: "blur"
           }
-        ]
+        ],
+        btnType: [{ validator: validateBtnType, trigger: "change" }],
+        btnMethod: [{ validator: validateBtnMethod, trigger: "blur" }]
       }
     };
-  },
-  created() {
-    console.log(this.dataModel);
   },
   methods: {
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          alert("submit!");
+          let option = {};
+          option.onSuccess = this.onSubmitOk;
+          option.onFaild = this.onSubmitFaild;
+          option.params = this.dataModel;
+          createPermission(option);
+          //   console.log(this.dataModel);
         } else {
           console.log("error submit!!");
           return false;
@@ -202,6 +230,15 @@ export default {
     },
     onPermissionTypeChange(val) {
       console.log("currnt chose val", val);
+    },
+    onSubmitOk(data) {
+      if (data.errorCode == 200) {
+        console.log("提交成功");
+        this.onfinish(1);
+      }
+    },
+    onSubmitFaild(error) {
+      noticeMsg(error, true);
     }
   }
 };

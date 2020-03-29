@@ -66,6 +66,7 @@ public class MenuService implements IMenuService {
     @Override
     @Transactional(propagation= Propagation.REQUIRED,isolation= Isolation.READ_COMMITTED)
     public int createPermission(Permission permission) {
+        permissionMapper.findPermissionByUrl(permission.getUrl());
         int i = permissionMapper.insertPermission(permission);
         return i;
     }
@@ -88,5 +89,11 @@ public class MenuService implements IMenuService {
     @Override
     public Permission getPermissionDetail(Long id) {
        return permissionMapper.findPermissionById(id);
+    }
+
+    @Override
+    @Transactional(propagation= Propagation.REQUIRED,isolation= Isolation.READ_COMMITTED)
+    public int deletePermission(List<Long> deleteIds) {
+        return this.permissionMapper.deletePermission(deleteIds);
     }
 }

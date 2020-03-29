@@ -33,4 +33,8 @@ public interface PermissionMapper {
      * @return
      */
     Permission findPermissionById(Long id);
+
+    Permission findPermissionByUrl(String url);
+
+    int deletePermission(List<Long> deleteIds);
 }

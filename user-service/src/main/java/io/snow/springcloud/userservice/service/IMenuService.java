@@ -17,4 +17,6 @@ public interface IMenuService {
     PageResult getSubMenuByParentId(Map<String, Object> map);
 
     Permission getPermissionDetail(Long id);
+
+    int deletePermission(List<Long> deleteIds);
 }
