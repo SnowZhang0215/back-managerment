@@ -21,6 +21,9 @@
     <select id="selectByPath" resultMap="resultBaseMap" parameterType="java.lang.String">
         select a.* from api_entity a where a.`path` = #{path,jdbcType=VARCHAR}
     </select>
+    <select id="selectByDesc" resultMap="resultBaseMap" parameterType="java.lang.String">
+        select a.* from api_entity a where a.description like concat('%',{desc,jdbcType=VARCHAR},'%')
+    </select>
     <insert id="insertApiEntity" useGeneratedKeys="true" keyProperty="id" keyColumn="id" parameterType="io.snow.model.vo.ApiVo">
         INSERT INTO api_entity(
         path ,

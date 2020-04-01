@@ -12,6 +12,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/apiEntity")
@@ -43,6 +45,16 @@ public class APIController {
         } catch (Exception e) {
             logger.error("create api_entity error:{0}",e);
             return ResponseData.error(e.getMessage());
+        }
+    }
+    @PostMapping("/query")
+    public ResponseData queryApi(@RequestBody Map<String,String> map){
+        try {
+            List<ApiVo> result =apiEntityService.queryApiByDesc(map.get("desc"));
+            return ResponseData.ok(result);
+        } catch (Exception e) {
+            logger.error("query:{0}",e);
+            return ResponseData.error("查询失败");
         }
     }
 }
