@@ -103,6 +103,27 @@
       </el-col>
     </el-row>
     <el-row class="row">
+      <el-col :lg="24" :md="24" :sm="24">
+        <el-form-item label="权限对应的API接口">
+          <el-select
+            v-model="permissionApiIds"
+            multiple
+            filterable
+            value-key="id"
+            default-first-option
+            placeholder="请选择权限对应接口"
+          >
+            <el-option
+              v-for="item in apiOptions"
+              :key="item.id"
+              :label="item.description"
+              :value="item.id"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+      </el-col>
+    </el-row>
+    <el-row class="row">
       <el-col :lg="12" :md="12" :sm="24">
         <el-form-item>
           <el-button type="primary" @click="submitForm('dataModel')">提交</el-button>
@@ -183,6 +204,8 @@ export default {
         { label: "警告按钮", value: "warning" },
         { label: "危险按钮", value: "danger" }
       ],
+      apiOptions: [],
+      permissionApiIds: [],
       rules: {
         name: [
           { required: true, message: "权限名称不能为空", trigger: "blur" }
@@ -208,6 +231,29 @@ export default {
         btnMethod: [{ validator: validateBtnMethod, trigger: "blur" }]
       }
     };
+  },
+  created() {
+    console.log(this.dataModel);
+    if (this.dataModel.permissionHasApi) {
+      this.dataModel.permissionHasApi.forEach(element => {
+        this.permissionApiIds.push(element.id);
+        element.label = element.description;
+      });
+
+      // this.dataModel.permissionHasApi = this.dataModel.permissionHasApi.map(
+      //   item => {
+      //     return {
+      //       id: item.id,
+      //       path: item.path,
+      //       description: item.description,
+      //       value: item.id,
+      //       label: item.description
+      //     };
+      //   }
+      // );
+      this.apiOptions = this.dataModel.permissionHasApi;
+      console.log(this.dataModel);
+    }
   },
   methods: {
     submitForm(formName) {

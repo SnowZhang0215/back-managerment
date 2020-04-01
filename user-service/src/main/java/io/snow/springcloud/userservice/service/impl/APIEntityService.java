@@ -9,6 +9,8 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 public class APIEntityService implements IAPIEntityService {
 
@@ -24,5 +26,10 @@ public class APIEntityService implements IAPIEntityService {
     @Override
     public ApiVo getApiVoByPath(String path) {
         return apiMapper.selectByPath(path);
+    }
+
+    @Override
+    public List<ApiVo> queryApiByDesc(String desc) {
+        return apiMapper.selectByDesc(desc);
     }
 }
