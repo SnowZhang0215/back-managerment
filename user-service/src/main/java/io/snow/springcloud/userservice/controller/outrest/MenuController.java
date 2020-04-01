@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -56,6 +57,27 @@ public class MenuController {
         } catch (Exception e) {
             logger.error("create permission : {0}",e);
             return ResponseData.error("新建权限失败");
+        }
+    }
+    @PostMapping("/manage/delete")
+    public ResponseData deletePermission(@RequestBody List<Permission> permission){
+        logger.info("delete permission:{}" , permission);
+        try {
+           if (!permission.isEmpty()){
+               List<Long> deleteIds = new ArrayList<>();
+               for (Permission p: permission){
+                   deleteIds.add(p.getId());
+               }
+              int row = menuService.deletePermission(deleteIds);
+
+               return ResponseData.ok(row);
+
+           }else {
+               return ResponseData.error("选择数据为空");
+           }
+        } catch (Exception e) {
+            logger.error("delete permission : {0}",e);
+            return ResponseData.error("删除权限失败");
         }
     }
 

@@ -17,8 +17,8 @@
         <el-button
           v-for="btn in pageBtns"
           :key="btn.id"
-          :type="btn.type"
-          @click="handleBtnClick(btn.method)"
+          :type="btn.btnType"
+          @click="handleBtnClick(btn.btnMethod)"
         >{{btn.name}}</el-button>
       </el-row>
       <el-table
@@ -62,7 +62,7 @@
       :append-to-body="true"
       width="50%"
     >
-      <permission-edit :data-model="editDataModel"></permission-edit>
+      <permission-edit :data-model="editDataModel" :onfinish="onEditFinish"></permission-edit>
     </el-dialog>
   </el-container>
 </template>
@@ -71,7 +71,9 @@
 import { getAllPermission } from "../service/menuService";
 import {
   getSubMenusByParentId,
-  getPermissionDetail
+  getPermissionDetail,
+  deletePermission,
+  getPermissionBtns
 } from "../service/menuService";
 import { convertTree } from "../service/tree.service";
 import { showMsgBox, noticeMsg } from "../common/common.service";
@@ -91,26 +93,7 @@ export default {
       pageSize: 10,
       totalCount: 0,
       selection: [],
-      pageBtns: [
-        {
-          id: 1,
-          name: "新增",
-          type: "primary",
-          method: "add"
-        },
-        {
-          id: 2,
-          name: "修改",
-          type: "warning",
-          method: "edit"
-        },
-        {
-          id: 3,
-          name: "删除",
-          type: "danger",
-          method: "delete"
-        }
-      ],
+      pageBtns: [],
       btnMethods: {
         add: this.add,
         edit: this.edit,
@@ -124,13 +107,29 @@ export default {
   },
   reloadTable() {},
   created() {
-    let opt = {};
-    opt.onSuccess = this.onLoadPermission;
-    opt.onFaild = this.onFaild;
-    getAllPermission(opt);
+    this.lodadAllPermission();
     this.getTableData();
+    this.getUserBtns();
   },
   methods: {
+    getUserBtns() {
+      if (this.$store.state.asideActiveCode) {
+        console.log("current active code :", this.$store.state.asideActiveCode);
+      }
+
+      let btns = getPermissionBtns(
+        this.$store.getters.getMenuData,
+        this.$store.state.asideActiveCode
+      );
+      console.log(btns);
+      this.pageBtns = btns;
+    },
+    lodadAllPermission() {
+      let opt = {};
+      opt.onSuccess = this.onLoadPermission;
+      opt.onFaild = this.onFaild;
+      getAllPermission(opt);
+    },
     handleBtnClick(methodName) {
       console.log(methodName);
       const functionName = this.btnMethods[methodName];
@@ -164,7 +163,26 @@ export default {
       }
     },
     delete() {
-      noticeMsg("delete", true);
+      if (this.selection.length == 0) {
+        noticeMsg("请选择要删除的数据", true);
+      } else {
+        let option = {};
+        option.onSuccess = this.onDeleteOk;
+        option.onFaild = this.onDeleteError;
+        option.params = this.selection;
+        deletePermission(option);
+      }
+    },
+    onDeleteOk(data) {
+      if (data.errorCode === 200) {
+        noticeMsg(data.errorMsg, true);
+        this.getTableData();
+      } else {
+        noticeMsg(data.errorMsg, true);
+      }
+    },
+    onDeleteError(data) {
+      noticeMsg(data, true);
     },
     showEditDialog(title, data) {
       this.showDialog = true;
@@ -235,6 +253,8 @@ export default {
         this.currentKey = key.id;
         console.log("根据key 获取child", key);
         this.getTableData();
+        let result = this.getUserBtns();
+        console.log(result);
       }
     },
     tableHeaderStyle({ row, column, rowIndex, columnIndex }) {
@@ -242,6 +262,13 @@ export default {
         return "background-color: #f5f7fa;";
       } else {
         return "";
+      }
+    },
+    onEditFinish(result) {
+      if (result) {
+        this.showDialog = false;
+        this.getTableData();
+        // this.lodadAllPermission();
       }
     }
   }

@@ -29,7 +29,7 @@ export function generateRouter(data){
         if(menu.parentId == 0){
             let subChildrenRouter = []
             //头部菜单
-            if(menu.url){
+            if(menu.url && menu.permissionType == '1'){
               if(menu.children && menu.children.length > 0){
                 menu.children.forEach(e => generateSubRoutes(subChildrenRouter,e,menu.url));
                 children.push({
@@ -60,7 +60,7 @@ export function generateRouter(data){
             generateSubRoutes(childrenRouter,e)
           })
         }
-        if (item.url) {
+        if (item.url && item.permissionType == '1') {
           childrenRouter.push({
             path: item.url ,
             name: item.url,

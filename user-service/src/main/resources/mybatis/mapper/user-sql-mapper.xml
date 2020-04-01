@@ -78,17 +78,4 @@
         WHERE
             u.user_name = #{userName};
     </select>
-
-    <!--<select id="loadUserWithPermission" resultMap="resultBaseMap">-->
-        <!--SELECT-->
-            <!--u.*, r.* ,p.*-->
-        <!--FROM-->
-            <!--USER u-->
-        <!--LEFT JOIN user_role ur ON u.id = ur.user_id-->
-        <!--LEFT JOIN role r ON r.id = ur.role_id-->
-        <!--LEFT JOIN role_privilege rp ON rp.role_id = r.id-->
-        <!--LEFT JOIN permission p ON rp.permission_id = p.id-->
-        <!--WHERE-->
-            <!--u.user_name = #{userName};-->
-    <!--</select>-->
 </mapper>
