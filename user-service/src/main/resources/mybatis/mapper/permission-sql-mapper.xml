@@ -78,7 +78,7 @@
         </if>
     </select>
 
-    <insert id="insertPermission" parameterType="io.snow.model.vo.Permission">
+    <insert id="insertPermission" useGeneratedKeys="true" keyProperty="id" keyColumn="id" parameterType="io.snow.model.vo.Permission">
         insert into permission
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <include refid="baseColumnList"/>
@@ -104,6 +104,13 @@
         #{lastModifiedBy},
         #{lastModifiedDate}
         )
+    </insert>
+
+    <insert id="insertPermissionApi" parameterType="map">
+        insert into permission_api (p_id,a_id) values
+        <foreach collection="ApiIds" item="aId" separator=",">
+            (${permissionId},#{aId})
+        </foreach>
     </insert>
 
     <select id="getUserNavPermissions"  resultMap="resultBaseMap" parameterType = "String">
