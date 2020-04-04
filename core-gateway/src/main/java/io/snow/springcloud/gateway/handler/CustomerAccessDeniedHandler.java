@@ -26,7 +26,7 @@ public class CustomerAccessDeniedHandler implements AccessDeniedHandler {
     public void handle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AccessDeniedException e) throws IOException, ServletException {
         ResponseData<Object> accessDenied = ResponseData.accessDenied();
         httpServletResponse.setContentType("application/json");
-        httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        httpServletResponse.setStatus(HttpServletResponse.SC_FORBIDDEN);
         try {
             ObjectMapper mapper = new ObjectMapper();
             mapper.writeValue(httpServletResponse.getOutputStream(), accessDenied);

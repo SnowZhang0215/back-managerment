@@ -1,21 +1,15 @@
 package io.snow.springcloud.auth.config;
 
-import io.snow.springcloud.auth.authentication.SmsCodeAuthenticationProvider;
 import io.snow.springcloud.auth.authentication.SmsCodeTokenGranter;
-import io.snow.springcloud.auth.exception.MssWebResponseExceptionTranslator;
 import io.snow.springcloud.auth.filter.CustomerAuthenticationFilter;
-import io.snow.springcloud.auth.service.SmsVerificationCodeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
@@ -25,7 +19,6 @@ import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.CompositeTokenGranter;
 import org.springframework.security.oauth2.provider.TokenGranter;
 import org.springframework.security.oauth2.provider.client.JdbcClientDetailsService;
-import org.springframework.security.oauth2.provider.error.WebResponseExceptionTranslator;
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
@@ -119,6 +112,7 @@ public class OAuth2Config extends AuthorizationServerConfigurerAdapter {
                 .allowFormAuthenticationForClients()
                 //在这里可以添加拦截器，对请求参数进行相关解密。
                 .addTokenEndpointAuthenticationFilter(customerAuthenticationFilter);
+
         ;
 
     }
@@ -136,7 +130,6 @@ public class OAuth2Config extends AuthorizationServerConfigurerAdapter {
                  .tokenServices(createJdbcTokenService())
                  .tokenGranter(tokenGranter(endpoints))//OAuth2最红认证就是在tokenGranter中完成的。
                  .authenticationManager(authenticationManager);
-        endpoints.exceptionTranslator(webResponseExceptionTranslator());
     }
 
     /**
@@ -150,12 +143,6 @@ public class OAuth2Config extends AuthorizationServerConfigurerAdapter {
         granters.add(smsCodeTokenGranter);
         return new CompositeTokenGranter(granters);
     }
-
-    @Bean
-    public WebResponseExceptionTranslator<OAuth2Exception> webResponseExceptionTranslator(){
-        return new MssWebResponseExceptionTranslator();
-    }
-
     /**
      * jdbc token service
      * @return
