@@ -5,8 +5,8 @@
         <id property="id" column="id"/>
         <result column="path" jdbcType="VARCHAR" property="path"/>
         <result column="description" jdbcType="VARCHAR" property="description"/>
-        <result column="create_by" jdbcType="VARCHAR" property="createBy"/>
-        <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="created_by" jdbcType="VARCHAR" property="createdBy"/>
+        <result column="created_date" jdbcType="TIMESTAMP" property="createdDate"/>
         <result column="last_modified_by" jdbcType="VARCHAR" property="lastModifiedBy"/>
         <result column="last_modified_date" jdbcType="TIMESTAMP" property="lastModifiedDate"/>
     </resultMap>
@@ -22,15 +22,31 @@
         select a.* from api_entity a where a.`path` = #{path,jdbcType=VARCHAR}
     </select>
     <select id="selectByDesc" resultMap="resultBaseMap" parameterType="java.lang.String">
-        select a.* from api_entity a where a.description like concat('%',{desc,jdbcType=VARCHAR},'%')
+        select a.*
+        from api_entity a
+        where a.description like concat('%',#{desc},'%')
+        or a.path like concat('%',#{desc},'%')
     </select>
+    <select id="findApiEntityPageable" resultMap="resultBaseMap">
+        select a.* from api_entity a order by a.id
+    </select>
+    <update id="updateApiVo" useGeneratedKeys="true" keyProperty="id" keyColumn="id" parameterType="io.snow.model.vo.ApiVo">
+        update api_entity
+        <set>
+            <if test="path != null">path=#{path},</if>
+            <if test="description != null">description=#{description},</if>
+            <if test="lastModifiedDate != null">last_modified_date=#{lastModifiedDate},</if>
+            <if test="lastModifiedBy != null">last_modified_by=#{lastModifiedBy}</if>
+        </set>
+        where id=#{id}
+    </update>
     <insert id="insertApiEntity" useGeneratedKeys="true" keyProperty="id" keyColumn="id" parameterType="io.snow.model.vo.ApiVo">
         INSERT INTO api_entity(
         path ,
         description ,
-        create_by ,
+        created_by ,
         last_modified_by ,
-        create_date ,
+        created_date ,
         last_modified_date ,
         type
         )
@@ -38,9 +54,9 @@
         (
         #{path},
         #{description},
-        #{createBy},
+        #{createdBy},
         #{lastModifiedBy},
-        #{createDate},
+        #{createdDate},
         #{lastModifiedDate},
         #{type}
         )

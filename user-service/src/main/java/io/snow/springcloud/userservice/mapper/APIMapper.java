@@ -14,4 +14,8 @@ public interface APIMapper {
     int insertApiEntity(ApiVo apiVo);
 
     List<ApiVo> selectByDesc(String desc);
+
+    List<ApiVo> findApiEntityPageable();
+
+    int updateApiVo(ApiVo apiVo);
 }

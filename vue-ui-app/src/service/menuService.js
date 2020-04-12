@@ -91,6 +91,13 @@ export function createPermission(opt) {
         .then(response => opt.onSuccess(response))
         .catch(error => opt.onFaild ? opt.onFaild(error) : noticeMsg(error, true))
 }
+
+export function updatePermission(opt){
+    axios.post(api.menuManageUpdate, opt.params)
+        .then(response => opt.onSuccess(response))
+        .catch(error => opt.onFaild ? opt.onFaild(error) : noticeMsg(error, true))
+}
+
 export function deletePermission(opt) {
     axios.post(api.menuManageDelete, opt.params)
         .then(response => opt.onSuccess(response))

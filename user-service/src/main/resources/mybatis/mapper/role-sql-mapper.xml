@@ -5,8 +5,8 @@
         <result column="id" property="id"/>
         <result column="name" jdbcType="VARCHAR" property="name"/>
         <result column="code" jdbcType="VARCHAR" property="code"/>
-        <result column="create_by" jdbcType="VARCHAR" property="createBy"/>
-        <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="created_by" jdbcType="VARCHAR" property="createdBy"/>
+        <result column="created_date" jdbcType="TIMESTAMP" property="createdDate"/>
         <result column="last_modified_by" jdbcType="VARCHAR" property="lastModifiedBy"/>
         <result column="last_modified_date" jdbcType="TIMESTAMP" property="lastModifiedDate"/>
     </resultMap>
@@ -18,4 +18,54 @@
         WHERE
             r.`code` = #{roleName}
     </select>
+
+    <delete id="deleteRolePermission" parameterType="Long">
+        delete
+        from
+        role_privilege
+        where
+        role_id = #{roleId}
+    </delete>
+
+    <insert id="insertRolePermission" parameterType="map">
+        insert into role_privilege (role_id,permission_id) values
+        <foreach collection="checkIds" item="pId" separator=",">
+            (${roleId},#{pId})
+        </foreach>
+    </insert>
+
+    <select id="listRolePageable" resultMap="resultBaseMap">
+        SELECT
+        r.*
+        FROM
+        role r
+        WHERE
+        r.`id` > 0
+    </select>
+
+    <select id="findRolePermissionId" resultType="Long">
+        select
+        permission_id
+        from role_privilege
+        where role_id = #{Id}
+    </select>
+
+    <insert id="insertRole" parameterType="io.snow.model.vo.RoleVo">
+        insert into role(
+            name,
+            code,
+            created_by,
+            created_date,
+            last_modified_by,
+            last_modified_date
+        )VALUES
+        (
+        #{name},
+        #{code},
+        #{createdBy},
+        #{createdDate},
+        #{lastModifiedBy},
+        #{lastModifiedDate}
+        )
+    </insert>
 </mapper>

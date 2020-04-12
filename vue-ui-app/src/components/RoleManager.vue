@@ -20,15 +20,9 @@
         @select-all="onSelectAll"
       >
         <el-table-column type="selection" width="55"></el-table-column>
-        <template v-for="(item,index) in tableHeaderItem">
-          <el-table-column
-            :prop="item.code"
-            :label="item.label"
-            :width="item.width"
-            :formatter="item.formatter"
-            :key="index"
-          ></el-table-column>
-        </template>
+        <el-table-column prop="id" label="ID" width="55"></el-table-column>
+        <el-table-column prop="code" label="角色编码"></el-table-column>
+        <el-table-column prop="name" label="角色名称"></el-table-column>
       </el-table>
       <el-row>
         <el-pagination
@@ -53,28 +47,48 @@
       center
       :append-to-body="true"
       width="50%"
+      @open="onDialogOpen"
+      @close="onDialogClose"
     >
-      <user-edit :data-model="editDataModel" :onfinish="onEditFinish" :onClose="close"></user-edit>
+      <auth-role
+        v-if="editView == 'authRole'"
+        :data-model="editDataModel"
+        :onfinish="onEditFinish"
+        :onClose="close"
+      ></auth-role>
+      <role-edit
+        v-if="editView == 'roleEdit'"
+        :data-model="editDataModel"
+        :onfinish="onEditFinish"
+        :onClose="close"
+      ></role-edit>
     </el-dialog>
   </el-container>
 </template>
 
 <script>
-import { getPermissionBtns } from "../service/menuService";
-import { getSelectRole } from "../service/rolemanager.service";
-import { listUserPage, getUserDetail } from "../service/userinfo.service";
+import { getPermissionBtns, getAllPermission } from "../service/menuService";
+import { convertTree } from "../service/tree.service";
+import {
+  loadAllRoles,
+  loadRolePermission
+} from "../service/rolemanager.service";
 import { showMsgBox, noticeMsg } from "../common/common.service";
-import UserEdit from "../components/edit/UserEdit";
+
+import RoleEdit from "../components/edit/RoleEdit";
+import AuthRole from "../components/authrole/AuthRole";
 export default {
-  name: "UserManager",
+  name: "RoleManager",
   components: {
-    UserEdit
+    RoleEdit,
+    AuthRole
   },
   data() {
     return {
       info: "",
+      editView: "roleEdit", //编辑框默认是role编辑
       tableData: [],
-      allRoles: [],
+      allPermission: [],
       currentPage: 1,
       pageSize: 10,
       totalCount: 0,
@@ -83,43 +97,9 @@ export default {
       btnMethods: {
         add: this.add,
         edit: this.edit,
-        delete: this.delete
+        delete: this.delete,
+        authRole: this.authRole
       },
-      tableHeaderItem: [
-        {
-          code: "id",
-          label: "ID",
-          width: 55
-        },
-        {
-          code: "userName",
-          label: "用户名"
-        },
-        {
-          code: "emile",
-          label: "邮箱"
-        },
-        {
-          code: "gender",
-          label: "性别",
-          formatter: function(row, column, cellValue, index) {
-            if (cellValue == 0) {
-              return "男";
-            }
-            if (cellValue == 1) {
-              return "女";
-            }
-          }
-        },
-        {
-          code: "phoneNumber",
-          label: "电话号码"
-        },
-        {
-          code: "profile",
-          label: "头像"
-        }
-      ],
       //eidt
       showDialog: false,
       dialogTitle: "",
@@ -127,22 +107,27 @@ export default {
     };
   },
   created() {
+    // this.lodadAllPermission();
     this.getTableData();
     this.getUserBtns();
-    this.loadAllRole();
+    this.lodadAllPermission();
   },
   methods: {
-    loadAllRole() {
-      var opt = {};
-      opt.onSuccess = this.onGetAllRole;
-      getSelectRole(opt);
+    lodadAllPermission() {
+      let opt = {};
+      opt.onSuccess = this.onLoadPermission;
+      opt.onFaild = this.onFaild;
+      getAllPermission(opt);
     },
-    onGetAllRole(data) {
-      if (data.errorCode == 200) {
-        this.allRoles = data.data;
-      } else {
-        noticeMsg(data.errorMsg, true);
+    onLoadPermission(data) {
+      console.log(data);
+      if (data.errorCode === 200) {
+        this.allPermission = convertTree(data.data);
+        console.log("allPermission", this.allPermission);
       }
+    },
+    onFaild(data) {
+      console.log(data);
     },
     getUserBtns() {
       if (this.$store.state.asideActiveCode) {
@@ -153,7 +138,6 @@ export default {
         this.$store.getters.getMenuData,
         this.$store.state.asideActiveCode
       );
-      console.log(btns);
       this.pageBtns = btns;
     },
     handleBtnClick(methodName) {
@@ -165,7 +149,7 @@ export default {
     },
     add() {
       this.editDataModel = {};
-      this.showEditDialog("新建", this.editDataModel);
+      this.showEditDialog("新建", "roleEdit", this.editDataModel);
     },
     edit() {
       if (this.selection.length <= 0) {
@@ -174,30 +158,7 @@ export default {
         noticeMsg("请选择一条数据", true);
       } else {
         console.log(this.selection[0]);
-        let opt = {};
-        opt.id = this.selection[0].id;
-        opt.onSuccess = this.detailOk;
-        getUserDetail(opt);
-      }
-    },
-    detailOk(data) {
-      if (data.errorCode === 200) {
-        let dataModel = data.data;
-        let userHasRoleId = [];
-        this.allRoles.forEach(element => {
-          element.label = element.name;
-        });
-        if (dataModel.authorities) {
-          dataModel.authorities.forEach(element => {
-            userHasRoleId.push(element.id);
-          });
-        }
-        dataModel.userHasRoleId = userHasRoleId
-        dataModel.allRoles = this.allRoles;
-        console.log(dataModel);
-        this.showEditDialog("编辑用户", dataModel);
-      } else {
-        noticeMsg("获取用户详情失败", true);
+        this.showEditDialog("编辑", "roleEdit", this.selection[0]);
       }
     },
 
@@ -212,6 +173,37 @@ export default {
         deletePermission(option);
       }
     },
+    authRole() {
+      if (this.selection.length == 0) {
+        noticeMsg("请选择要授权的角色", true);
+      } else {
+        if (this.allPermission.length == 0) {
+          noticeMsg("无法获取权限列表请稍后再试", true);
+          return;
+        }
+        let authModel = {}
+        authModel.id = this.selection[0].id;
+        this.getRolePermission(authModel);
+      }
+    },
+    getRolePermissionOK(data) {
+      console.log(data);
+      if (data.errorCode == 200) {
+        let authModel = {};
+        authModel.roleId = this.selection[0].id;
+        authModel.allPermissions = this.allPermission;
+        authModel.rolePermissions = data.data;
+        this.showEditDialog("角色授权", "authRole", authModel);
+      } else {
+        noticeMsg(data.errorMsg);
+      }
+    },
+    getRolePermission(authModel) {
+      let option = {};
+      option.onSuccess = this.getRolePermissionOK;
+      option.params = authModel;
+      loadRolePermission(option);
+    },
     onDeleteOk(data) {
       if (data.errorCode === 200) {
         noticeMsg(data.errorMsg, true);
@@ -223,9 +215,10 @@ export default {
     onDeleteError(data) {
       noticeMsg(data, true);
     },
-    showEditDialog(title, data) {
+    showEditDialog(title, view, data) {
       this.showDialog = true;
       this.dialogTitle = title;
+      this.editView = view;
       this.editDataModel = data;
     },
     getTableData() {
@@ -233,12 +226,12 @@ export default {
       let params = {};
       params.pageNum = this.currentPage;
       params.pageSize = this.pageSize;
-      requestOpt.onSuccess = this.listUserPageOk;
-      requestOpt.onFaild = this.listUserPageError;
+      requestOpt.onSuccess = this.listRoleOk;
+      requestOpt.onFaild = this.listRoleError;
       requestOpt.params = params;
-      listUserPage(requestOpt);
+      loadAllRoles(requestOpt);
     },
-    listUserPageOk(data) {
+    listRoleOk(data) {
       console.log(data);
       if (data.errorCode === 200) {
         this.tableData = data.data.content;
@@ -249,18 +242,14 @@ export default {
         console.log("totalCount", this.totalCount);
       }
     },
-    listUserPageError(data) {
+    listRoleError(data) {
       console.log(data);
     },
     onRowSelect(selection, row) {
       this.selection = selection;
-
-      console.log("selection:", selection);
-      console.log("row:", row);
     },
     onSelectAll(selection) {
       this.selection = selection;
-      console.log("selection:", selection);
     },
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`);
@@ -284,10 +273,19 @@ export default {
       if (result) {
         this.showDialog = false;
         this.getTableData();
+        // this.lodadAllPermission();
       }
     },
     close() {
       this.showDialog = false;
+    },
+    onDialogOpen() {
+      this.$nextTick(() => {
+        this.$refs;
+      });
+    },
+    onDialogClose(){
+        this.editView = "roleEdit"
     }
   }
 };

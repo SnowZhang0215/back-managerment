@@ -106,6 +106,32 @@
         )
     </insert>
 
+    <update id="updatePermission" parameterType="io.snow.model.vo.Permission">
+        update permission
+        <set>
+            <if test="name != null">name=#{name},</if>
+            <if test="code != null">code=#{code},</if>
+            <if test="icon != null">icon=#{icon},</if>
+            <if test="level != null">level=#{level},</if>
+
+            <if test="parentCode != null">parent_code=#{parentCode},</if>
+            <if test="status != null">status=#{status},</if>
+            <if test="sort != null">sort=#{sort},</if>
+            <if test="url != null">url=#{url},</if>
+
+            <if test="permissionType != null">permission_type=#{permissionType},</if>
+            <if test="defaultType != null">default_type=#{defaultType},</if>
+            <if test="component != null">component=#{component},</if>
+            <if test="parentId != null">parent_id=#{parentId},</if>
+
+            <if test="btnMethod != null">btn_method=#{btnMethod},</if>
+            <if test="btnType != null">btn_type=#{btnType},</if>
+            <if test="lastModifiedBy != null">last_modified_by=#{lastModifiedBy},</if>
+            <if test="lastModifiedDate != null">last_modified_date=#{lastModifiedDate}</if>
+        </set>
+        where id = #{id}
+    </update>
+
     <insert id="insertPermissionApi" parameterType="map">
         insert into permission_api (p_id,a_id) values
         <foreach collection="ApiIds" item="aId" separator=",">
@@ -252,9 +278,13 @@
         *
         from permission p
         <where>
-            p.url = #{url,jdbcType=BIGINT}
+            p.url = #{url}
         </where>
     </select>
+
+    <delete id="deletePermissionApi" parameterType="java.lang.Long">
+        delete from permission_api where p_id = #{id}
+    </delete>
 
     <delete id="deletePermission" parameterType="List">
         delete from permission where id in

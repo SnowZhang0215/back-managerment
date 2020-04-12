@@ -1,14 +1,15 @@
 package io.snow.model.vo;
 
-import java.io.Serializable;
 
-public class ApiVo extends BaseVo implements Serializable {
+public class ApiVo extends BaseVo {
 
     private Long id;
 
     private String path;
 
     private String description;
+
+    private String type;
 
     public Long getId() {
         return id;
@@ -32,5 +33,13 @@ public class ApiVo extends BaseVo implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

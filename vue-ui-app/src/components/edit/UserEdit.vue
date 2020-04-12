@@ -2,135 +2,56 @@
   <el-form :model="dataModel" :rules="rules" ref="dataModel" class="form-class" label-width="35%">
     <el-row class="row">
       <el-col :lg="12" :md="12" :sm="24">
-        <el-form-item label="父权限ID" prop="parentId">
-          <el-input v-model="dataModel.parentId" disabled="disabled"></el-input>
-        </el-form-item>
-      </el-col>
-      <el-col :lg="12" :md="12" :sm="24">
-        <el-form-item label="权限ID" prop="id">
+        <el-form-item label="ID" prop="id">
           <el-input v-model="dataModel.id" disabled="disabled"></el-input>
         </el-form-item>
       </el-col>
-    </el-row>
-    <el-row class="row">
       <el-col :lg="12" :md="12" :sm="24">
-        <el-form-item label="权限名称" prop="name">
-          <el-input v-model="dataModel.name"></el-input>
-        </el-form-item>
-      </el-col>
-      <el-col :lg="12" :md="12" :sm="24">
-        <el-form-item label="是否默认" prop="defaultType">
-          <el-select v-model="dataModel.defaultType" placeholder="请选择是否默认">
-            <el-option
-              v-for="item in defaultTypeOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            ></el-option>
-          </el-select>
+        <el-form-item label="用户名" prop="userName">
+          <el-input v-model="dataModel.userName"></el-input>
         </el-form-item>
       </el-col>
     </el-row>
     <el-row class="row">
       <el-col :lg="12" :md="12" :sm="24">
-        <el-form-item label="权限类型" prop="permissionType">
-          <el-select
-            v-model="dataModel.permissionType"
-            @change="onPermissionTypeChange"
-            placeholder="请选择权限类型"
-          >
-            <el-option
-              v-for="item in permissionTypeOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            ></el-option>
-          </el-select>
+        <el-form-item label="手机" prop="phoneNumber">
+          <el-input v-model="dataModel.phoneNumber"></el-input>
         </el-form-item>
       </el-col>
       <el-col :lg="12" :md="12" :sm="24">
-        <el-form-item label="权限对应的API接口">
+        <el-form-item label="用户名" prop="userName">
+          <el-input v-model="dataModel.userName"></el-input>
+        </el-form-item>
+      </el-col>
+    </el-row>
+    <el-row class="row">
+      <el-col :lg="12" :md="12" :sm="24">
+        <el-form-item label="邮箱" prop="emile">
+          <el-input v-model="dataModel.emile"></el-input>
+        </el-form-item>
+      </el-col>
+      <el-col :lg="12" :md="12" :sm="24">
+        <el-form-item label="用户角色">
           <el-select
-            v-model="dataModel.permissionApiIds"
+            v-model="dataModel.userHasRoleId"
             multiple
             filterable
-            :remote="true"
             value-key="id"
-            :remote-method="queryApi"
             :loading="loading"
             default-first-option
-            placeholder="请选择权限对应接口"
+            placeholder="请选择用户角色"
           >
             <el-option
-              v-for="item in dataModel.apiOptions"
+              v-for="item in dataModel.allRoles"
               :key="item.id"
-              :label="item.description"
+              :label="item.name"
               :value="item.id"
             ></el-option>
           </el-select>
         </el-form-item>
       </el-col>
     </el-row>
-    <el-row class="row">
-      <el-col :lg="12" :md="12" :sm="24">
-        <el-form-item label="是否启用" prop="status">
-          <el-select v-model="dataModel.status" placeholder="请选择启用状态">
-            <el-option
-              v-for="item in permissionStatusOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-      </el-col>
-      <el-col :lg="12" :md="12" :sm="24">
-        <el-form-item label="排序" prop="sort">
-          <el-input v-model="dataModel.sort"></el-input>
-        </el-form-item>
-      </el-col>
-    </el-row>
-    <el-row class="row">
-      <el-col
-        :lg="12"
-        :md="12"
-        :sm="24"
-        v-if="dataModel.permissionType == 1 || dataModel.permissionType == null "
-      >
-        <el-form-item label="路由路径" prop="url">
-          <el-input v-model="dataModel.url"></el-input>
-        </el-form-item>
-      </el-col>
-      <el-col
-        :lg="12"
-        :md="12"
-        :sm="24"
-        v-if="dataModel.permissionType == 1 || dataModel.permissionType == null "
-      >
-        <el-form-item label="权限对应组件" prop="component">
-          <el-input v-model="dataModel.component"></el-input>
-        </el-form-item>
-      </el-col>
-    </el-row>
-    <el-row class="row">
-      <el-col :lg="12" :md="12" :sm="24" v-if="dataModel.permissionType == 2">
-        <el-form-item label="按钮方法" prop="btnMethod">
-          <el-input v-model="dataModel.btnMethod"></el-input>
-        </el-form-item>
-      </el-col>
-      <el-col :lg="12" :md="12" :sm="24" v-if="dataModel.permissionType == 2">
-        <el-form-item label="按钮类型" prop="btnType">
-          <el-select v-model="dataModel.btnType" placeholder="请选择按钮类型">
-            <el-option
-              v-for="item in btnTypeOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-      </el-col>
-    </el-row>
+
     <el-row class="row">
       <el-col :lg="12" :md="12" :sm="24">
         <el-form-item>
@@ -143,12 +64,11 @@
   </el-form>
 </template>
 <script>
-import { createPermission, updatePermission } from "../../service/menuService";
+import { createUser, updateUser} from "../../service/userinfo.service";
 import { noticeMsg } from "../../common/common.service";
-import { queryApiByDesc } from "../../service/api.service.js";
 export default {
   props: { dataModel: Object, onfinish: Function, onClose: Function },
-  name: "PermissionEdit",
+  name: "UserEdit",
   data() {
     var validateUrl = (rule, value, callback) => {
       if (this.dataModel.permissionType == 1) {

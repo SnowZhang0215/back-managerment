@@ -2,6 +2,7 @@ package io.snow.springcloud.userservice.service.impl;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import io.snow.model.vo.ApiVo;
 import io.snow.model.vo.Permission;
 import io.snow.rest.common.page.PageRequest;
 import io.snow.rest.common.page.PageResult;
@@ -13,9 +14,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class MenuService implements IMenuService {
@@ -64,10 +63,19 @@ public class MenuService implements IMenuService {
     }
 
     @Override
-    @Transactional(propagation= Propagation.REQUIRED,isolation= Isolation.READ_COMMITTED)
+    @Transactional(propagation= Propagation.REQUIRED,isolation= Isolation.READ_COMMITTED,rollbackFor = Exception.class)
     public int createPermission(Permission permission) {
-        permissionMapper.findPermissionByUrl(permission.getUrl());
+        permission.setCode(permission.getUrl());
+        List<Long> permissionApiIds = permission.getPermissionApiIds();
         int i = permissionMapper.insertPermission(permission);
+        if (i == 1){
+            if (permissionApiIds!=null && permissionApiIds.size()>0){
+                Map<String,Object> permissionAndApi = new HashMap<>();
+                permissionAndApi.put("permissionId",permission.getId());
+                permissionAndApi.put("ApiIds",permissionApiIds);
+                permissionMapper.insertPermissionApi(permissionAndApi);
+            }
+        }
         return i;
     }
 
@@ -95,5 +103,27 @@ public class MenuService implements IMenuService {
     @Transactional(propagation= Propagation.REQUIRED,isolation= Isolation.READ_COMMITTED)
     public int deletePermission(List<Long> deleteIds) {
         return this.permissionMapper.deletePermission(deleteIds);
+    }
+
+    @Override
+    @Transactional(propagation= Propagation.REQUIRED,isolation= Isolation.READ_COMMITTED)
+    public int updatePermission(Permission permission) {
+//        List<ApiVo> permissionHasApi = permission.getPermissionHasApi();
+        List<Long> permissionApiIds = permission.getPermissionApiIds();
+        if(permissionApiIds.isEmpty()){
+            permissionMapper.deletePermissionApi(permission.getId());
+        }else {
+            permissionMapper.deletePermissionApi(permission.getId());
+            Map<String,Object> map = new HashMap<>();
+            map.put("permissionId",permission.getId());
+            map.put("ApiIds",permissionApiIds);
+            permissionMapper.insertPermissionApi(map);
+        }
+        return permissionMapper.updatePermission(permission);
+    }
+
+    @Override
+    public Permission findPermissionByUrl(String url) {
+        return permissionMapper.findPermissionByUrl(url);
     }
 }

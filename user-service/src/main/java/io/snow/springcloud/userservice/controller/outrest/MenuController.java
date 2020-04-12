@@ -50,6 +50,10 @@ public class MenuController {
     public ResponseData addPermission(@RequestBody Permission permission,@RequestHeader("userName")String userName){
         logger.info("create permission");
         try {
+            Permission permissionByUrl = menuService.findPermissionByUrl(permission.getUrl());
+            if (permissionByUrl!=null){
+                return ResponseData.error("权限已经存在");
+            }
             permission.setCreatedBy(userName);
             permission.setCreatedDate(Instant.now());
             int row =  menuService.createPermission(permission);
@@ -59,6 +63,21 @@ public class MenuController {
             return ResponseData.error("新建权限失败");
         }
     }
+
+    @PostMapping("/manage/update")
+    public ResponseData updatePermission(@RequestBody Permission permission,@RequestHeader("userName")String userName){
+        logger.info("update permission:{}",permission);
+        try {
+            permission.setLastModifiedBy(userName);
+            permission.setLastModifiedDate(Instant.now());
+            int row =  menuService.updatePermission(permission);
+            return ResponseData.ok(row);
+        } catch (Exception e) {
+            logger.error("create permission : {0}",e);
+            return ResponseData.error("新建权限失败");
+        }
+    }
+
     @PostMapping("/manage/delete")
     public ResponseData deletePermission(@RequestBody List<Permission> permission){
         logger.info("delete permission:{}" , permission);
