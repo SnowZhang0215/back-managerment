@@ -92,9 +92,33 @@
     </insert>
 
     <insert id="saveUserAndRole" parameterType="HashMap">
-        insert into user_role values(#{user.id},#{role.id})
+        insert into user_role (user_id,role_id) values
+        <foreach collection="role" item="rId" separator=",">
+            (${user.id},#{rId})
+        </foreach>
     </insert>
 
+    <delete id="deleteUserRole" parameterType="Long">
+        delete from user_role where user_id = #{userId}
+    </delete>
+
+    <update id="updateUser" parameterType="io.snow.model.vo.UserVo">
+        update user
+        <set>
+            <if test="gender != null">gender=#{gender},</if>
+            <if test="emile != null">emile=#{emile},</if>
+            <if test="phoneNumber != null">phone_number=#{phoneNumber},</if>
+            <if test="profile != null">profile=#{profile}</if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <delete id="deleteUsers" parameterType="List">
+        delete from user where id in
+        <foreach collection="list" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
 
     <select id="findUserByUserName"  resultMap="resultBaseMap">
         SELECT

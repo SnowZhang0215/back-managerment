@@ -20,15 +20,9 @@
         @select-all="onSelectAll"
       >
         <el-table-column type="selection" width="55"></el-table-column>
-        <template v-for="(item,index) in tableHeaderItem">
-          <el-table-column
-            :prop="item.code"
-            :label="item.label"
-            :width="item.width"
-            :formatter="item.formatter"
-            :key="index"
-          ></el-table-column>
-        </template>
+        <el-table-column prop="id" label="ID" width="55"></el-table-column>
+        <el-table-column prop="path" label="API路径"></el-table-column>
+        <el-table-column prop="description" label="API接口描述"></el-table-column>
       </el-table>
       <el-row>
         <el-pagination
@@ -54,27 +48,25 @@
       :append-to-body="true"
       width="50%"
     >
-      <user-edit :data-model="editDataModel" :onfinish="onEditFinish" :onClose="close"></user-edit>
+      <api-entity-edit :data-model="editDataModel" :onfinish="onEditFinish" :onClose="close"></api-entity-edit>
     </el-dialog>
   </el-container>
 </template>
 
 <script>
 import { getPermissionBtns } from "../service/menuService";
-import { getSelectRole } from "../service/rolemanager.service";
-import { listUserPage, getUserDetail ,deleteUser} from "../service/userinfo.service";
+import { listApiEntity } from "../service/api.service";
 import { showMsgBox, noticeMsg } from "../common/common.service";
-import UserEdit from "../components/edit/UserEdit";
+import ApiEntityEdit from "../components/edit/ApiEntityEdit";
 export default {
-  name: "UserManager",
+  name: "OrgManager",
   components: {
-    UserEdit
+    ApiEntityEdit
   },
   data() {
     return {
       info: "",
       tableData: [],
-      allRoles: [],
       currentPage: 1,
       pageSize: 10,
       totalCount: 0,
@@ -85,41 +77,6 @@ export default {
         edit: this.edit,
         delete: this.delete
       },
-      tableHeaderItem: [
-        {
-          code: "id",
-          label: "ID",
-          width: 55
-        },
-        {
-          code: "userName",
-          label: "用户名"
-        },
-        {
-          code: "emile",
-          label: "邮箱"
-        },
-        {
-          code: "gender",
-          label: "性别",
-          formatter: function(row, column, cellValue, index) {
-            if (cellValue == 0) {
-              return "男";
-            }
-            if (cellValue == 1) {
-              return "女";
-            }
-          }
-        },
-        {
-          code: "phoneNumber",
-          label: "电话号码"
-        },
-        {
-          code: "profile",
-          label: "头像"
-        }
-      ],
       //eidt
       showDialog: false,
       dialogTitle: "",
@@ -127,23 +84,11 @@ export default {
     };
   },
   created() {
+    // this.lodadAllPermission();
     this.getTableData();
     this.getUserBtns();
-    this.loadAllRole();
   },
   methods: {
-    loadAllRole() {
-      var opt = {};
-      opt.onSuccess = this.onGetAllRole;
-      getSelectRole(opt);
-    },
-    onGetAllRole(data) {
-      if (data.errorCode == 200) {
-        this.allRoles = data.data;
-      } else {
-        noticeMsg(data.errorMsg, true);
-      }
-    },
     getUserBtns() {
       if (this.$store.state.asideActiveCode) {
         console.log("current active code :", this.$store.state.asideActiveCode);
@@ -156,6 +101,12 @@ export default {
       console.log(btns);
       this.pageBtns = btns;
     },
+    lodadAllPermission() {
+      let opt = {};
+      opt.onSuccess = this.onLoadPermission;
+      opt.onFaild = this.onFaild;
+      getAllPermission(opt);
+    },
     handleBtnClick(methodName) {
       console.log(methodName);
       const functionName = this.btnMethods[methodName];
@@ -164,20 +115,8 @@ export default {
       }
     },
     add() {
-    //   this.editDataModel = {};
-      var dataModel={};
-      let userHasRoleId = [];
-      this.allRoles.forEach(element => {
-        element.label = element.name;
-      });
-      if (dataModel.authorities) {
-        dataModel.authorities.forEach(element => {
-          userHasRoleId.push(element.id);
-        });
-      }
-      dataModel.userHasRoleId = userHasRoleId;
-      dataModel.allRoles = this.allRoles;
-      this.showEditDialog("新建", dataModel);
+      this.editDataModel = {};
+      this.showEditDialog("新建", this.editDataModel);
     },
     edit() {
       if (this.selection.length <= 0) {
@@ -186,30 +125,7 @@ export default {
         noticeMsg("请选择一条数据", true);
       } else {
         console.log(this.selection[0]);
-        let opt = {};
-        opt.id = this.selection[0].id;
-        opt.onSuccess = this.detailOk;
-        getUserDetail(opt);
-      }
-    },
-    detailOk(data) {
-      if (data.errorCode === 200) {
-        let dataModel = data.data;
-        let userHasRoleId = [];
-        this.allRoles.forEach(element => {
-          element.label = element.name;
-        });
-        if (dataModel.authorities) {
-          dataModel.authorities.forEach(element => {
-            userHasRoleId.push(element.id);
-          });
-        }
-        dataModel.userHasRoleId = userHasRoleId;
-        dataModel.allRoles = this.allRoles;
-        console.log(dataModel);
-        this.showEditDialog("编辑用户", dataModel);
-      } else {
-        noticeMsg("获取用户详情失败", true);
+        this.showEditDialog("编辑", this.selection[0]);
       }
     },
 
@@ -221,7 +137,7 @@ export default {
         option.onSuccess = this.onDeleteOk;
         option.onFaild = this.onDeleteError;
         option.params = this.selection;
-        deleteUser(option);
+        deletePermission(option);
       }
     },
     onDeleteOk(data) {
@@ -245,12 +161,12 @@ export default {
       let params = {};
       params.pageNum = this.currentPage;
       params.pageSize = this.pageSize;
-      requestOpt.onSuccess = this.listUserPageOk;
-      requestOpt.onFaild = this.listUserPageError;
+      requestOpt.onSuccess = this.listApiEntityOk;
+      requestOpt.onFaild = this.listApiEntityError;
       requestOpt.params = params;
-      listUserPage(requestOpt);
+      listApiEntity(requestOpt);
     },
-    listUserPageOk(data) {
+    listApiEntityOk(data) {
       console.log(data);
       if (data.errorCode === 200) {
         this.tableData = data.data.content;
@@ -261,7 +177,7 @@ export default {
         console.log("totalCount", this.totalCount);
       }
     },
-    listUserPageError(data) {
+    listApiEntityError(data) {
       console.log(data);
     },
     onRowSelect(selection, row) {
@@ -284,6 +200,17 @@ export default {
       this.currentPage = val;
       this.getTableData();
     },
+    onLoadPermission(data) {
+      console.log(data);
+      if (data.errorCode === 200) {
+        this.tableData = data.data;
+        this.treeData = convertTree(data.data);
+        console.log("tree", this.treeData);
+      }
+    },
+    onFaild(data) {
+      console.log(data);
+    },
 
     tableHeaderStyle({ row, column, rowIndex, columnIndex }) {
       if (rowIndex === 0) {
@@ -296,6 +223,7 @@ export default {
       if (result) {
         this.showDialog = false;
         this.getTableData();
+        // this.lodadAllPermission();
       }
     },
     close() {

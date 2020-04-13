@@ -140,27 +140,39 @@
     </insert>
 
     <select id="getUserNavPermissions"  resultMap="resultBaseMap" parameterType = "String">
-        SELECT
-            p.* ,
-            rp.role_id ,
-            ur.user_id
+        SELECT DISTINCT
+        (p.id) ,
+        p.`code` ,
+        p.default_type ,
+        p.icon ,
+        p.permission_type ,
+        p.`level` ,
+        p.`name` ,
+        p.parent_code ,
+        p.sort ,
+        p.`status` ,
+        p.url ,
+        p.parent_id ,
+        p.btn_method ,
+        p.btn_type ,
+        p.component
         FROM
-            permission p
+        permission p
         LEFT JOIN role_privilege rp ON rp.permission_id = p.id
         LEFT JOIN user_role ur ON ur.role_id = rp.role_id
         WHERE
-            p.`status` = '1'
+        p.`status` = '1'
         AND p.parent_id = '0'
         AND ur.user_id =(
-            SELECT
-                id
-            FROM
-                USER
-            WHERE
-                USER .user_name = #{userName}
+        SELECT
+        id
+        FROM
+        USER
+        WHERE
+        USER .user_name = #{userName}
         )
         ORDER BY
-            p.sort
+        p.sort
     </select>
 
 
@@ -218,12 +230,11 @@
         WHERE
         USER .user_name = #{userName}
         );
-
     </select>
 
     <select id="getUserPermissionsIds" resultType = "Long">
         SELECT
-            p.id
+        DISTINCT(p.id)
         FROM
             permission p
         LEFT JOIN role_privilege rp ON rp.permission_id = p.id

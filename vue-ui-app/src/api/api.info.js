@@ -7,6 +7,9 @@ const api = {
     userInfo:'api/user-service/account/info',
     userManagerList:'api/user-service/user/manager/list',//用户管理列表展示
     userManagerDetail:'api/user-service/user/manager/detail',
+    userManagerAdd:'api/user-service/user/manager/add',
+    userManagerEdit:'api/user-service/user/manager/edit',
+    userManagerDelete:'api/user-service/user/manager/delete',
 
 
     menuManageList:'api/user-service/menu/manage/list',

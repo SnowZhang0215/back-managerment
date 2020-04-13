@@ -10,7 +10,9 @@ public interface IUserService {
 
     UserVo getUserDetail(Long uId);
 
-    int createUser(UserVo userVo);
+    int createUser(UserVo userVo) throws Exception;
 
     int deleteUsers(List<Long> deleteIds);
+
+    int updateUser(UserVo userVo);
 }

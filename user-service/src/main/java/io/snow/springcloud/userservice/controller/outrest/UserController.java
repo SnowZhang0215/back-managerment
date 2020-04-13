@@ -70,13 +70,13 @@ public class UserController {
     public ResponseData editUser(@RequestBody UserVo userVo,@RequestHeader("userName")String userName){
         logger.info("create user : {}",userVo);
         try {
-            userVo.setCreatedBy(userName);
-            userVo.setCreatedDate(Instant.now());
-            int row =  userService.createUser(userVo);
+            userVo.setLastModifiedBy(userName);
+            userVo.setLastModifiedDate(Instant.now());
+            int row =  userService.updateUser(userVo);
             return ResponseData.ok(row);
         } catch (Exception e) {
             logger.error("create user exception : {0}",e);
-            return ResponseData.error("新建用户失败");
+            return ResponseData.error("修改用户失败");
         }
     }
 

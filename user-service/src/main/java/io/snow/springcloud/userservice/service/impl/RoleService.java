@@ -61,7 +61,7 @@ public class RoleService implements IRoleService {
     }
 
     @Override
-    @Transactional(propagation= Propagation.REQUIRED,isolation= Isolation.READ_COMMITTED)
+    @Transactional(propagation= Propagation.REQUIRED,isolation= Isolation.READ_COMMITTED,rollbackFor = Exception.class)
     public Map<String, Object> authRolePermission(Map<String, Object> map) {
         logger.info("auth role:{}" , map);
         Object role = map.get("roleId");
@@ -77,7 +77,9 @@ public class RoleService implements IRoleService {
         Map<String,Object> param = new HashMap<>();
         param.put("roleId",roleId);
         param.put("checkIds",checkIds);
-        roleMapper.insertRolePermission(param);
+        if (checkIds.size()>0){
+            roleMapper.insertRolePermission(param);
+        }
         return param;
     }
 

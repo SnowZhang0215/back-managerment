@@ -19,6 +19,7 @@ import java.util.*;
 @Service
 public class MenuService implements IMenuService {
 
+
     @Autowired
     private PermissionMapper permissionMapper;
 
@@ -46,7 +47,9 @@ public class MenuService implements IMenuService {
         Iterator<Permission> iterator = userMenus.iterator();
         while (iterator.hasNext()){
             Permission permission = iterator.next();
-            if (!permission.getChildren().isEmpty()){
+            if (!userPermission.contains(permission.getId())){
+                iterator.remove();
+            }else if (!permission.getChildren().isEmpty()){
                 removeNotAllowChildren(permission.getChildren(),userPermission);
             }else {
                 if (!userPermission.contains(permission.getId())){

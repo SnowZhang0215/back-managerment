@@ -22,4 +22,10 @@ public interface UserMapper {
 
     //获取用户的详情。需要获取用户的角色，不需要获取权限
     UserVo getUserDetail(Long uId);
+
+    int updateUser(UserVo userVo);
+
+    int deleteUserRole(Long userId);
+
+    int deleteUsers(List<Long> deleteIds);
 }

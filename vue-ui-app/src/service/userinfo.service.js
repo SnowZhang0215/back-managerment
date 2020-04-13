@@ -21,3 +21,21 @@ export function getUserDetail(opt) {
         .then(response => opt.onSuccess(response))
         .catch(error => opt.onFaild ? opt.onFaild(error) : noticeMsg(error, true))
 }
+
+export function createUser(opt){
+    axios.post(api.userManagerAdd,opt.params)
+        .then(response => opt.onSuccess(response))
+        .catch(error => opt.onFaild ? opt.onFaild(error) : noticeMsg(error, true))
+}
+
+export function updateUser(opt){
+    axios.post(api.userManagerEdit , opt.params)
+        .then(response => opt.onSuccess(response))
+        .catch(error => opt.onFaild ? opt.onFaild(error) : noticeMsg(error, true))
+}
+
+export function deleteUser(opt){
+    axios.post(api.userManagerDelete , opt.params)
+    .then(response => opt.onSuccess(response))
+    .catch(error => opt.onFaild ? opt.onFaild(error) : noticeMsg(error, true))
+}

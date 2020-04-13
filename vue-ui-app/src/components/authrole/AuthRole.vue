@@ -9,6 +9,7 @@
         :expand-on-click-node="true"
         :highlight-current="true"
         default-expand-all
+        :check-strictly="true"
         :getCheckedNodes="getCheckedNodes"
         :default-checked-keys="dataModel.rolePermissions"
       ></el-tree>
@@ -17,25 +18,28 @@
       <el-col :lg="12" :md="12" :sm="24">
         <el-form-item>
           <el-button type="primary" @click="submitForm('dataModel')">提交</el-button>
-          <el-button  @click="cancel()">关闭</el-button>
+          <el-button @click="cancel()">关闭</el-button>
         </el-form-item>
       </el-col>
     </el-row>
   </el-form>
 </template>
 <script>
-import { createRole, editRole ,submitAuthRole} from "../../service/rolemanager.service";
+import {
+  createRole,
+  editRole,
+  submitAuthRole
+} from "../../service/rolemanager.service";
 import { noticeMsg } from "../../common/common.service";
 export default {
   props: { dataModel: Object, onfinish: Function, onClose: Function },
   name: "AuthRole",
   data() {
-    return {
-      
-    };
+    return {};
   },
   created() {
     console.log(this.dataModel);
+    // this.setCheckedKeys();
   },
   methods: {
     cancel() {
@@ -49,11 +53,12 @@ export default {
       option.onSuccess = this.onSubmitOk;
       option.onFaild = this.onSubmitFaild;
       option.params = this.dataModel;
-      submitAuthRole(option)
+      submitAuthRole(option);
     },
-    getCheckedNodes(val){
-      
+    setCheckedNodes() {
+      this.$refs.tree.setCheckedNodes(this.dataModel.rolePermissions);
     },
+    getCheckedNodes(val) {},
     onSubmitOk(data) {
       if (data.errorCode == 200) {
         console.log("提交成功");
