@@ -91,4 +91,9 @@ public class UserService implements IUserService {
         }
         return 0;
     }
+
+    @Override
+    public List<UserVo> queryUserByName(String userName) {
+        return userMapper.selectUserByUserName(userName);
+    }
 }

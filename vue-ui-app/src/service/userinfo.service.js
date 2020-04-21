@@ -39,3 +39,10 @@ export function deleteUser(opt){
     .then(response => opt.onSuccess(response))
     .catch(error => opt.onFaild ? opt.onFaild(error) : noticeMsg(error, true))
 }
+
+export function queryUserByName(query){
+    axios
+    .post(api.userManagerQuery,query.params)
+    .then(response => query.onSuccess(response))
+    .catch(error => query.onFaild(error))
+}

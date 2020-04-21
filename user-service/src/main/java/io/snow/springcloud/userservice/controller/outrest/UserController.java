@@ -80,6 +80,18 @@ public class UserController {
         }
     }
 
+    @PostMapping("/manager/query")
+    public ResponseData queryUser(@RequestBody UserVo userVo){
+        logger.info("query user : {}",userVo);
+        try {
+           List<UserVo> result =  userService.queryUserByName(userVo.getUserName());
+           return ResponseData.ok(result);
+        } catch (Exception e) {
+            logger.error("query user exception : {0}",e);
+            return ResponseData.error("查询用户失败");
+        }
+    }
+
     @PostMapping("/manager/delete")
     public ResponseData deleteUsers(@RequestBody List<UserVo> users){
         logger.info("delete users:{}" , users);

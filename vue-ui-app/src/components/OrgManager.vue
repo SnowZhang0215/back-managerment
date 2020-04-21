@@ -20,9 +20,15 @@
         @select-all="onSelectAll"
       >
         <el-table-column type="selection" width="55"></el-table-column>
-        <el-table-column prop="id" label="ID" width="55"></el-table-column>
-        <el-table-column prop="path" label="API路径"></el-table-column>
-        <el-table-column prop="description" label="API接口描述"></el-table-column>
+        <template v-for="(item,index) in tableHeaderItem">
+          <el-table-column
+            :prop="item.code"
+            :label="item.label"
+            :width="item.width"
+            :formatter="item.formatter"
+            :key="index"
+          ></el-table-column>
+        </template>
       </el-table>
       <el-row>
         <el-pagination
@@ -48,20 +54,20 @@
       :append-to-body="true"
       width="50%"
     >
-      <api-entity-edit :data-model="editDataModel" :onfinish="onEditFinish" :onClose="close"></api-entity-edit>
+      <org-manager-edit :data-model="editDataModel" :onfinish="onEditFinish" :onClose="close"></org-manager-edit>
     </el-dialog>
   </el-container>
 </template>
 
 <script>
 import { getPermissionBtns } from "../service/menuService";
-import { listApiEntity } from "../service/api.service";
+import { listOrgPage } from "../service/orgmanager.service";
 import { showMsgBox, noticeMsg } from "../common/common.service";
-import ApiEntityEdit from "../components/edit/ApiEntityEdit";
+import OrgManagerEdit from "../components/edit/OrgManagerEdit";
 export default {
   name: "OrgManager",
   components: {
-    ApiEntityEdit
+    OrgManagerEdit
   },
   data() {
     return {
@@ -77,6 +83,41 @@ export default {
         edit: this.edit,
         delete: this.delete
       },
+      tableHeaderItem: [
+        {
+          code: "id",
+          label: "ID",
+          width: 55
+        },
+        {
+          code: "orgName",
+          label: "组织名称"
+        },
+        {
+          code: "orgMaster",
+          label: "组织首领"
+        },
+        {
+          code: "orgSeinorManager1",
+          label: "组织高层1"
+        },
+        {
+          code: "orgSeinorManager2",
+          label: "组织高层2"
+        },
+        {
+          code: "openFlag",
+          label: "是否激活",
+          formatter: function(row, column, cellValue, index){
+              if(cellValue == 1){
+                return '激活'
+              }
+              if(cellValue == 0){
+                return '未激活'
+              }
+          }
+        }
+      ],
       //eidt
       showDialog: false,
       dialogTitle: "",
@@ -84,7 +125,6 @@ export default {
     };
   },
   created() {
-    // this.lodadAllPermission();
     this.getTableData();
     this.getUserBtns();
   },
@@ -101,12 +141,6 @@ export default {
       console.log(btns);
       this.pageBtns = btns;
     },
-    lodadAllPermission() {
-      let opt = {};
-      opt.onSuccess = this.onLoadPermission;
-      opt.onFaild = this.onFaild;
-      getAllPermission(opt);
-    },
     handleBtnClick(methodName) {
       console.log(methodName);
       const functionName = this.btnMethods[methodName];
@@ -116,7 +150,8 @@ export default {
     },
     add() {
       this.editDataModel = {};
-      this.showEditDialog("新建", this.editDataModel);
+      this.editDataModel.orgMasterOpt = [];
+      this.showEditDialog("新建组织", this.editDataModel);
     },
     edit() {
       if (this.selection.length <= 0) {
@@ -161,12 +196,12 @@ export default {
       let params = {};
       params.pageNum = this.currentPage;
       params.pageSize = this.pageSize;
-      requestOpt.onSuccess = this.listApiEntityOk;
-      requestOpt.onFaild = this.listApiEntityError;
+      requestOpt.onSuccess = this.listOrgPageOk;
+      requestOpt.onFaild = this.listOrgPageError;
       requestOpt.params = params;
-      listApiEntity(requestOpt);
+      listOrgPage(requestOpt);
     },
-    listApiEntityOk(data) {
+    listOrgPageOk(data) {
       console.log(data);
       if (data.errorCode === 200) {
         this.tableData = data.data.content;
@@ -177,7 +212,7 @@ export default {
         console.log("totalCount", this.totalCount);
       }
     },
-    listApiEntityError(data) {
+    listOrgPageError(data) {
       console.log(data);
     },
     onRowSelect(selection, row) {
@@ -200,17 +235,6 @@ export default {
       this.currentPage = val;
       this.getTableData();
     },
-    onLoadPermission(data) {
-      console.log(data);
-      if (data.errorCode === 200) {
-        this.tableData = data.data;
-        this.treeData = convertTree(data.data);
-        console.log("tree", this.treeData);
-      }
-    },
-    onFaild(data) {
-      console.log(data);
-    },
 
     tableHeaderStyle({ row, column, rowIndex, columnIndex }) {
       if (rowIndex === 0) {
@@ -223,7 +247,6 @@ export default {
       if (result) {
         this.showDialog = false;
         this.getTableData();
-        // this.lodadAllPermission();
       }
     },
     close() {

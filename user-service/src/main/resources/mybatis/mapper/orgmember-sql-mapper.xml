@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.snow.springcloud.userservice.mapper.OrgMemberMapper">
+    <resultMap id="resultBaseMap" type="io.snow.model.vo.OrgMemberVo">
+        <id property="id" column="id"/>
+        <result column="game_id" jdbcType="VARCHAR" property="gameId"/>
+        <result column="game_name" jdbcType="VARCHAR" property="gameName"/>
+        <result column="org_id" jdbcType="BIGINT" property="orgId"/>
+        <result column="fight_capacity" jdbcType="BIGINT" property="fightCapacity"/>
+        <result column="org_role_type" jdbcType="INTEGER" property="orgRoleType"/>
+        <result column="system_user_id" jdbcType="BIGINT" property="systemUserId"/>
+        <result column="created_by" jdbcType="VARCHAR" property="createdBy"/>
+        <result column="created_date" jdbcType="TIMESTAMP" property="createdDate"/>
+        <result column="last_modified_by" jdbcType="VARCHAR" property="lastModifiedBy"/>
+        <result column="last_modified_date" jdbcType="TIMESTAMP" property="lastModifiedDate"/>
+    </resultMap>
+
+    <resultMap id="resultBaseMapWithOrgName" type="io.snow.model.vo.OrgMemberVo" extends="resultBaseMap">
+        <result column="org_name" jdbcType="VARCHAR" property="orgName"/>
+    </resultMap>
+
+    <select id="listOrgMemberPageableByAdmin" resultMap="resultBaseMapWithOrgName">
+        SELECT
+        a.*,b.org_name
+        FROM
+        org_member a
+        LEFT JOIN org_manager b ON a.org_id = b.id
+        ORDER BY
+        a.id
+    </select>
+
+    <select id="listOrgMemberPageable" resultMap="resultBaseMapWithOrgName" parameterType="Long">
+        SELECT
+        a.*,b.org_name
+        FROM
+        org_member a
+        LEFT JOIN org_manager b ON a.org_id = b.id
+        where a.org_id = #{orgId}
+        ORDER BY
+        a.id
+    </select>
+
+    <select id="selectByGameId" resultMap="resultBaseMap" parameterType="java.lang.String">
+        select o.* from org_member o where o.`game_id` = #{gameId}
+    </select>
+
+    <select id="findOrgMemberByOrgIdAndGameId" resultMap="resultBaseMap" parameterType="io.snow.model.vo.OrgMemberVo">
+        select o.* from org_member o where o.`org_id` = #{orgId} and o.`game_id` = #{gameId}
+    </select>
+
+    <delete id="deleteOrgMemberById" parameterType="Long">
+        delete from org_member where id = #{id}
+    </delete>
+
+    <update id="updateOrgMemberVo" useGeneratedKeys="true" keyProperty="id" keyColumn="id" parameterType="io.snow.model.vo.OrgMemberVo">
+        update org_member
+        <set>
+            <if test="gameId != null">game_id=#{gameId},</if>
+            <if test="gameName != null">game_name=#{gameName},</if>
+            <if test="orgId !=null">org_id=#{orgId},</if>
+            <if test="systemUserId != null">system_user_id=#{systemUserId},</if>
+            <if test="fightCapacity != null">fight_capacity=#{fightCapacity},</if>
+            <if test="orgRoleType != null">org_role_type=#{orgRoleType},</if>
+            <if test="lastModifiedDate != null">last_modified_date=#{lastModifiedDate},</if>
+            <if test="lastModifiedBy != null">last_modified_by=#{lastModifiedBy}</if>
+        </set>
+        where id=#{id}
+    </update>
+    <insert id="insertOrgMember" useGeneratedKeys="true" keyProperty="id" keyColumn="id" parameterType="io.snow.model.vo.OrgMemberVo">
+        INSERT INTO org_member(
+        game_id ,
+        game_name ,
+        org_id,
+        fight_capacity,
+        org_role_type,
+        system_user_id,
+        created_by ,
+        last_modified_by ,
+        created_date ,
+        last_modified_date
+        )
+        VALUES
+        (
+        #{gameId},
+        #{gameName},
+        #{orgId},
+        #{fightCapacity},
+        #{orgRoleType},
+        #{systemUserId},
+        #{createdBy},
+        #{lastModifiedBy},
+        #{createdDate},
+        #{lastModifiedDate}
+        )
+    </insert>
+</mapper>

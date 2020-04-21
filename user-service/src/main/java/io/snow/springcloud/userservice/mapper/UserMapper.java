@@ -28,4 +28,6 @@ public interface UserMapper {
     int deleteUserRole(Long userId);
 
     int deleteUsers(List<Long> deleteIds);
+
+    List<UserVo> selectUserByUserName(String userName);
 }

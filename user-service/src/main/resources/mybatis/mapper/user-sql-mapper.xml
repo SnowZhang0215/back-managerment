@@ -41,6 +41,12 @@
         order by id
     </select>
 
+    <select id="selectUserByUserName" resultMap="baseUserMap" parameterType="String">
+        select *
+        from user u
+        where u.user_name like concat('%',#{userName},'%')
+    </select>
+
     <select id="getUserDetail" resultMap="userDetail" parameterType="Long">
         SELECT
         u.id ,
@@ -119,6 +125,10 @@
             #{id}
         </foreach>
     </delete>
+
+<!--    <select id="selectUserByLogin" resultMap="baseUserMap" parameterType="String">-->
+<!--        select * from user u where u.user_name = #{userName}-->
+<!--    </select>-->
 
     <select id="findUserByUserName"  resultMap="resultBaseMap">
         SELECT

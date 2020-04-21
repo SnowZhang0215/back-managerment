@@ -178,10 +178,22 @@
 
 
     <select id="getDefaultPermission" resultMap = "resultBaseMap">
-        SELECT
-            p.* ,
-            rp.role_id ,
-            ur.user_id
+        SELECT DISTINCT
+        (p.id) ,
+        p.`code` ,
+        p.default_type ,
+        p.icon ,
+        p.permission_type ,
+        p.`level` ,
+        p.`name` ,
+        p.parent_code ,
+        p.sort ,
+        p.`status` ,
+        p.url ,
+        p.parent_id ,
+        p.btn_method ,
+        p.btn_type ,
+        p.component
         FROM
             permission p
         LEFT JOIN role_privilege rp ON rp.permission_id = p.id

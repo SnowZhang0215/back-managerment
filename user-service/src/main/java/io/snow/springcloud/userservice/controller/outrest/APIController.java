@@ -20,7 +20,7 @@ import java.util.Map;
 @RequestMapping("/apiEntity")
 public class APIController {
 
-    private static final Logger logger = LoggerFactory.getLogger(ApiDialog.class);
+    private static final Logger logger = LoggerFactory.getLogger(APIController.class);
 
     @Autowired
     private IAPIEntityService apiEntityService;

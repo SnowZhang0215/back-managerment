@@ -6,10 +6,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.netflix.zuul.filters.support.FilterConstants;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Collection;
 
 @Component
 public class PreRequestFilter extends ZuulFilter {
@@ -39,6 +41,14 @@ public class PreRequestFilter extends ZuulFilter {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication!=null && authentication.isAuthenticated()){
             ctx.getZuulRequestHeaders().put("userName", (String) authentication.getPrincipal());
+            Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+            int isAdmin = 0;
+            for(GrantedAuthority authority : authorities){
+                if (authority.getAuthority().equalsIgnoreCase("ROLE_ADMIN")){
+                    isAdmin = 1;
+                }
+            }
+            ctx.getZuulRequestHeaders().put("isAdmin",isAdmin+"");
         }
         LOG.info("request user: {}",authentication);
         LOG.info("send {} request to {}",request.getMethod(),request.getRequestURL().toString());

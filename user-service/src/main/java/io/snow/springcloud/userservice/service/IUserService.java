@@ -15,4 +15,6 @@ public interface IUserService {
     int deleteUsers(List<Long> deleteIds);
 
     int updateUser(UserVo userVo);
+
+    List<UserVo> queryUserByName(String userName);
 }
