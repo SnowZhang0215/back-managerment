@@ -130,6 +130,7 @@ public class OrgMemberService implements IOrgMemberService {
             if (orgMemberVo.getOrgId() == null){
                 throw new Exception("您还没有加入组织");
             }
+            page = PageHelper.startPage(pageRequest.getPageNum(), pageRequest.getPageSize(), true);
             list = orgMemberMapper.listOrgMemberPageable(orgMemberVo.getOrgId());
         }
         PageResult result = new PageResult();

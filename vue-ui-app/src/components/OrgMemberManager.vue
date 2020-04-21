@@ -136,7 +136,7 @@ export default {
             if (cellValue == 3) {
               return "成员";
             }
-            if (cellValue == 5) {
+            if (cellValue == 4) {
               return "学员";
             }
           }
