@@ -1,7 +1,6 @@
 package io.snow.springcloud.userservice.controller.outrest;
 
 
-import com.sun.jnlp.ApiDialog;
 import io.snow.model.vo.ApiVo;
 import io.snow.rest.common.ResponseData;
 import io.snow.rest.common.page.PageResult;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/apiEntity")
