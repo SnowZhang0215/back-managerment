@@ -37,7 +37,7 @@
         LEFT JOIN org_manager b ON a.org_id = b.id
         where a.org_id = #{orgId}
         ORDER BY
-        a.id
+        a.org_role_type asc,a.fight_capacity desc
     </select>
 
     <select id="selectByGameId" resultMap="resultBaseMap" parameterType="java.lang.String">
