@@ -19,6 +19,8 @@ public class OrgMemberVo extends BaseVo {
 
     private Long systemUserId;
 
+    private Long fightChange;
+
     public Long getId() {
         return id;
     }
@@ -81,5 +83,13 @@ public class OrgMemberVo extends BaseVo {
 
     public void setOrgName(String orgName) {
         this.orgName = orgName;
+    }
+
+    public Long getFightChange() {
+        return fightChange;
+    }
+
+    public void setFightChange(Long fightChange) {
+        this.fightChange = fightChange;
     }
 }

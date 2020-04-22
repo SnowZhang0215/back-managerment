@@ -114,7 +114,7 @@ export default {
         },
         {
           code: "fightCapacity",
-          label: "战斗力"
+          label: "战斗力(万)"
         },
         {
           code: "orgName",
@@ -140,6 +140,10 @@ export default {
               return "学员";
             }
           }
+        },
+        {
+          code: "fightChange",
+          label: "近7天战斗力变化(万)"
         }
       ],
       //eidt

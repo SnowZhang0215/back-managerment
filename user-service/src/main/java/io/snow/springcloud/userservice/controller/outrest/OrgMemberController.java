@@ -58,8 +58,8 @@ public class OrgMemberController {
                     orgMemberVo.setOrgId(requestUser.getOrgId());
                 }
             }
-
             if (orgMemberByGameId != null){
+
                 if (orgMemberByGameId.getOrgId()!=null && !orgMemberByGameId.getOrgId().equals(orgMemberVo.getOrgId())){
                     return ResponseData.error("成员已经加入其它组织");
                 }else {

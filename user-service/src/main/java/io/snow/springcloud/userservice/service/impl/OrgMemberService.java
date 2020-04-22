@@ -2,6 +2,7 @@ package io.snow.springcloud.userservice.service.impl;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import io.snow.model.vo.FightChangeVo;
 import io.snow.model.vo.OrgMemberVo;
 import io.snow.model.vo.RoleVo;
 import io.snow.model.vo.UserVo;
@@ -10,6 +11,7 @@ import io.snow.rest.common.page.PageResult;
 import io.snow.springcloud.userservice.mapper.OrgMemberMapper;
 import io.snow.springcloud.userservice.mapper.RoleMapper;
 import io.snow.springcloud.userservice.mapper.UserMapper;
+import io.snow.springcloud.userservice.service.IFightChangeService;
 import io.snow.springcloud.userservice.service.IOrgMemberService;
 import io.snow.springcloud.userservice.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,20 +40,9 @@ public class OrgMemberService implements IOrgMemberService {
     @Qualifier("managerUserService")
     private IUserService userService;
 
-//    @Override
-//    public PageResult listOrg(Integer pageIndex, Integer pageSize) {
-//        PageRequest pageRequest = new PageRequest();
-//        pageRequest.setPageNum(pageIndex == null ? 1 : pageIndex);
-//        pageRequest.setPageSize(pageSize == null ? 10 : pageSize);
-//        Page<Object> page = PageHelper.startPage(pageRequest.getPageNum(), pageRequest.getPageSize(), true);
-//        List<OrgVo> list = orgManagerMapper.listOrgPageable();
-//        PageResult result = new PageResult();
-//        result.setContent(list);
-//        result.setTotalSize(page.getTotal());
-//        result.setPageNum(pageRequest.getPageNum());
-//        result.setPageSize(pageRequest.getPageSize());
-//        return result;
-//    }
+    @Autowired
+    private IFightChangeService fightChangeService;
+
 
     @Override
     @Transactional(propagation= Propagation.REQUIRED,isolation= Isolation.READ_COMMITTED,rollbackFor = Exception.class)
@@ -72,6 +63,10 @@ public class OrgMemberService implements IOrgMemberService {
         }
         userVo.setUserHasRoleId(roleIds);
         userService.updateUser(userVo);
+        OrgMemberVo saved = orgMemberMapper.selectByGameId(gameId);
+        if(!saved.getFightCapacity().equals(orgMemberVo.getFightCapacity())){
+            fightChangeService.insertFightChange(orgMemberVo);
+        }
         return orgMemberMapper.updateOrgMemberVo(orgMemberVo);
     }
 
@@ -113,7 +108,9 @@ public class OrgMemberService implements IOrgMemberService {
         if (orgMemberVo.getId() !=null){
             return orgMemberMapper.updateOrgMemberVo(orgMemberVo);
         }
-        return orgMemberMapper.insertOrgMember(orgMemberVo);
+        int insertOrgMember = orgMemberMapper.insertOrgMember(orgMemberVo);
+        fightChangeService.insertFightChange(orgMemberVo);
+        return insertOrgMember;
     }
 
     @Override
@@ -125,6 +122,12 @@ public class OrgMemberService implements IOrgMemberService {
         List<OrgMemberVo> list = null;
         if(isAdmin == 1){
             list = orgMemberMapper.listOrgMemberPageableByAdmin();
+            if(list!=null){
+                for (OrgMemberVo vo: list){
+                    Long fightChangeVal = fightChangeService.getRecentFightVal(vo.getId());
+                    vo.setFightChange(fightChangeVal);
+                }
+            }
         }else {
             OrgMemberVo orgMemberVo = orgMemberMapper.selectByGameId(userName);
             if (orgMemberVo.getOrgId() == null){
@@ -132,6 +135,12 @@ public class OrgMemberService implements IOrgMemberService {
             }
             page = PageHelper.startPage(pageRequest.getPageNum(), pageRequest.getPageSize(), true);
             list = orgMemberMapper.listOrgMemberPageable(orgMemberVo.getOrgId());
+            if(list!=null){
+                for (OrgMemberVo vo: list){
+                  Long fightChangeVal = fightChangeService.getRecentFightVal(vo.getId());
+                  vo.setFightChange(fightChangeVal);
+                }
+            }
         }
         PageResult result = new PageResult();
         result.setContent(list);
