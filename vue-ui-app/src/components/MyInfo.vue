@@ -71,7 +71,7 @@ export default {
         },
         yAxis: {
           type: "value",
-          name: "纵轴名称", // y轴名称
+          name: "战斗力(万)", // y轴名称
           min: 0,
           max: 0,
           splitNumber: 0.5,
