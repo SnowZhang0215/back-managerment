@@ -1,6 +1,8 @@
 package io.snow.model.vo;
 
 
+import java.util.List;
+
 public class OrgMemberVo extends BaseVo {
 
     private Long id;
@@ -20,6 +22,8 @@ public class OrgMemberVo extends BaseVo {
     private Long systemUserId;
 
     private Long fightChange;
+
+    private List<FightChangeVo> frightChanges;
 
     public Long getId() {
         return id;
@@ -91,5 +95,13 @@ public class OrgMemberVo extends BaseVo {
 
     public void setFightChange(Long fightChange) {
         this.fightChange = fightChange;
+    }
+
+    public List<FightChangeVo> getFrightChanges() {
+        return frightChanges;
+    }
+
+    public void setFrightChanges(List<FightChangeVo> frightChanges) {
+        this.frightChanges = frightChanges;
     }
 }

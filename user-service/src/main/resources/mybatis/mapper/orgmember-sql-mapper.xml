@@ -19,6 +19,23 @@
         <result column="org_name" jdbcType="VARCHAR" property="orgName"/>
     </resultMap>
 
+    <select id="getMemberInfo" resultMap="resultBaseMapWithOrgName" parameterType="String">
+        SELECT
+        om.*, o.org_name
+        FROM
+        org_member om
+        LEFT JOIN org_manager o ON o.id = om.org_id
+        WHERE
+        om.system_user_id =(
+        SELECT
+        u.id
+        FROM
+        USER u
+        WHERE
+        u.user_name = #{userName}
+        )
+    </select>
+
     <select id="listOrgMemberPageableByAdmin" resultMap="resultBaseMapWithOrgName">
         SELECT
         a.*,b.org_name

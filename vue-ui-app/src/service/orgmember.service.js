@@ -11,16 +11,21 @@ export function listOrgMemberPage(opt) {
         .catch(error => opt.onFaild ? opt.onFaild(error) : noticeMsg(error, true))
 }
 
-export function createOrgMember(opt){
+export function createOrgMember(opt) {
     axios
-    .post(api.orgMemberAdd,opt.params)
-    .then(response => opt.onSuccess(response))
-    .catch(error => opt.onFaild(error))
+        .post(api.orgMemberAdd, opt.params)
+        .then(response => opt.onSuccess(response))
+        .catch(error => opt.onFaild(error))
 }
 
-export function editOrgMember(opt){
+export function editOrgMember(opt) {
     axios
-    .post(api.orgMemberUpdate,opt.params)
-    .then(response => opt.onSuccess(response))
-    .catch(error => opt.onFaild(error))
+        .post(api.orgMemberUpdate, opt.params)
+        .then(response => opt.onSuccess(response))
+        .catch(error => opt.onFaild(error))
+}
+export function getUserInfo(opt) {
+    axios.get(api.orgMemberInfo)
+        .then(response => opt.onSuccess(response))
+        .catch(error => opt.onFaild ? opt.onFaild(error) : noticeMsg(error, true))
 }

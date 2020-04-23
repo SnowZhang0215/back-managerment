@@ -43,6 +43,17 @@ public class OrgMemberController {
         }
     }
 
+    @GetMapping("/member/info")
+    public ResponseData<?> getMemberInfo(@RequestHeader("userName") String userName){
+        try {
+           OrgMemberVo orgMemberVo = orgMemberService.getMemberInfo(userName);
+           return ResponseData.ok(orgMemberVo);
+        } catch (Exception e) {
+            logger.error("get info  org member vo error:{0}",e);
+            return ResponseData.error(e.getMessage());
+        }
+    }
+
     @PostMapping("/add")
     public ResponseData createOrgMember(@RequestBody OrgMemberVo orgMemberVo, @RequestHeader("userName") String userName,@RequestHeader("isAdmin") Integer isAdmin){
         try {

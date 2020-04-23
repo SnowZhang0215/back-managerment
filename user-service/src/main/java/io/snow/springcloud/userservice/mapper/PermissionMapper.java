@@ -49,4 +49,6 @@ public interface PermissionMapper {
     int updatePermission(Permission permission);
 
     void insertPermissionApi(Map<String, Object> map);
+
+    int deletePermissionNotReal(List<Long> deleteIds);
 }

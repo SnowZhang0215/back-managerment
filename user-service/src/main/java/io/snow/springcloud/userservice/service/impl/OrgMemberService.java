@@ -16,6 +16,7 @@ import io.snow.springcloud.userservice.service.IOrgMemberService;
 import io.snow.springcloud.userservice.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -158,5 +159,16 @@ public class OrgMemberService implements IOrgMemberService {
     @Override
     public int deleteOrgMember(Long id) {
         return orgMemberMapper.deleteOrgMemberById(id);
+    }
+
+    @Override
+    public OrgMemberVo getMemberInfo(String userName) {
+        OrgMemberVo memberInfo = orgMemberMapper.getMemberInfo(userName);
+        if (memberInfo == null){
+            return null;
+        }
+        List<FightChangeVo> recentChangeData = fightChangeService.getRecentChangeData(memberInfo.getId());
+        memberInfo.setFrightChanges(recentChangeData);
+        return memberInfo;
     }
 }

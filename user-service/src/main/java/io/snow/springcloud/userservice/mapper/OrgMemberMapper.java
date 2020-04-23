@@ -18,4 +18,6 @@ public interface OrgMemberMapper {
     OrgMemberVo selectByGameId(String gameId);
 
     int deleteOrgMemberById(Long id);
+
+    OrgMemberVo getMemberInfo(String userName);
 }

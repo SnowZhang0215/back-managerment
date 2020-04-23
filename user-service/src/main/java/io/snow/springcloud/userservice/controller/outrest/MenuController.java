@@ -88,7 +88,6 @@ public class MenuController {
                    deleteIds.add(p.getId());
                }
               int row = menuService.deletePermission(deleteIds);
-
                return ResponseData.ok(row);
 
            }else {

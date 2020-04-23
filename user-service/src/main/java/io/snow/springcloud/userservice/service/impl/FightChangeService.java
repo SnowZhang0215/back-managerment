@@ -40,4 +40,9 @@ public class FightChangeService implements IFightChangeService {
         }
         return val;
     }
+
+    @Override
+    public List<FightChangeVo> getRecentChangeData(Long id) {
+        return fightChangeMapper.selectRecentFightValChangeList(id);
+    }
 }

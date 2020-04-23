@@ -315,4 +315,11 @@
             #{id}
         </foreach>
     </delete>
+
+    <update id="deletePermissionNotReal" parameterType="List">
+        update permission set status = 0 where id in
+        <foreach collection="list" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
 </mapper>

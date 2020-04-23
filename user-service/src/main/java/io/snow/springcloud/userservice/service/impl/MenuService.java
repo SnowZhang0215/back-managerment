@@ -105,7 +105,8 @@ public class MenuService implements IMenuService {
     @Override
     @Transactional(propagation= Propagation.REQUIRED,isolation= Isolation.READ_COMMITTED)
     public int deletePermission(List<Long> deleteIds) {
-        return this.permissionMapper.deletePermission(deleteIds);
+//        return this.permissionMapper.deletePermission(deleteIds);
+        return permissionMapper.deletePermissionNotReal(deleteIds);
     }
 
     @Override

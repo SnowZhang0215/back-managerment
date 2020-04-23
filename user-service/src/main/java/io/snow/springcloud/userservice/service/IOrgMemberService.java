@@ -15,4 +15,6 @@ public interface IOrgMemberService {
     OrgMemberVo getOrgMemberByGameId(OrgMemberVo orgMemberVo);
 
     int deleteOrgMember(Long id);
+
+    OrgMemberVo getMemberInfo(String userName);
 }

@@ -40,11 +40,13 @@ const api = {
     orgManagerUpdate: "api/user-service/orgManager/update",
     orgManagerDelete: "api/user-service/orgManager/delete",
     orgManagerQuery:"api/user-service/orgManager/query",
+    
 
     orgMemberList: "api/user-service/orgMember/list",
     orgMemberAdd: "api/user-service/orgMember/add",
     orgMemberUpdate: "api/user-service/orgMember/edit",
-    orgMemberDelete: "api/user-service/orgMember/delete"
+    orgMemberDelete: "api/user-service/orgMember/delete",
+    orgMemberInfo:"api/user-service/orgMember/member/info"
 
 
 
