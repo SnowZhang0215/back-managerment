@@ -34,6 +34,7 @@
 
 <script>
 import { getUserInfo } from "../service/orgmember.service";
+import { formatDate } from "../common/common.service";
 import ECharts from "vue-echarts/components/ECharts";
 // import chart from "echarts/lib/chart/line";
 import "echarts/lib/chart/line";
@@ -67,6 +68,10 @@ export default {
           nameTextStyle: {
             fontWeight: 600,
             fontSize: 18
+          },
+          axisLabel: {
+            interval: 0,
+            rotate: 10
           }
         },
         yAxis: {
@@ -111,19 +116,20 @@ export default {
         let max = this.userInfo.frightChanges[0].fightVal;
         let min = this.userInfo.frightChanges[0].fightVal;
         this.userInfo.frightChanges.forEach(element => {
-          if(max <= element.fightVal){
-              max = element.fightVal;
+          if (max <= element.fightVal) {
+            max = element.fightVal;
           }
-          if(min >= element.fightVal){
-              min = element.fightVal
+          if (min >= element.fightVal) {
+            min = element.fightVal;
           }
-          xData.push(element.changeDate);
+          xData.push(formatDate(element.changeDate));
           yDate.push(element.fightVal);
         });
         // var xData = this.userInfo.
         this.options.xAxis.data = xData;
-        this.options.yAxis.min = min - 2
-        this.options.yAxis.max = max + 2
+        console.log(this.options.xAxis.data);
+        this.options.yAxis.min = min - 2;
+        this.options.yAxis.max = max + 2;
         this.options.series[0].data = yDate;
       }
     }

@@ -21,3 +21,6 @@ export function showMsgBox(title,msg,onConfirm,onCancel) {
         }  
       });
 }
+export const formatDate = (timestamp) => {
+  return timestamp.replace(/T/g,' ').replace(/Z/g,'')
+}

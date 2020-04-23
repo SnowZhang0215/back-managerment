@@ -12,6 +12,7 @@
       <el-table
         :data="tableData"
         :stripe="true"
+        :height="500"
         :highlight-current-row="true"
         style="width: 100%"
         :header-cell-style="tableHeaderStyle"
@@ -27,6 +28,8 @@
             :width="item.width"
             :formatter="item.formatter"
             :key="index"
+            :sortable="item.sortable"
+            :fixed="item.fixed"
           ></el-table-column>
         </template>
       </el-table>
@@ -143,7 +146,11 @@ export default {
         },
         {
           code: "fightChange",
-          label: "近7天战斗力变化(万)"
+          label: "近7天战斗力变化(万)",
+          sortable:true,
+          fixed:"right",
+          width:200
+          
         }
       ],
       //eidt

@@ -46,3 +46,4 @@ fabric.properties
 !/log/
 /appLogs/
 vue-ui-app/dist.zip
+/api-gateway/
