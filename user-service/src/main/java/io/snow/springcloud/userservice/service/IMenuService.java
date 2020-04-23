@@ -19,4 +19,8 @@ public interface IMenuService {
     Permission getPermissionDetail(Long id);
 
     int deletePermission(List<Long> deleteIds);
+
+    int updatePermission(Permission permission);
+
+    Permission findPermissionByUrl(String url);
 }

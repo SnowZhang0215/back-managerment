@@ -144,8 +144,8 @@ export default {
   float: right;
 } */
 .main-container {
-  min-height: 540px;
-  max-height: 600px;
+  min-height: 600px;
+  /* height: 80%; */
   padding: 3px;
 }
 .footer-class {

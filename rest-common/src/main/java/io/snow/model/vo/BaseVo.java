@@ -21,6 +21,10 @@ public class BaseVo implements Serializable {
         this.createdBy = createdBy;
     }
 
+    public String getCreateBy(){
+        return this.createdBy;
+    }
+
     public Instant getCreatedDate() {
         return createdDate;
     }

@@ -7,12 +7,17 @@
         </el-form-item>
       </el-col>
       <el-col :lg="12" :md="12" :sm="24">
-        <el-form-item label="权限名称" prop="name">
-          <el-input v-model="dataModel.name"></el-input>
+        <el-form-item label="权限ID" prop="id">
+          <el-input v-model="dataModel.id" disabled="disabled"></el-input>
         </el-form-item>
       </el-col>
     </el-row>
     <el-row class="row">
+      <el-col :lg="12" :md="12" :sm="24">
+        <el-form-item label="权限名称" prop="name">
+          <el-input v-model="dataModel.name"></el-input>
+        </el-form-item>
+      </el-col>
       <el-col :lg="12" :md="12" :sm="24">
         <el-form-item label="是否默认" prop="defaultType">
           <el-select v-model="dataModel.defaultType" placeholder="请选择是否默认">
@@ -25,6 +30,8 @@
           </el-select>
         </el-form-item>
       </el-col>
+    </el-row>
+    <el-row class="row">
       <el-col :lg="12" :md="12" :sm="24">
         <el-form-item label="权限类型" prop="permissionType">
           <el-select
@@ -37,6 +44,28 @@
               :key="item.value"
               :label="item.label"
               :value="item.value"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+      </el-col>
+      <el-col :lg="12" :md="12" :sm="24">
+        <el-form-item label="权限对应的API接口">
+          <el-select
+            v-model="dataModel.permissionApiIds"
+            multiple
+            filterable
+            :remote="true"
+            value-key="id"
+            :remote-method="queryApi"
+            :loading="loading"
+            default-first-option
+            placeholder="请选择权限对应接口"
+          >
+            <el-option
+              v-for="item in dataModel.apiOptions"
+              :key="item.id"
+              :label="item.description"
+              :value="item.id"
             ></el-option>
           </el-select>
         </el-form-item>
@@ -103,41 +132,22 @@
       </el-col>
     </el-row>
     <el-row class="row">
-      <el-col :lg="24" :md="24" :sm="24">
-        <el-form-item label="权限对应的API接口">
-          <el-select
-            v-model="permissionApiIds"
-            multiple
-            filterable
-            value-key="id"
-            default-first-option
-            placeholder="请选择权限对应接口"
-          >
-            <el-option
-              v-for="item in apiOptions"
-              :key="item.id"
-              :label="item.description"
-              :value="item.id"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-      </el-col>
-    </el-row>
-    <el-row class="row">
       <el-col :lg="12" :md="12" :sm="24">
         <el-form-item>
           <el-button type="primary" @click="submitForm('dataModel')">提交</el-button>
-          <el-button @click="resetForm('dataModel')">重置</el-button>
+          <el-button v-if="dataModel.id == null" @click="resetForm('dataModel')">重置</el-button>
+          <el-button v-if="dataModel.id" @click="cancel()">关闭</el-button>
         </el-form-item>
       </el-col>
     </el-row>
   </el-form>
 </template>
 <script>
-import { createPermission } from "../../service/menuService";
+import { createPermission, updatePermission } from "../../service/menuService";
 import { noticeMsg } from "../../common/common.service";
+import { queryApiByDesc } from "../../service/api.service.js";
 export default {
-  props: { dataModel: Object, onfinish: Function },
+  props: { dataModel: Object, onfinish: Function, onClose: Function },
   name: "PermissionEdit",
   data() {
     var validateUrl = (rule, value, callback) => {
@@ -204,8 +214,9 @@ export default {
         { label: "警告按钮", value: "warning" },
         { label: "危险按钮", value: "danger" }
       ],
+      loading: false,
       apiOptions: [],
-      permissionApiIds: [],
+      // permissionApiIds: [],
       rules: {
         name: [
           { required: true, message: "权限名称不能为空", trigger: "blur" }
@@ -232,38 +243,25 @@ export default {
       }
     };
   },
-  created() {
-    console.log(this.dataModel);
-    if (this.dataModel.permissionHasApi) {
-      this.dataModel.permissionHasApi.forEach(element => {
-        this.permissionApiIds.push(element.id);
-        element.label = element.description;
-      });
-
-      // this.dataModel.permissionHasApi = this.dataModel.permissionHasApi.map(
-      //   item => {
-      //     return {
-      //       id: item.id,
-      //       path: item.path,
-      //       description: item.description,
-      //       value: item.id,
-      //       label: item.description
-      //     };
-      //   }
-      // );
-      this.apiOptions = this.dataModel.permissionHasApi;
-      console.log(this.dataModel);
-    }
-  },
   methods: {
+    cancel() {
+      console.log("close");
+      this.onClose();
+    },
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
           let option = {};
           option.onSuccess = this.onSubmitOk;
           option.onFaild = this.onSubmitFaild;
+          // this.dataModel.permissionApiIds = this.permissionApiIds;
           option.params = this.dataModel;
-          createPermission(option);
+          // console.log(this.permissionApiIds);
+          if (this.dataModel.id) {
+            updatePermission(option);
+          } else {
+            createPermission(option);
+          }
           //   console.log(this.dataModel);
         } else {
           console.log("error submit!!");
@@ -281,10 +279,42 @@ export default {
       if (data.errorCode == 200) {
         console.log("提交成功");
         this.onfinish(1);
+      }else{
+        noticeMsg(data.errorMsg);
       }
     },
     onSubmitFaild(error) {
       noticeMsg(error, true);
+    },
+    queryApi(query) {
+      if (query !== "") {
+        this.loading = true;
+        var option = {};
+        option.onSuccess = this.queryApiOk;
+        option.onFaild = this.queryApiError;
+        option.params = {
+          desc: query
+        };
+        queryApiByDesc(option);
+      }
+    },
+    queryApiOk(data) {
+      this.loading = false;
+      console.log("query", data);
+      if (data && data.errorCode == 200) {
+        let remoteData = data.data;
+        remoteData.forEach(element => {
+          element.label = element.description;
+        });
+        this.dataModel.apiOptions = remoteData;
+      } else {
+        noticeMsg(data.errorMsg);
+      }
+    },
+    queryApiError(data) {
+      this.loading = false;
+      console.log(data);
+      noticeMsg(data, true);
     }
   }
 };

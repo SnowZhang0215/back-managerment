@@ -71,6 +71,8 @@ public class Permission extends BaseVo{
 
     private String btnType;
 
+    private List<Long> permissionApiIds;
+
     public Long getId() {
         return id;
     }
@@ -197,5 +199,9 @@ public class Permission extends BaseVo{
 
     public void setBtnMethod(String btnMethod) {
         this.btnMethod = btnMethod;
+    }
+
+    public List<Long> getPermissionApiIds() {
+        return permissionApiIds;
     }
 }

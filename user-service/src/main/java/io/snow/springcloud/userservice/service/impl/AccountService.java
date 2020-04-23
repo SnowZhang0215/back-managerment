@@ -16,7 +16,9 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -54,8 +56,10 @@ public class AccountService implements IAccountService {
         userMapper.insertUser(newUser);
         RoleVo roles = roleMapper.findRoleByRoleName(AuthoritiesConstants.USER);
         Map<String,Object> userRole = new HashMap<>();
+        List<Long> roleIds = new ArrayList<>();
+        roleIds.add(roles.getId());
         userRole.put("user",newUser);
-        userRole.put("role",roles);
+        userRole.put("role",roleIds);
         userMapper.saveUserAndRole(userRole);
         logger.info("created user : {}",newUser);
         return ResponseData.ok("注册成功");

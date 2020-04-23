@@ -32,11 +32,9 @@
         @select-all="onSelectAll"
       >
         <el-table-column type="selection" width="55"></el-table-column>
-        <el-table-column prop="id" label="ID" width="55"></el-table-column>
-        <el-table-column prop="isMenu" label="权限类型"></el-table-column>
-        <el-table-column prop="url" label="权限跳转路径"></el-table-column>
-        <el-table-column prop="name" label="名称"></el-table-column>
-        <el-table-column prop="component" label="组件"></el-table-column>
+        <template v-for="(item,index) in tableHeaderItem">
+          <el-table-column :prop="item.code" :label="item.label" :width="item.width" :formatter="item.formatter" :key="index"></el-table-column>
+        </template>
       </el-table>
       <el-row>
         <el-pagination
@@ -62,14 +60,14 @@
       :append-to-body="true"
       width="50%"
     >
-      <permission-edit :data-model="editDataModel" :onfinish="onEditFinish"></permission-edit>
+      <permission-edit :data-model="editDataModel" :onfinish="onEditFinish" :onClose="close"></permission-edit>
     </el-dialog>
   </el-container>
 </template>
 
 <script>
-import { getAllPermission } from "../service/menuService";
 import {
+  getAllPermission,
   getSubMenusByParentId,
   getPermissionDetail,
   deletePermission,
@@ -99,6 +97,41 @@ export default {
         edit: this.edit,
         delete: this.delete
       },
+      tableHeaderItem: [
+        {
+          code: "id",
+          label: "ID",
+          width: 55
+        },
+        {
+          code: "permissionType",
+          label: "权限类型",
+          formatter: function(row, column, cellValue, index){
+              if(cellValue == 1){
+                return '菜单'
+              }
+              if(cellValue == 2){
+                return '按钮'
+              }
+          }
+        },
+        {
+          code: "url",
+          label: "菜单跳转路径"
+        },
+        {
+          code: "name",
+          label: "权限名称"
+        },
+        {
+          code: "component",
+          label: "菜单对应组件"
+        },
+        {
+          code: "btnMethod",
+          label: "按钮方法"
+        }
+      ],
       //eidt
       showDialog: false,
       dialogTitle: "",
@@ -157,7 +190,17 @@ export default {
     detailOk(data) {
       console.log(data);
       if (data.errorCode === 200) {
-        this.showEditDialog("编辑", data.data);
+        let dataModel = data.data;
+
+        if (dataModel.permissionHasApi) {
+          dataModel.permissionApiIds = [];
+          dataModel.permissionHasApi.forEach(element => {
+            dataModel.permissionApiIds.push(element.id);
+            element.label = element.description;
+          });
+          dataModel.apiOptions = dataModel.permissionHasApi;
+        }
+        this.showEditDialog("编辑", dataModel);
       } else {
         noticeMsg("获取权限详情失败", true);
       }
@@ -270,6 +313,9 @@ export default {
         this.getTableData();
         // this.lodadAllPermission();
       }
+    },
+    close() {
+      this.showDialog = false;
     }
   }
 };

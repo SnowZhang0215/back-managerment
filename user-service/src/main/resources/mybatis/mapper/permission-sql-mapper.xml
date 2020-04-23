@@ -106,6 +106,32 @@
         )
     </insert>
 
+    <update id="updatePermission" parameterType="io.snow.model.vo.Permission">
+        update permission
+        <set>
+            <if test="name != null">name=#{name},</if>
+            <if test="code != null">code=#{code},</if>
+            <if test="icon != null">icon=#{icon},</if>
+            <if test="level != null">level=#{level},</if>
+
+            <if test="parentCode != null">parent_code=#{parentCode},</if>
+            <if test="status != null">status=#{status},</if>
+            <if test="sort != null">sort=#{sort},</if>
+            <if test="url != null">url=#{url},</if>
+
+            <if test="permissionType != null">permission_type=#{permissionType},</if>
+            <if test="defaultType != null">default_type=#{defaultType},</if>
+            <if test="component != null">component=#{component},</if>
+            <if test="parentId != null">parent_id=#{parentId},</if>
+
+            <if test="btnMethod != null">btn_method=#{btnMethod},</if>
+            <if test="btnType != null">btn_type=#{btnType},</if>
+            <if test="lastModifiedBy != null">last_modified_by=#{lastModifiedBy},</if>
+            <if test="lastModifiedDate != null">last_modified_date=#{lastModifiedDate}</if>
+        </set>
+        where id = #{id}
+    </update>
+
     <insert id="insertPermissionApi" parameterType="map">
         insert into permission_api (p_id,a_id) values
         <foreach collection="ApiIds" item="aId" separator=",">
@@ -114,36 +140,60 @@
     </insert>
 
     <select id="getUserNavPermissions"  resultMap="resultBaseMap" parameterType = "String">
-        SELECT
-            p.* ,
-            rp.role_id ,
-            ur.user_id
+        SELECT DISTINCT
+        (p.id) ,
+        p.`code` ,
+        p.default_type ,
+        p.icon ,
+        p.permission_type ,
+        p.`level` ,
+        p.`name` ,
+        p.parent_code ,
+        p.sort ,
+        p.`status` ,
+        p.url ,
+        p.parent_id ,
+        p.btn_method ,
+        p.btn_type ,
+        p.component
         FROM
-            permission p
+        permission p
         LEFT JOIN role_privilege rp ON rp.permission_id = p.id
         LEFT JOIN user_role ur ON ur.role_id = rp.role_id
         WHERE
-            p.`status` = '1'
+        p.`status` = '1'
         AND p.parent_id = '0'
         AND ur.user_id =(
-            SELECT
-                id
-            FROM
-                USER
-            WHERE
-                USER .user_name = #{userName}
+        SELECT
+        id
+        FROM
+        USER
+        WHERE
+        USER .user_name = #{userName}
         )
         ORDER BY
-            p.sort
+        p.sort
     </select>
 
 
 
     <select id="getDefaultPermission" resultMap = "resultBaseMap">
-        SELECT
-            p.* ,
-            rp.role_id ,
-            ur.user_id
+        SELECT DISTINCT
+        (p.id) ,
+        p.`code` ,
+        p.default_type ,
+        p.icon ,
+        p.permission_type ,
+        p.`level` ,
+        p.`name` ,
+        p.parent_code ,
+        p.sort ,
+        p.`status` ,
+        p.url ,
+        p.parent_id ,
+        p.btn_method ,
+        p.btn_type ,
+        p.component
         FROM
             permission p
         LEFT JOIN role_privilege rp ON rp.permission_id = p.id
@@ -192,12 +242,11 @@
         WHERE
         USER .user_name = #{userName}
         );
-
     </select>
 
     <select id="getUserPermissionsIds" resultType = "Long">
         SELECT
-            p.id
+        DISTINCT(p.id)
         FROM
             permission p
         LEFT JOIN role_privilege rp ON rp.permission_id = p.id
@@ -252,9 +301,13 @@
         *
         from permission p
         <where>
-            p.url = #{url,jdbcType=BIGINT}
+            p.url = #{url}
         </where>
     </select>
+
+    <delete id="deletePermissionApi" parameterType="java.lang.Long">
+        delete from permission_api where p_id = #{id}
+    </delete>
 
     <delete id="deletePermission" parameterType="List">
         delete from permission where id in
@@ -262,4 +315,11 @@
             #{id}
         </foreach>
     </delete>
+
+    <update id="deletePermissionNotReal" parameterType="List">
+        update permission set status = 0 where id in
+        <foreach collection="list" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
 </mapper>

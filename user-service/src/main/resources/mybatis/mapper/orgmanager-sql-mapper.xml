@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.snow.springcloud.userservice.mapper.OrgManagerMapper">
+    <resultMap id="resultBaseMap" type="io.snow.model.vo.OrgVo">
+        <id property="id" column="id"/>
+        <result column="org_id" jdbcType="VARCHAR" property="orgId"/>
+        <result column="org_name" jdbcType="VARCHAR" property="orgName"/>
+        <result column="org_master" jdbcType="BIGINT" property="orgMaster"/>
+        <result column="org_senior_manager1" jdbcType="BIGINT" property="orgSeniorManager1"/>
+        <result column="org_senior_manager2" jdbcType="BIGINT" property="orgSeniorManager2"/>
+        <result column="open_flag" jdbcType="INTEGER" property="openFlag"/>
+        <result column="created_by" jdbcType="VARCHAR" property="createdBy"/>
+        <result column="created_date" jdbcType="TIMESTAMP" property="createdDate"/>
+        <result column="last_modified_by" jdbcType="VARCHAR" property="lastModifiedBy"/>
+        <result column="last_modified_date" jdbcType="TIMESTAMP" property="lastModifiedDate"/>
+    </resultMap>
+    <select id="listOrgPageable" resultMap="resultBaseMap">
+        select o.* from org_manager o order by o.id
+    </select>
+
+    <select id="selectByOrgId" resultMap="resultBaseMap" parameterType="java.lang.String">
+        select o.* from org_manager o where o.`org_id` = #{orgId}
+    </select>
+
+    <select id="findOrgLikeName" resultMap="resultBaseMap" parameterType="String">
+        select *
+        from org_manager o
+        where o.`org_name` like concat('%',#{orgName},'%')
+    </select>
+
+    <update id="updateOrgVo" useGeneratedKeys="true" keyProperty="id" keyColumn="id" parameterType="io.snow.model.vo.OrgVo">
+        update org_manager
+        <set>
+            <if test="orgId != null">org_id=#{orgId},</if>
+            <if test="orgName != null">org_name=#{orgName},</if>
+            <if test="orgMaster != null">org_master=#{orgMaster},</if>
+            <if test="orgSeniorManager1 != null">org_senior_manager1=#{orgSeniorManager1},</if>
+            <if test="orgSeniorManager2 != null">org_senior_manager2=#{orgSeniorManager2},</if>
+            <if test="openFlag != null">open_flag=#{openFlag},</if>
+            <if test="lastModifiedDate != null">last_modified_date=#{lastModifiedDate},</if>
+            <if test="lastModifiedBy != null">last_modified_by=#{lastModifiedBy}</if>
+        </set>
+        where id=#{id}
+    </update>
+    <insert id="insertOrg" useGeneratedKeys="true" keyProperty="id" keyColumn="id" parameterType="io.snow.model.vo.OrgVo">
+        INSERT INTO org_manager(
+        org_id,
+        org_name ,
+        org_master ,
+        org_senior_manager1,
+        org_senior_manager2,
+        open_flag,
+        created_by ,
+        last_modified_by ,
+        created_date ,
+        last_modified_date
+        )
+        VALUES
+        (
+        #{orgId},
+        #{orgName},
+        #{orgMaster},
+        #{orgSeniorManager1},
+        #{orgSeniorManager2},
+        #{openFlag},
+        #{createdBy},
+        #{lastModifiedBy},
+        #{createdDate},
+        #{lastModifiedDate}
+        )
+    </insert>
+</mapper>

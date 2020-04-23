@@ -37,4 +37,18 @@ public interface PermissionMapper {
     Permission findPermissionByUrl(String url);
 
     int deletePermission(List<Long> deleteIds);
+
+//    void insertPermissionAndApi(Map<String, Object> permissionAndApi);
+
+    /**
+     * 删除permission 关联的api
+     * @param id
+     */
+    void deletePermissionApi(Long id);
+
+    int updatePermission(Permission permission);
+
+    void insertPermissionApi(Map<String, Object> map);
+
+    int deletePermissionNotReal(List<Long> deleteIds);
 }

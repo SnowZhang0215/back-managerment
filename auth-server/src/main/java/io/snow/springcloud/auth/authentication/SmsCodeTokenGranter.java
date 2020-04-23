@@ -6,11 +6,14 @@ import org.springframework.security.oauth2.common.exceptions.InvalidGrantExcepti
 import org.springframework.security.oauth2.provider.*;
 import org.springframework.security.oauth2.provider.token.AbstractTokenGranter;
 import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
-import org.springframework.util.StringUtils;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+/**
+ * 进行短信验证码认证用户的TokenGranter。
+ * 对用户的身份进行验证，验证通过返回Token。
+ */
 public class SmsCodeTokenGranter extends AbstractTokenGranter {
     private static final String GRANT_TYPE = "sms_code";
 

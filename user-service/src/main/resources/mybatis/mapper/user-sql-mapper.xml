@@ -1,7 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="io.snow.springcloud.userservice.mapper.UserMapper">
-    <resultMap id="resultBaseMap" type="io.snow.model.vo.UserVo">
+    <resultMap id="resultBaseMap" type="io.snow.model.vo.UserVo" extends="baseUserMap">
+        <collection property="authorities" ofType="io.snow.model.vo.RoleVo">
+            <result column="id" property="id"/>
+            <result column="name" jdbcType="VARCHAR" property="name"/>
+            <result column="code" jdbcType="VARCHAR" property="code"/>
+            <result column="created_by" jdbcType="VARCHAR" property="createdBy"/>
+            <result column="created_date" jdbcType="TIMESTAMP" property="createdDate"/>
+            <result column="last_modified_by" jdbcType="VARCHAR" property="lastModifiedBy"/>
+            <result column="last_modified_date" jdbcType="TIMESTAMP" property="lastModifiedDate"/>
+        </collection>
+    </resultMap>
+
+    <resultMap id="baseUserMap" type="io.snow.model.vo.UserVo">
         <id property="id" column="id"/>
         <result column="user_name" jdbcType="VARCHAR" property="userName"/>
         <result column="password" jdbcType="VARCHAR" property="password"/>
@@ -9,29 +21,54 @@
         <result column="profile" jdbcType="VARCHAR" property="profile"/>
         <result column="gender" jdbcType="VARCHAR" property="gender"/>
         <result column="emile" jdbcType="VARCHAR" property="emile"/>
-        <result column="create_by" jdbcType="VARCHAR" property="createBy"/>
-        <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="created_by" jdbcType="VARCHAR" property="createdBy"/>
+        <result column="created_date" jdbcType="TIMESTAMP" property="createdDate"/>
         <result column="last_modified_by" jdbcType="VARCHAR" property="lastModifiedBy"/>
         <result column="last_modified_date" jdbcType="TIMESTAMP" property="lastModifiedDate"/>
+    </resultMap>
+
+    <resultMap id="userDetail" type="io.snow.model.vo.UserVo" extends="baseUserMap">
         <collection property="authorities" ofType="io.snow.model.vo.RoleVo">
-            <result column="id" property="id"/>
+            <result column="rId" property="id"/>
             <result column="name" jdbcType="VARCHAR" property="name"/>
-            <result column="code" jdbcType="VARCHAR" property="code"/>
-            <result column="create_by" jdbcType="VARCHAR" property="createBy"/>
-            <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
-            <result column="last_modified_by" jdbcType="VARCHAR" property="lastModifiedBy"/>
-            <result column="last_modified_date" jdbcType="TIMESTAMP" property="lastModifiedDate"/>
-            <!--<collection property="rolePermissions" ofType="io.snow.model.vo.Permission">-->
-                <!--<result column="id" property="id"/>-->
-                <!--<result column="path" jdbcType="VARCHAR" property="path"/>-->
-                <!--<result column="description" jdbcType="VARCHAR" property="description"/>-->
-                <!--<result column="create_by" jdbcType="VARCHAR" property="createBy"/>-->
-                <!--<result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>-->
-                <!--<result column="last_modified_by" jdbcType="VARCHAR" property="lastModifiedBy"/>-->
-                <!--<result column="last_modified_date" jdbcType="TIMESTAMP" property="lastModifiedDate"/>-->
-            <!--</collection>-->
         </collection>
     </resultMap>
+
+    <select id="listUserPageable" resultMap="baseUserMap">
+        select *
+        from user
+        where id > 0
+        order by id
+    </select>
+
+    <select id="selectUserByUserName" resultMap="baseUserMap" parameterType="String">
+        select *
+        from user u
+        where u.user_name like concat('%',#{userName},'%')
+    </select>
+
+    <select id="getUserDetail" resultMap="userDetail" parameterType="Long">
+        SELECT
+        u.id ,
+        u.user_name ,
+        u.created_by ,
+        u.created_date ,
+        u.last_modified_by ,
+        u.last_modified_date ,
+        u.emile ,
+        u.gender ,
+        u.`password` ,
+        u.phone_number ,
+        u.`profile` ,
+        r.id AS rId ,
+        r.`name`
+        FROM
+        `user` u
+        LEFT JOIN user_role ur ON u.id = ur.user_id
+        LEFT JOIN role r ON r.id = ur.role_id
+        WHERE
+        u.id = #{uId}
+    </select>
 
 
     <insert id="insertUser" useGeneratedKeys="true" keyProperty="id" keyColumn="id" parameterType="io.snow.model.vo.UserVo">
@@ -61,9 +98,37 @@
     </insert>
 
     <insert id="saveUserAndRole" parameterType="HashMap">
-        insert into user_role values(#{user.id},#{role.id})
+        insert into user_role (user_id,role_id) values
+        <foreach collection="role" item="rId" separator=",">
+            (${user.id},#{rId})
+        </foreach>
     </insert>
 
+    <delete id="deleteUserRole" parameterType="Long">
+        delete from user_role where user_id = #{userId}
+    </delete>
+
+    <update id="updateUser" parameterType="io.snow.model.vo.UserVo">
+        update user
+        <set>
+            <if test="gender != null">gender=#{gender},</if>
+            <if test="emile != null">emile=#{emile},</if>
+            <if test="phoneNumber != null">phone_number=#{phoneNumber},</if>
+            <if test="profile != null">profile=#{profile}</if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <delete id="deleteUsers" parameterType="List">
+        delete from user where id in
+        <foreach collection="list" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+<!--    <select id="selectUserByLogin" resultMap="baseUserMap" parameterType="String">-->
+<!--        select * from user u where u.user_name = #{userName}-->
+<!--    </select>-->
 
     <select id="findUserByUserName"  resultMap="resultBaseMap">
         SELECT
