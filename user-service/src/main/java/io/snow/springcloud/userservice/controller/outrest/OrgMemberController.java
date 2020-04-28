@@ -100,7 +100,7 @@ public class OrgMemberController {
             PageResult result = orgMemberService.listOrgMember(pageIndex, pageSize,isAdmin,userName);
             return ResponseData.ok(result);
         } catch (Exception e) {
-            logger.error("query:{0}",e);
+            logger.error("query:{}",e);
             return ResponseData.error("查询组织成员列表失败");
         }
     }
