@@ -33,7 +33,7 @@ public class FightChangeService implements IFightChangeService {
     public Long getRecentFightVal(Long id) {
         long val = 0;
         List<FightChangeVo> result = fightChangeMapper.selectRecentFightValChangeList(id);
-        if (result!=null){
+        if (result!=null && result.size() > 0){
             Long min = result.get(0).getFightVal();
             Long max = result.get(result.size()-1).getFightVal();
             val = max-min;
